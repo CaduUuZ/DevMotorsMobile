@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView,KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
 
 // Obtém a largura da tela do dispositivo
