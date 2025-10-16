@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
-export default function Home() {
+export default function Home({ navigation, onLogout }) {
   const [pacientesHoje, setPacientesHoje] = useState(0);
   const [examesHoje, setExamesHoje] = useState(0);
   const [tabela, setTabela] = useState([]);
@@ -25,41 +25,6 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      {/* SIDEBAR */}
-      <View style={styles.sidebar}>
-        <Text style={styles.logo}>☰</Text>
-        <ScrollView>
-          <TouchableOpacity style={styles.menuItem}>
-            <Icon name="home" size={16} color="#fff" />
-            <Text style={styles.menuText}> Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
-            <Icon name="pen-square" size={16} color="#fff" />
-            <Text style={styles.menuText}> Cadastro de Pacientes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
-            <Icon name="list" size={16} color="#fff" />
-            <Text style={styles.menuText}> Lista de Pacientes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
-            <Icon name="file-alt" size={16} color="#fff" />
-            <Text style={styles.menuText}> Solicitar Exame</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
-            <Icon name="clipboard-list" size={16} color="#fff" />
-            <Text style={styles.menuText}> Lista de Exames</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.menuItem, { marginTop: 20 }]}>
-            <Icon name="sign-out-alt" size={16} color="#fff" />
-            <Text style={styles.menuText}> Logout</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
-            <Icon name="user" size={16} color="#fff" />
-            <Text style={styles.menuText}> Perfil</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-
       {/* CONTEÚDO */}
       <ScrollView style={styles.content}>
         <Text style={styles.title}>📊 Painel de Resumo do Dia</Text>
