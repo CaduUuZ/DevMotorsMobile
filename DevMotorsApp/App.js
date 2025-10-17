@@ -8,6 +8,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import CadastroPaciente from './src/screens/CadastroPaciente/CadastroPaciente';
 import LoginRegisterScreen from './src/screens/LoginCadastro/Login';
 import Home from './src/screens/Home/Home';
+import ListaExame from './src/screens/Exames/ListaExame/ListaExame'; 
+import NovoExame from './src/screens/Exames/NovoExame/NovoExame';
 
 // --- NAVIGATORS ---
 const AuthStack = createNativeStackNavigator();
@@ -45,16 +47,13 @@ export default function App() {
           options={{ title: 'Lista Pacientes' }}
         />
 
-        <Drawer.Screen 
-          name="NovoExame"
-          component={() => <View style={styles.screen}><Text>Novo Exame</Text></View>}
-          options={{ title: 'Novo Exame' }}
-        />
+        <Drawer.Screen name="Novo Exame">
+          {props => <NovoExame {...props} onLogout={() => setIsLoggedIn(false)} />}
+        </Drawer.Screen>
 
         <Drawer.Screen 
-          name="ListaExame"
-          component={() => <View style={styles.screen}><Text>Lista Exame</Text></View>}
-          options={{ title: 'Lista Exames' }}
+          name="Lista Exame"
+          component={props => <ListaExame {...props} onLogout={() => setIsLoggedIn(false)} />}
         />
       </Drawer.Navigator>
     );
