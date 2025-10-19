@@ -44,7 +44,7 @@ export default function App() {
 
         <Drawer.Screen 
           name="ListaPaciente"
-          component={() => <View style={styles.screen}><Text>Lista Paciente</Text></View>}
+          component={ListaPaciente}
           options={{ title: 'Lista Pacientes' }}
         />
 
