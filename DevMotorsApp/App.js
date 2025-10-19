@@ -10,6 +10,7 @@ import LoginRegisterScreen from './src/screens/LoginCadastro/Login';
 import Home from './src/screens/Home/Home';
 import ListaExame from './src/screens/Exames/ListaExame/ListaExame'; 
 import NovoExame from './src/screens/Exames/NovoExame/NovoExame';
+import ListaPaciente from './DevMotorsApp/src/screens/ListarPacientes/ListaPaciente.js';
 
 // --- NAVIGATORS ---
 const AuthStack = createNativeStackNavigator();
