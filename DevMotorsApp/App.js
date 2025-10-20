@@ -8,9 +8,11 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import CadastroPaciente from './src/screens/CadastroPaciente/CadastroPaciente';
 import LoginRegisterScreen from './src/screens/LoginCadastro/Login';
 import Home from './src/screens/Home/Home';
-import ListaExame from './src/screens/Exames/ListaExame/ListaExame'; 
-import NovoExame from './src/screens/Exames/NovoExame/NovoExame';
+import ListaExame from './src/screens/ListaExame/ListaExame'; 
+import NovoExame from './src/screens/CadastroExame/NovoExame';
 import ListaPaciente from './src/screens/ListarPacientes/ListaPaciente';
+import TelaRelatorio from './src/screens/Admin/TelaRelatorio/TelaRelatorio';
+import ListaPacienteAdmin from './src/screens/Admin/ListaPacienteAdmin/ListaPacienteAdmin';
 
 // --- NAVIGATORS ---
 const AuthStack = createNativeStackNavigator();
@@ -42,7 +44,7 @@ export default function App() {
           options={{ title: 'Novo Paciente' }}
         />
 
-        <Drawer.Screen name="ListaPaciente">
+        <Drawer.Screen name="Lista Paciente">
           {props => <ListaPaciente {...props} onLogout={() => setIsLoggedIn(false)} />}
         </Drawer.Screen>
 
@@ -52,6 +54,14 @@ export default function App() {
 
         <Drawer.Screen name="Lista Exame">
           {props => <ListaExame {...props} onLogout={() => setIsLoggedIn(false)} />}
+        </Drawer.Screen>
+
+        <Drawer.Screen name="Relatório" options={{ title: 'Relatório (Admin)' }}>
+          {props => <TelaRelatorio {...props} onLogout={() => setIsLoggedIn(false)} />}
+        </Drawer.Screen>
+
+        <Drawer.Screen name="Listar Pacientes Admin" options={{ title: 'Pacientes (Admin)' }}>
+          {props => <ListaPacienteAdmin {...props} onLogout={() => setIsLoggedIn(false)} />}
         </Drawer.Screen>
       </Drawer.Navigator>
     );

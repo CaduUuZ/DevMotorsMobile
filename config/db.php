@@ -27,6 +27,7 @@ CREATE TABLE usuarios (
 
 CREATE TABLE pacientes (
     idPaciente INT AUTO_INCREMENT PRIMARY KEY,
+    isAdmin BOOLEAN DEFAULT FALSE,
     dataCadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     nome VARCHAR(100) NOT NULL,
     dataNascimento DATE NOT NULL,

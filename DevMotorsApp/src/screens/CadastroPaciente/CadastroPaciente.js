@@ -6,11 +6,43 @@ import {
   TouchableOpacity, 
   ScrollView, 
   StyleSheet, 
-  useWindowDimensions 
+  useWindowDimensions,
+  Alert,
+  ActivityIndicator 
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker'; 
 
-export default function CadastroPaciente() {
+
+// URL da API
+const API_BASE_URL = 'https://sua-api.com/api'; 
+
+// Funções de Máscara
+const formatPhone = (text) => {
+  const cleanText = text.replace(/\D/g, '');
+  
+  if (cleanText.length <= 10) { 
+    return cleanText.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3').slice(0, 14);
+  } else { 
+    return cleanText.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3').slice(0, 15);
+  }
+};
+
+const formatData = (text) => {
+  const cleanText = text.replace(/\D/g, '');
+  
+  if (cleanText.length <= 8) {
+    return cleanText
+      .replace(/(\d{2})(\d)/, '$1/$2')
+      .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
+  }
+  return cleanText.slice(0, 8)
+    .replace(/(\d{2})(\d)/, '$1/$2')
+    .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
+};
+
+
+export default function CadastroPaciente(props) {
+  const { navigation } = props;
   const { width } = useWindowDimensions();
   const isSmallScreen = width < 600;
 
@@ -22,12 +54,71 @@ export default function CadastroPaciente() {
   const [nomeMae, setNomeMae] = useState('');
   const [medicamentoContinuo, setMedicamentoContinuo] = useState('nao');
   const [patologia, setPatologia] = useState('nao');
+  const [qualMedicamento, setQualMedicamento] = useState('');
+  const [qualPatologia, setQualPatologia] = useState('');
+  const [loading, setLoading] = useState(false); // Estado de carregamento
 
-  const handleCadastro = () => {
-    console.log('Dados a serem enviados:', {
-      nomeCompleto, dataNascimento, telefone, email, nomeMae, medicamentoContinuo, patologia
-    });
-    alert('Cadastro de Paciente enviado com sucesso!');
+  // FUNÇÃO DE CADASTRO CONECTADA À API (POST)
+  const handleCadastro = async () => {
+    // 1. Validação Básica
+    if (!nomeCompleto || !dataNascimento || !telefone || !email) {
+        Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios (Nome, Data, Telefone e Email).');
+        return;
+    }
+
+    // 2. Preparação dos Dados
+    const dadosPaciente = {
+        nomeCompleto,
+        dataNascimento,
+        telefone,
+        email,
+        nomeMae,
+        // Envia o detalhe ou um indicador de 'Nenhum'
+        medicamento: medicamentoContinuo === 'sim' ? qualMedicamento : 'Nenhum',
+        patologia: patologia === 'sim' ? qualPatologia : 'Nenhuma',
+    };
+
+    setLoading(true);
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/pacientes`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify(dadosPaciente),
+        });
+
+        if (response.ok) {
+            Alert.alert('Sucesso', 'Paciente cadastrado com sucesso!');
+            
+            // Opcional: Voltar para a tela anterior (Lista de Pacientes)
+            if (navigation && typeof navigation.goBack === 'function') {
+                navigation.goBack(); 
+            } else {
+                // Se não houver navegação, apenas limpa o formulário
+                setNomeCompleto('');
+                setDataNascimento('');
+                setTelefone('');
+                setEmail('');
+                setNomeMae('');
+                setMedicamentoContinuo('nao');
+                setPatologia('nao');
+                setQualMedicamento('');
+                setQualPatologia('');
+            }
+
+        } else {
+            const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido da API.' }));
+            console.error('Erro da API:', errorData);
+            Alert.alert('Erro no Cadastro', `Falha ao cadastrar: ${errorData.message || response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Erro de Rede/Fetch:', error);
+        Alert.alert('Erro de Conexão', 'Não foi possível conectar-se ao servidor. Verifique o IP/CORS.');
+    } finally {
+        setLoading(false);
+    }
   };
 
   return (
@@ -45,7 +136,7 @@ export default function CadastroPaciente() {
 
         {/* Nome Completo */}
         <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, isSmallScreen && styles.formControlFull]}>
+          <View style={[styles.formControl, styles.formControlFull]}>
             <Text style={styles.label}>Nome Completo</Text>
             <TextInput
               style={styles.input}
@@ -65,8 +156,10 @@ export default function CadastroPaciente() {
               style={styles.input}
               placeholder="DD/MM/AAAA"
               placeholderTextColor="#999"
+              keyboardType="numeric"
               value={dataNascimento}
-              onChangeText={setDataNascimento}
+              onChangeText={(text) => setDataNascimento(formatData(text))}
+              maxLength={10} 
             />
           </View>
           <View style={[styles.formControl, styles.formControlSpacing, isSmallScreen && styles.formControlFull]}>
@@ -77,7 +170,8 @@ export default function CadastroPaciente() {
               placeholderTextColor="#999"
               keyboardType="phone-pad"
               value={telefone}
-              onChangeText={setTelefone}
+              onChangeText={(text) => setTelefone(formatPhone(text))}
+              maxLength={15} 
             />
             <Text style={styles.helpText}>Formato: (00) 00000-0000</Text>
           </View>
@@ -85,7 +179,7 @@ export default function CadastroPaciente() {
 
         {/* Email */}
         <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, isSmallScreen && styles.formControlFull]}>
+          <View style={[styles.formControl, styles.formControlFull]}>
             <Text style={styles.label}>Email</Text>
             <TextInput
               style={styles.input}
@@ -101,7 +195,7 @@ export default function CadastroPaciente() {
 
         {/* Nome da Mãe */}
         <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, isSmallScreen && styles.formControlFull]}>
+          <View style={[styles.formControl, styles.formControlFull]}>
             <Text style={styles.label}>Nome da Mãe</Text>
             <TextInput
               style={styles.input}
@@ -113,18 +207,21 @@ export default function CadastroPaciente() {
           </View>
         </View>
 
-        {/* Medicamento Contínuo */}
+        {/* Medicamento Contínuo - Select */}
         <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, isSmallScreen && styles.formControlFull]}>
+          <View style={[styles.formControl, styles.formControlFull]}>
             <Text style={styles.label}>Toma algum medicamento contínuo?</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 style={styles.select}
                 selectedValue={medicamentoContinuo}
-                onValueChange={(itemValue) => setMedicamentoContinuo(itemValue)}
+                onValueChange={(itemValue) => {
+                    setMedicamentoContinuo(itemValue);
+                    if (itemValue === 'nao') setQualMedicamento('');
+                }}
                 mode="dropdown"
               >
-                <Picker.Item label="Selecione..." value="" />
+                <Picker.Item label="Selecione..." value="" enabled={false} />
                 <Picker.Item label="Sim" value="sim" />
                 <Picker.Item label="Não" value="nao" />
               </Picker>
@@ -132,18 +229,37 @@ export default function CadastroPaciente() {
           </View>
         </View>
 
-        {/* Patologia */}
+        {/* Medicamento Contínuo - Input Condicional */}
+        {medicamentoContinuo === 'sim' && (
+          <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
+            <View style={[styles.formControl, styles.formControlFull]}>
+              <Text style={styles.label}>Qual medicamento contínuo?</Text>
+              <TextInput
+                style={[styles.input, styles.conditionalInput]}
+                placeholder="Ex: Losartana 50mg"
+                placeholderTextColor="#999"
+                value={qualMedicamento}
+                onChangeText={setQualMedicamento}
+              />
+            </View>
+          </View>
+        )}
+
+        {/* Patologia - Select */}
         <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, isSmallScreen && styles.formControlFull]}>
+          <View style={[styles.formControl, styles.formControlFull]}>
             <Text style={styles.label}>Paciente tem alguma patologia que trata?</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 style={styles.select}
                 selectedValue={patologia}
-                onValueChange={(itemValue) => setPatologia(itemValue)}
+                onValueChange={(itemValue) => {
+                    setPatologia(itemValue);
+                    if (itemValue === 'nao') setQualPatologia('');
+                }}
                 mode="dropdown"
               >
-                <Picker.Item label="Selecione..." value="" />
+                <Picker.Item label="Selecione..." value="" enabled={false} />
                 <Picker.Item label="Sim" value="sim" />
                 <Picker.Item label="Não" value="nao" />
               </Picker>
@@ -151,9 +267,33 @@ export default function CadastroPaciente() {
           </View>
         </View>
 
+        {/* Patologia - Input Condicional */}
+        {patologia === 'sim' && (
+          <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
+            <View style={[styles.formControl, styles.formControlFull]}>
+              <Text style={styles.label}>Qual patologia o paciente trata?</Text>
+              <TextInput
+                style={[styles.input, styles.conditionalInput]}
+                placeholder="Ex: Hipertensão, Diabetes Tipo 2"
+                placeholderTextColor="#999"
+                value={qualPatologia}
+                onChangeText={setQualPatologia}
+              />
+            </View>
+          </View>
+        )}
+
         {/* Botão */}
-        <TouchableOpacity style={styles.btnPrimary} onPress={handleCadastro}>
-          <Text style={styles.btnText}>Cadastrar Paciente</Text>
+        <TouchableOpacity 
+          style={[styles.btnPrimary, loading && styles.btnDisabled]} 
+          onPress={handleCadastro}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.btnText}>Cadastrar Paciente</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -240,6 +380,11 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
+  conditionalInput: {
+      borderColor: '#123458',
+      borderWidth: 2,
+      backgroundColor: '#f6f6ff',
+  },
   helpText: {
     fontSize: 12,
     color: '#777',
@@ -275,4 +420,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  btnDisabled: {
+    backgroundColor: '#6c757d',
+  }
 });

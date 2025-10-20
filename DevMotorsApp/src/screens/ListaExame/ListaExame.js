@@ -2,9 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import axios from 'axios'; 
 
-// **CORREÇÃO 1: Definição da URL Base da API**
-// Substitua pelo IP ou URL do seu servidor PHP. 
-// Ex: 'http://192.168.1.100/api'
+
 const API_BASE_URL = 'http://SEU_IP_AQUI/SEU_DIRETORIO_DA_API'; 
 
 // Componente para renderizar uma linha na lista
