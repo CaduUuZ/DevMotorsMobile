@@ -10,7 +10,7 @@ import LoginRegisterScreen from './src/screens/LoginCadastro/Login';
 import Home from './src/screens/Home/Home';
 import ListaExame from './src/screens/Exames/ListaExame/ListaExame'; 
 import NovoExame from './src/screens/Exames/NovoExame/NovoExame';
-import ListaPaciente from './DevMotorsApp/src/screens/ListarPacientes/ListaPaciente.js';
+import ListaPaciente from './src/screens/ListarPacientes/ListaPaciente';
 
 // --- NAVIGATORS ---
 const AuthStack = createNativeStackNavigator();
@@ -42,20 +42,17 @@ export default function App() {
           options={{ title: 'Novo Paciente' }}
         />
 
-        <Drawer.Screen 
-          name="ListaPaciente"
-          component={ListaPaciente}
-          options={{ title: 'Lista Pacientes' }}
-        />
+        <Drawer.Screen name="ListaPaciente">
+          {props => <ListaPaciente {...props} onLogout={() => setIsLoggedIn(false)} />}
+        </Drawer.Screen>
 
         <Drawer.Screen name="Novo Exame">
           {props => <NovoExame {...props} onLogout={() => setIsLoggedIn(false)} />}
         </Drawer.Screen>
 
-        <Drawer.Screen 
-          name="Lista Exame"
-          component={props => <ListaExame {...props} onLogout={() => setIsLoggedIn(false)} />}
-        />
+        <Drawer.Screen name="Lista Exame">
+          {props => <ListaExame {...props} onLogout={() => setIsLoggedIn(false)} />}
+        </Drawer.Screen>
       </Drawer.Navigator>
     );
   }

@@ -17,7 +17,8 @@ import {
 // Configure a URL da sua API aqui
 const API_BASE_URL = 'https://sua-api.com/api';
 
-const PacientesApp = () => {
+const ListaPaciente = (props) => {
+  const { navigation } = props;
   const [pacientes, setPacientes] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -130,12 +131,18 @@ const PacientesApp = () => {
       return;
     }
 
+    const dataToSend = {
+      ...formData,
+      // Garante que a idade seja enviada como um número para o backend
+      idade: Number(formData.idade), 
+    };
+
     try {
       // Descomente para usar sua API real:
-      // await fetch(`${API_BASE_URL}/pacientes/${formData.idPaciente}`, {
+      // await fetch(`${API_BASE_URL}/pacientes/${dataToSend.idPaciente}`, {
       //   method: 'PUT',
       //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
+      //   body: JSON.stringify(dataToSend) 
       // });
 
       Alert.alert('Sucesso', 'Paciente atualizado com sucesso');
@@ -178,9 +185,11 @@ const PacientesApp = () => {
 
   const handleNewPaciente = () => {
     // Navegue para a tela de cadastro
+    if (navigation && typeof navigation.navigate === 'function') {
+      navigation.navigate('CadastroPaciente');
+      return;
+    }
     Alert.alert('Info', 'Navegue para tela de cadastro de novo paciente');
-    // Exemplo com React Navigation:
-    // navigation.navigate('CadastroPaciente');
   };
 
   const renderPaciente = ({ item }) => (
@@ -325,7 +334,9 @@ const PacientesApp = () => {
                   onChangeText={(text) => setFormData({...formData, telefone: text})}
                   placeholder="(00) 00000-0000"
                   placeholderTextColor="#999"
-                  keyboardType="phone-pad"
+                  // 🚀 Melhoria de UX: Teclado otimizado para telefone e limite de caracteres
+                  keyboardType="phone-pad" 
+                  maxLength={15} 
                 />
               </View>
 
@@ -337,6 +348,8 @@ const PacientesApp = () => {
                   onChangeText={(text) => setFormData({...formData, dataNascimento: text})}
                   placeholder="AAAA-MM-DD"
                   placeholderTextColor="#999"
+                  // 🚀 Melhoria de UX: Limite de caracteres
+                  maxLength={10} 
                 />
               </View>
 
@@ -405,7 +418,6 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: 'row',
-    gap: 8,
     alignItems: 'center'
   },
   newButton: {
@@ -417,7 +429,8 @@ const styles = StyleSheet.create({
     shadowColor: '#667eea',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
-    shadowRadius: 4
+    shadowRadius: 4,
+    marginRight: 8, // substitui gap
   },
   newButtonText: {
     color: '#fff',
@@ -433,7 +446,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 14,
     backgroundColor: '#fafafa',
-    color: '#333'
+    color: '#333',
+    marginRight: 8, // espaçamento para o botão de busca
   },
   searchButton: {
     backgroundColor: '#667eea',
@@ -492,7 +506,6 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    gap: 8
   },
   editButton: {
     backgroundColor: '#ffc107',
@@ -510,7 +523,8 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2
+    elevation: 2,
+    marginLeft: 8 // substitui gap
   },
   buttonIcon: {
     fontSize: 20
@@ -591,7 +605,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
-    gap: 10,
     backgroundColor: '#f9f9f9'
   },
   cancelButton: {
@@ -600,7 +613,8 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
-    elevation: 2
+    elevation: 2,
+    marginRight: 10 // substitui gap
   },
   cancelButtonText: {
     color: '#fff',
@@ -622,4 +636,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default PacientesApp;
+export default ListaPaciente;
