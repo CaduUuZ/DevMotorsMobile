@@ -192,33 +192,6 @@ const ListaPaciente = (props) => {
     Alert.alert('Info', 'Navegue para tela de cadastro de novo paciente');
   };
 
-  const renderPaciente = ({ item }) => (
-    <View style={styles.pacienteCard}>
-      <View style={styles.pacienteInfo}>
-        <Text style={styles.pacienteTitle}>
-          {item.idPaciente} - {item.nome}
-        </Text>
-        <Text style={styles.pacienteEmail}>{item.email}</Text>
-      </View>
-      <View style={styles.actions}>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => openEditModal(item)}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.buttonIcon}>✏️</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => handleDelete(item.idPaciente, item.nome)}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.buttonIcon}>🗑️</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#667eea" />

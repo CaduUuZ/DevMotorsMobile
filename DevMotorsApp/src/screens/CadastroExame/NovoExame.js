@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { 
     View, 
     Text, 
@@ -6,15 +6,57 @@ import {
     TouchableOpacity, 
     StyleSheet, 
     ScrollView, 
-    Alert 
+    Alert,
+    ActivityIndicator 
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Necessário instalar: npm install @react-native-picker/picker
-import axios from 'axios';
+import { Picker } from '@react-native-picker/picker'; 
+import axios from 'axios'; 
 
-// URL base da sua API PHP
-const API_BASE_URL = 'http://seu-servidor-local/seus-arquivos-php/api';
 
-// Lista estática de laboratórios (pode ser carregada dinamicamente da API também)
+const API_BASE_URL = '';
+
+// Lista estática de exames para cada laboratório
+const LISTA_EXAMES_ESTATICA = {
+    microbiologia: [
+        { id: "micro1", nome: "Urocultura com antibiograma" },
+        { id: "micro2", nome: "Swab ocular" },
+        { id: "micro3", nome: "Escarro para exame de Micobacterium tuberculosis" },
+    ],
+    parasitologia: [
+        { id: "para1", nome: "Exame parasitológico de fezes" },
+        { id: "para2", nome: "Sangue oculto" },
+    ],
+    hematologia: [
+        { id: "hemato1", nome: "Hemograma completo" },
+        { id: "hemato2", nome: "Outros exames de hematologia" },
+    ],
+    bioquímica: [
+        { id: "bio1", nome: "Ácido úrico" },
+        { id: "bio2", nome: "Alfa amilase" },
+        { id: "bio3", nome: "Bilirrubina Total" },
+        { id: "bio4", nome: "Bilirrubina Direta" },
+        { id: "bio5", nome: "Cálcio" },
+        { id: "bio6", nome: "Colesterol" },
+        { id: "bio7", nome: "HDL" },
+        { id: "bio8", nome: "Creatinina" },
+        { id: "bio9", nome: "Ferro Ferene" },
+        { id: "bio10", nome: "Fosfatase Alcalina" },
+        { id: "bio11", nome: "Fosfato" },
+        { id: "bio12", nome: "Gama GT" },
+        { id: "bio13", nome: "Glicose" },
+        { id: "bio14", nome: "GOT (AST)" },
+        { id: "bio15", nome: "GTP (ALT)" },
+        { id: "bio16", nome: "Magnésio" },
+        { id: "bio17", nome: "Proteína total" },
+        { id: "bio18", nome: "Triglicerídeos" },
+        { id: "bio19", nome: "Uréia" },
+    ],
+    urinálise: [
+        { id: "urina", nome: "Urina 1" },
+    ],
+};
+
+// Lista de laboratórios para o primeiro Picker
 const laboratorios = [
     { label: "Selecione um Laboratório", value: "" },
     { label: "Microbiologia", value: "microbiologia" },
@@ -24,51 +66,36 @@ const laboratorios = [
     { label: "Urinálise", value: "urinálise" },
 ];
 
+
 export default function SolicitarExameScreen({ navigation }) {
-    // 1. Estados do Formulário
+    // 2. Estados do Formulário
     const [pacienteId, setPacienteId] = useState('');
     const [laboratorio, setLaboratorio] = useState('');
-    const [examesDisponiveis, setExamesDisponiveis] = useState([]);
     const [exameSelecionado, setExameSelecionado] = useState(''); // O ID/Value do exame
-    const [exameTexto, setExameTexto] = useState(''); // O texto do exame para salvar
+    const [exameTexto, setExameTexto] = useState(''); // O texto do exame (ex: 'Hemograma completo') para salvar
     const [loading, setLoading] = useState(false);
     
-    // NOTE: Em React Native, buscar paciente por ID geralmente é feito em um campo 
-    // com auto-completar ou validando se o ID é válido. Aqui, simulamos o input simples.
+    // 3. Filtra os exames disponíveis com base no laboratório selecionado
+    const examesDisponiveis = laboratorio 
+        ? (LISTA_EXAMES_ESTATICA[laboratorio] || []) 
+        : [];
 
-    // 2. Função para carregar opções de exame
-    const carregarOpcoesExame = useCallback(async (lab) => {
-        if (!lab) {
-            setExamesDisponiveis([]);
-            setExameSelecionado('');
-            return;
-        }
+    // 4. Função para gerenciar a seleção do Laboratório
+    const handleLaboratorioChange = (labValue) => {
+        setLaboratorio(labValue);
+        // Reseta o exame selecionado e o texto ao mudar o laboratório
+        setExameSelecionado(''); 
+        setExameTexto('');
+    };
 
-        try {
-            // API para buscar exames do laboratório (Você precisa criar este endpoint)
-            const response = await axios.get(`${API_BASE_URL}/exames_por_laboratorio.php?laboratorio=${lab}`);
-            // Exemplo de formato esperado: [{ id: 1, nome: 'Hemograma Completo' }, ...]
-            setExamesDisponiveis(response.data);
-            setExameSelecionado(''); // Reseta a seleção
-            setExameTexto(''); // Reseta o texto
-        } catch (error) {
-            console.error("Erro ao carregar exames:", error);
-            Alert.alert("Erro", "Não foi possível carregar os exames para este laboratório.");
-            setExamesDisponiveis([]);
-        }
-    }, []);
 
-    // 3. Efeito para disparar a carga de opções quando o laboratório mudar
-    useEffect(() => {
-        carregarOpcoesExame(laboratorio);
-    }, [laboratorio, carregarOpcoesExame]);
-
-    // 4. Função para gerenciar a seleção do exame
+    // 5. Função para gerenciar a seleção do Exame
     const handleExameChange = (value) => {
         setExameSelecionado(value);
 
         // Encontra o texto correspondente ao valor selecionado para salvar no banco
         const exameObjeto = examesDisponiveis.find(e => e.id.toString() === value.toString());
+        
         if (exameObjeto) {
             setExameTexto(exameObjeto.nome);
         } else {
@@ -76,7 +103,8 @@ export default function SolicitarExameScreen({ navigation }) {
         }
     };
 
-    // 5. Função de Submissão do Formulário
+
+    // 6. Função de Submissão do Formulário
     const handleSubmit = async () => {
         if (!pacienteId || !laboratorio || !exameSelecionado) {
             Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios.");
@@ -90,24 +118,24 @@ export default function SolicitarExameScreen({ navigation }) {
             const dados = {
                 pacienteId: pacienteId,
                 laboratorio: laboratorio,
-                exameTexto: exameTexto,
-                // Você pode incluir o ID do exame selecionado, se necessário
-                exameId: exameSelecionado, 
+                exameTexto: exameTexto, // Nome do exame
+                exameId: exameSelecionado, // ID/Value do exame
             };
             
-            // Endpoint POST para salvar a solicitação (Você precisa criar este endpoint)
-            const response = await axios.post(`${API_BASE_URL}/exameDados.php`, dados);
+            // Aqui você faria a chamada real à API (Exemplo com Axios)
+            // const response = await axios.post(`${API_BASE_URL}/exameDados.php`, dados);
 
-            Alert.alert("Sucesso", "Exame cadastrado com sucesso!");
+            console.log("Dados Enviados:", dados); // Verifique os dados no console
+            Alert.alert("Sucesso", `Exame "${exameTexto}" para Paciente ID ${pacienteId} cadastrado com sucesso!`);
             
             // Limpa o formulário após o sucesso
             setPacienteId('');
             setLaboratorio('');
-            setExamesDisponiveis([]);
             setExameSelecionado('');
             setExameTexto('');
 
         } catch (error) {
+            // Tratamento de erro de API (Ajuste para seu ambiente)
             console.error("Erro ao solicitar exame:", error.response || error);
             const msgErro = error.response && error.response.data && error.response.data.error 
                             ? error.response.data.error 
@@ -120,8 +148,6 @@ export default function SolicitarExameScreen({ navigation }) {
 
     return (
         <ScrollView style={styles.container}>
-            {/* Sidebar (seria um componente separado ou parte da navegação) */}
-            {/* <SidebarComponent /> */} 
             
             <View style={styles.formHeader}>
                 <Text style={styles.title}>Solicitar Exame</Text>
@@ -138,17 +164,16 @@ export default function SolicitarExameScreen({ navigation }) {
                         value={pacienteId}
                         onChangeText={setPacienteId}
                         autoCapitalize="none"
-                        required
                     />
                 </View>
 
-                {/* 2. Laboratórios */}
+                {/* 2. Laboratórios (Primeiro Dropdown) */}
                 <View style={styles.formControl}>
                     <Text style={styles.label}>Laboratórios</Text>
                     <View style={styles.pickerContainer}>
                         <Picker
                             selectedValue={laboratorio}
-                            onValueChange={(itemValue) => setLaboratorio(itemValue)}
+                            onValueChange={handleLaboratorioChange} 
                             style={styles.picker}
                         >
                             {laboratorios.map(lab => (
@@ -158,15 +183,16 @@ export default function SolicitarExameScreen({ navigation }) {
                     </View>
                 </View>
 
-                {/* 3. Opções de Exames Dinâmicas */}
+                {/* 3. Opções de Exames Dinâmicas (Segundo Dropdown) */}
                 <View style={styles.formControl}>
                     <Text style={styles.label}>Exames</Text>
                     <View style={styles.pickerContainer}>
-                        {laboratorio ? (
+                        {/* Renderiza o Picker apenas se um laboratório foi selecionado */}
+                        {laboratorio && examesDisponiveis.length > 0 ? (
                             <Picker
                                 selectedValue={exameSelecionado}
-                                onValueChange={handleExameChange}
-                                enabled={!loading && examesDisponiveis.length > 0}
+                                onValueChange={handleExameChange} 
+                                enabled={!loading}
                                 style={styles.picker}
                             >
                                 <Picker.Item label="Selecione o Exame" value="" />
@@ -175,7 +201,11 @@ export default function SolicitarExameScreen({ navigation }) {
                                 ))}
                             </Picker>
                         ) : (
-                            <Text style={styles.infoText}>Selecione um laboratório primeiro.</Text>
+                            <View style={styles.infoBox}>
+                                <Text style={styles.infoText}>
+                                    {laboratorio ? "Nenhum exame disponível." : "Selecione um laboratório para ver os exames."}
+                                </Text>
+                            </View>
                         )}
                     </View>
                 </View>
@@ -187,9 +217,11 @@ export default function SolicitarExameScreen({ navigation }) {
                         onPress={handleSubmit}
                         disabled={loading}
                     >
-                        <Text style={styles.btnText}>
-                            {loading ? 'Cadastrando...' : 'Cadastrar Exame'}
-                        </Text>
+                        {loading ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text style={styles.btnText}>Cadastrar Exame</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </View>
@@ -197,7 +229,7 @@ export default function SolicitarExameScreen({ navigation }) {
     );
 }
 
-// 6. Estilos (Simulando o CSS)
+// 7. Estilos
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -239,15 +271,20 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 8,
         backgroundColor: '#fff',
-        overflow: 'hidden', // Importante para o Picker
+        overflow: 'hidden',
     },
     picker: {
         height: 45,
         width: '100%',
     },
+    infoBox: {
+        height: 45,
+        justifyContent: 'center',
+        paddingHorizontal: 15,
+    },
     infoText: {
-        padding: 10,
         color: '#999',
+        fontSize: 16,
     },
     buttons: {
         marginTop: 20,
@@ -264,6 +301,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     btnDisabled: {
-        backgroundColor: '#a0c7ff', // Cor mais clara para indicar desabilitado
+        backgroundColor: '#a0c7ff',
     },
 });
