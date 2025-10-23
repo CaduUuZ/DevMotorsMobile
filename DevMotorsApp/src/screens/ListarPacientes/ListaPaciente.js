@@ -307,7 +307,7 @@ const ListaPaciente = (props) => {
                   onChangeText={(text) => setFormData({...formData, telefone: text})}
                   placeholder="(00) 00000-0000"
                   placeholderTextColor="#999"
-                  // 🚀 Melhoria de UX: Teclado otimizado para telefone e limite de caracteres
+                  // Melhoria de UX: Teclado otimizado para telefone e limite de caracteres
                   keyboardType="phone-pad" 
                   maxLength={15} 
                 />
@@ -321,7 +321,7 @@ const ListaPaciente = (props) => {
                   onChangeText={(text) => setFormData({...formData, dataNascimento: text})}
                   placeholder="AAAA-MM-DD"
                   placeholderTextColor="#999"
-                  // 🚀 Melhoria de UX: Limite de caracteres
+                  // Melhoria de UX: Limite de caracteres
                   maxLength={10} 
                 />
               </View>
