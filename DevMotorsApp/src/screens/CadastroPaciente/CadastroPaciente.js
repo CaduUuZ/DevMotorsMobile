@@ -1,25 +1,17 @@
 import React, { useState } from 'react';
 import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  ScrollView, 
-  StyleSheet, 
-  useWindowDimensions,
-  Alert,
-  ActivityIndicator 
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, 
+  useWindowDimensions, Alert, ActivityIndicator 
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; 
+import { Picker } from '@react-native-picker/picker';
+import { PACIENTES_ENDPOINT } from '../../config/api';
 
 
-// URL da API
-const API_BASE_URL = 'https://sua-api.com/api'; 
+// ------------------- FUNÇÕES AUXILIARES ------------------- //
 
-// Funções de Máscara
+// Formata telefone
 const formatPhone = (text) => {
   const cleanText = text.replace(/\D/g, '');
-  
   if (cleanText.length <= 10) { 
     return cleanText.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3').slice(0, 14);
   } else { 
@@ -27,9 +19,9 @@ const formatPhone = (text) => {
   }
 };
 
+// Formata data DD/MM/AAAA
 const formatData = (text) => {
   const cleanText = text.replace(/\D/g, '');
-  
   if (cleanText.length <= 8) {
     return cleanText
       .replace(/(\d{2})(\d)/, '$1/$2')
@@ -40,13 +32,40 @@ const formatData = (text) => {
     .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
 };
 
+// Converte data para MySQL (YYYY-MM-DD)
+const formatDataParaMysql = (data) => {
+  const partes = data.split('/');
+  if (partes.length === 3){
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+  }
+  return data;
+};
 
-export default function CadastroPaciente(props) {
-  const { navigation } = props;
+// Calcula idade a partir de DD/MM/AAAA
+const calcularIdadeFromDDMMYYYY = (dataDDMMYYYY) => {
+  if (!dataDDMMYYYY) return '';
+  const partes = dataDDMMYYYY.split('/');
+  if (partes.length !== 3) return '';
+  const dia = parseInt(partes[0], 10);
+  const mes = parseInt(partes[1], 10) - 1;
+  const ano = parseInt(partes[2], 10);
+  if (isNaN(dia) || isNaN(mes) || isNaN(ano)) return '';
+  const hoje = new Date();
+  const nasc = new Date(ano, mes, dia);
+  let idade = hoje.getFullYear() - nasc.getFullYear();
+  const m = hoje.getMonth() - nasc.getMonth();
+  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+  return idade >= 0 ? String(idade) : '';
+};
+
+
+// ------------------- COMPONENTE PRINCIPAL ------------------- //
+
+export default function CadastroPaciente({ navigation }) {
   const { width } = useWindowDimensions();
   const isSmallScreen = width < 600;
 
-  // ESTADOS
+  // --------- ESTADOS --------- //
   const [nomeCompleto, setNomeCompleto] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -56,371 +75,265 @@ export default function CadastroPaciente(props) {
   const [patologia, setPatologia] = useState('nao');
   const [qualMedicamento, setQualMedicamento] = useState('');
   const [qualPatologia, setQualPatologia] = useState('');
-  const [loading, setLoading] = useState(false); // Estado de carregamento
+  const [idade, setIdade] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // FUNÇÃO DE CADASTRO CONECTADA À API (POST)
+
+  // --------- FUNÇÃO DE CADASTRO --------- //
   const handleCadastro = async () => {
-    // 1. Validação Básica
     if (!nomeCompleto || !dataNascimento || !telefone || !email) {
-        Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios (Nome, Data, Telefone e Email).');
-        return;
+      Alert.alert('Erro', 'Preencha todos os campos obrigatórios (Nome, Data, Telefone e Email).');
+      return;
     }
 
-    // 2. Preparação dos Dados
     const dadosPaciente = {
-        nomeCompleto,
-        dataNascimento,
-        telefone,
-        email,
-        nomeMae,
-        // Envia o detalhe ou um indicador de 'Nenhum'
-        medicamento: medicamentoContinuo === 'sim' ? qualMedicamento : 'Nenhum',
-        patologia: patologia === 'sim' ? qualPatologia : 'Nenhuma',
+      nome: nomeCompleto,
+      dataNascimento: formatDataParaMysql(dataNascimento),
+      telefone,
+      email,
+      nomeMae,
+      idade: idade || null,
+      medicamento: medicamentoContinuo === 'sim' ? qualMedicamento : 'Nenhum',
+      patologia: patologia === 'sim' ? qualPatologia : 'Nenhuma',
     };
 
     setLoading(true);
-
     try {
-        const response = await fetch(`${API_BASE_URL}/pacientes`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify(dadosPaciente),
-        });
+      const response = await fetch(PACIENTES_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosPaciente),
+      });
 
-        if (response.ok) {
-            Alert.alert('Sucesso', 'Paciente cadastrado com sucesso!');
-            
-            // Opcional: Voltar para a tela anterior (Lista de Pacientes)
-            if (navigation && typeof navigation.goBack === 'function') {
-                navigation.goBack(); 
-            } else {
-                // Se não houver navegação, apenas limpa o formulário
-                setNomeCompleto('');
-                setDataNascimento('');
-                setTelefone('');
-                setEmail('');
-                setNomeMae('');
-                setMedicamentoContinuo('nao');
-                setPatologia('nao');
-                setQualMedicamento('');
-                setQualPatologia('');
-            }
+      const text = await response.text();
+      let responseData = null;
+      try { responseData = text ? JSON.parse(text) : null; } catch(e) { responseData = text; }
 
-        } else {
-            const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido da API.' }));
-            console.error('Erro da API:', errorData);
-            Alert.alert('Erro no Cadastro', `Falha ao cadastrar: ${errorData.message || response.statusText}`);
-        }
+      if (response.ok) {
+        Alert.alert('Sucesso', 'Paciente cadastrado com sucesso!');
+        navigation?.goBack ? navigation.goBack() : limparFormulario();
+      } else {
+        console.error('Erro da API:', response.status, responseData);
+        const errMsg = (responseData && (responseData.error || responseData.message)) || `Status ${response.status}`;
+        Alert.alert('Erro', String(errMsg));
+      }
+
     } catch (error) {
-        console.error('Erro de Rede/Fetch:', error);
-        Alert.alert('Erro de Conexão', 'Não foi possível conectar-se ao servidor. Verifique o IP/CORS.');
+      console.error('Erro de Conexão:', error);
+      Alert.alert('Erro de Conexão', 'Não foi possível conectar-se ao servidor.');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
+  const limparFormulario = () => {
+    setNomeCompleto('');
+    setDataNascimento('');
+    setTelefone('');
+    setEmail('');
+    setNomeMae('');
+    setMedicamentoContinuo('nao');
+    setPatologia('nao');
+    setQualMedicamento('');
+    setQualPatologia('');
+    setIdade('');
+  };
+
+
+  // --------- RENDER --------- //
   return (
-    <ScrollView
-      style={styles.scrollContainer}
-      contentContainerStyle={styles.contentContainer}
+    <ScrollView 
+      style={styles.scrollContainer} 
+      contentContainerStyle={styles.contentContainer} 
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.innerContainer}>
-        {/* Cabeçalho */}
+
+        {/* HEADER */}
         <View style={styles.formHeader}>
           <Text style={styles.title}>Cadastro de Paciente</Text>
-          <Text style={styles.subtitle}>Preencha os dados abaixo para realizar o cadastro</Text>
+          <Text style={styles.subtitle}>Preencha os dados abaixo</Text>
         </View>
 
-        {/* Nome Completo */}
-        <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, styles.formControlFull]}>
-            <Text style={styles.label}>Nome Completo</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite o nome completo"
-              placeholderTextColor="#999"
-              value={nomeCompleto}
-              onChangeText={setNomeCompleto}
-            />
-          </View>
-        </View>
+        {/* NOME */}
+        <CampoTexto 
+          label="Nome Completo" 
+          value={nomeCompleto} 
+          onChangeText={setNomeCompleto} 
+          placeholder="Digite o nome completo" 
+          isSmallScreen={isSmallScreen}
+        />
 
-        {/* Data de Nascimento e Telefone */}
-        <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, isSmallScreen && styles.formControlFull]}>
-            <Text style={styles.label}>Data de Nascimento</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="DD/MM/AAAA"
-              placeholderTextColor="#999"
-              keyboardType="numeric"
-              value={dataNascimento}
-              onChangeText={(text) => setDataNascimento(formatData(text))}
-              maxLength={10} 
-            />
-          </View>
-          <View style={[styles.formControl, styles.formControlSpacing, isSmallScreen && styles.formControlFull]}>
-            <Text style={styles.label}>Telefone</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="(00) 00000-0000"
-              placeholderTextColor="#999"
-              keyboardType="phone-pad"
-              value={telefone}
-              onChangeText={(text) => setTelefone(formatPhone(text))}
-              maxLength={15} 
-            />
-            <Text style={styles.helpText}>Formato: (00) 00000-0000</Text>
-          </View>
-        </View>
+        {/* DATA DE NASCIMENTO */}
+        <CampoTexto 
+          label="Data de Nascimento" 
+          value={dataNascimento} 
+          onChangeText={text => {
+            const formatted = formatData(text);
+            setDataNascimento(formatted);
+            setIdade(calcularIdadeFromDDMMYYYY(formatted));
+          }} 
+          placeholder="DD/MM/AAAA" 
+          keyboardType="numeric"
+          maxLength={10}
+          isSmallScreen={isSmallScreen}
+        />
 
-        {/* Email */}
-        <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, styles.formControlFull]}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite o email"
-              placeholderTextColor="#999"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-            />
-          </View>
-        </View>
+        {/* TELEFONE */}
+        <CampoTexto 
+          label="Telefone" 
+          value={telefone} 
+          onChangeText={text => setTelefone(formatPhone(text))} 
+          placeholder="(00) 00000-0000" 
+          keyboardType="phone-pad"
+          maxLength={15}
+          helpText="Formato: (00) 00000-0000"
+          isSmallScreen={isSmallScreen}
+        />
 
-        {/* Nome da Mãe */}
-        <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, styles.formControlFull]}>
-            <Text style={styles.label}>Nome da Mãe</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite o nome da mãe"
-              placeholderTextColor="#999"
-              value={nomeMae}
-              onChangeText={setNomeMae}
-            />
-          </View>
-        </View>
+        {/* IDADE (somente leitura) */}
+        <CampoTexto 
+          label="Idade" 
+          value={idade} 
+          placeholder="Idade será calculada automaticamente" 
+          editable={false} 
+          isSmallScreen={isSmallScreen}
+        />
 
-        {/* Medicamento Contínuo - Select */}
-        <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, styles.formControlFull]}>
-            <Text style={styles.label}>Toma algum medicamento contínuo?</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                style={styles.select}
-                selectedValue={medicamentoContinuo}
-                onValueChange={(itemValue) => {
-                    setMedicamentoContinuo(itemValue);
-                    if (itemValue === 'nao') setQualMedicamento('');
-                }}
-                mode="dropdown"
-              >
-                <Picker.Item label="Selecione..." value="" enabled={false} />
-                <Picker.Item label="Sim" value="sim" />
-                <Picker.Item label="Não" value="nao" />
-              </Picker>
-            </View>
-          </View>
-        </View>
+        {/* EMAIL */}
+        <CampoTexto 
+          label="Email" 
+          value={email} 
+          onChangeText={setEmail} 
+          placeholder="Digite o email" 
+          keyboardType="email-address"
+          autoCapitalize="none"
+          isSmallScreen={isSmallScreen}
+        />
 
-        {/* Medicamento Contínuo - Input Condicional */}
+        {/* NOME DA MÃE */}
+        <CampoTexto 
+          label="Nome da Mãe" 
+          value={nomeMae} 
+          onChangeText={setNomeMae} 
+          placeholder="Digite o nome da mãe"
+          isSmallScreen={isSmallScreen}
+        />
+
+        {/* PICKERS CONDICIONAIS */}
+        <CampoPicker 
+          label="Toma algum medicamento contínuo?" 
+          selectedValue={medicamentoContinuo} 
+          onValueChange={value => {
+            setMedicamentoContinuo(value);
+            if (value === 'nao') setQualMedicamento('');
+          }}
+          isSmallScreen={isSmallScreen}
+        />
         {medicamentoContinuo === 'sim' && (
-          <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-            <View style={[styles.formControl, styles.formControlFull]}>
-              <Text style={styles.label}>Qual medicamento contínuo?</Text>
-              <TextInput
-                style={[styles.input, styles.conditionalInput]}
-                placeholder="Ex: Losartana 50mg"
-                placeholderTextColor="#999"
-                value={qualMedicamento}
-                onChangeText={setQualMedicamento}
-              />
-            </View>
-          </View>
+          <CampoTexto 
+            label="Qual medicamento contínuo?" 
+            value={qualMedicamento} 
+            onChangeText={setQualMedicamento} 
+            placeholder="Ex: Losartana 50mg"
+            isSmallScreen={isSmallScreen}
+            conditional
+          />
         )}
 
-        {/* Patologia - Select */}
-        <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-          <View style={[styles.formControl, styles.formControlFull]}>
-            <Text style={styles.label}>Paciente tem alguma patologia que trata?</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                style={styles.select}
-                selectedValue={patologia}
-                onValueChange={(itemValue) => {
-                    setPatologia(itemValue);
-                    if (itemValue === 'nao') setQualPatologia('');
-                }}
-                mode="dropdown"
-              >
-                <Picker.Item label="Selecione..." value="" enabled={false} />
-                <Picker.Item label="Sim" value="sim" />
-                <Picker.Item label="Não" value="nao" />
-              </Picker>
-            </View>
-          </View>
-        </View>
-
-        {/* Patologia - Input Condicional */}
+        <CampoPicker 
+          label="Paciente tem alguma patologia?" 
+          selectedValue={patologia} 
+          onValueChange={value => {
+            setPatologia(value);
+            if (value === 'nao') setQualPatologia('');
+          }}
+          isSmallScreen={isSmallScreen}
+        />
         {patologia === 'sim' && (
-          <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
-            <View style={[styles.formControl, styles.formControlFull]}>
-              <Text style={styles.label}>Qual patologia o paciente trata?</Text>
-              <TextInput
-                style={[styles.input, styles.conditionalInput]}
-                placeholder="Ex: Hipertensão, Diabetes Tipo 2"
-                placeholderTextColor="#999"
-                value={qualPatologia}
-                onChangeText={setQualPatologia}
-              />
-            </View>
-          </View>
+          <CampoTexto 
+            label="Qual patologia?" 
+            value={qualPatologia} 
+            onChangeText={setQualPatologia} 
+            placeholder="Ex: Hipertensão, Diabetes Tipo 2"
+            isSmallScreen={isSmallScreen}
+            conditional
+          />
         )}
 
-        {/* Botão */}
+        {/* BOTÃO */}
         <TouchableOpacity 
           style={[styles.btnPrimary, loading && styles.btnDisabled]} 
           onPress={handleCadastro}
           disabled={loading}
         >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.btnText}>Cadastrar Paciente</Text>
-          )}
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Cadastrar Paciente</Text>}
         </TouchableOpacity>
+
       </View>
     </ScrollView>
   );
 }
 
+
+// ------------------- COMPONENTES REUTILIZÁVEIS ------------------- //
+
+const CampoTexto = ({ label, value, onChangeText, placeholder, keyboardType, maxLength, editable=true, helpText, isSmallScreen, conditional=false, autoCapitalize='sentences' }) => (
+  <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
+    <View style={[styles.formControl, styles.formControlFull]}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={[styles.input, conditional && styles.conditionalInput, !editable && { backgroundColor: '#f3f3f3' }]}
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor="#999"
+        keyboardType={keyboardType}
+        maxLength={maxLength}
+        editable={editable}
+        autoCapitalize={autoCapitalize}
+      />
+      {helpText && <Text style={styles.helpText}>{helpText}</Text>}
+    </View>
+  </View>
+);
+
+const CampoPicker = ({ label, selectedValue, onValueChange, isSmallScreen }) => (
+  <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
+    <View style={[styles.formControl, styles.formControlFull]}>
+      <Text style={styles.label}>{label}</Text>
+      <View style={styles.pickerContainer}>
+        <Picker selectedValue={selectedValue} onValueChange={onValueChange}>
+          <Picker.Item label="Selecione..." value="" enabled={false} />
+          <Picker.Item label="Sim" value="sim" />
+          <Picker.Item label="Não" value="nao" />
+        </Picker>
+      </View>
+    </View>
+  </View>
+);
+
+
+// ------------------- ESTILOS ------------------- //
+
 const styles = StyleSheet.create({
-  // Scroll principal
-  scrollContainer: {
-    flex: 1,
-    backgroundColor: '#F1EFEC',
-  },
-
-  // Conteúdo centralizado dentro do Scroll
-  contentContainer: {
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingVertical: 30,
-  },
-
-  // Container interno do formulário
-  innerContainer: {
-    padding: 20,
-    backgroundColor: '#ffffffff',
-    alignSelf: 'center',
-    width: '100%',
-    maxWidth: 900,
-  },
-
-  formHeader: {
-    marginBottom: 18,
-    alignItems: 'center',
-    width: '100%',
-  },
-  title: {
-    fontSize: 26,
-    color: '#123458',
-    fontWeight: '700',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 6,
-    textAlign: 'center',
-  },
-  formRow: {
-    flexDirection: 'row',
-    marginBottom: 14,
-    width: '100%',
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
-  },
-  columnLayout: {
-    flexDirection: 'column',
-  },
-  formControl: {
-    flex: 1,
-    minWidth: 140,
-  },
-  formControlFull: {
-    width: '100%',
-  },
-  formControlSpacing: {
-    marginLeft: 12,
-  },
-  label: {
-    marginBottom: 8,
-    color: '#1b1b1b',
-    fontWeight: '600',
-    fontSize: 15,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    fontSize: 16,
-    backgroundColor: '#fff',
-    color: '#222',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  conditionalInput: {
-      borderColor: '#123458',
-      borderWidth: 2,
-      backgroundColor: '#f6f6ff',
-  },
-  helpText: {
-    fontSize: 12,
-    color: '#777',
-    marginTop: 6,
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 10,
-    overflow: 'hidden',
-    backgroundColor: '#fff',
-  },
-  select: {
-    height: 48,
-    width: '100%',
-    color: '#222',
-  },
-  btnPrimary: {
-    marginTop: 22,
-    backgroundColor: '#123458',
-    paddingVertical: 14,
-    borderRadius: 12,
-    width: '100%',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  btnText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  btnDisabled: {
-    backgroundColor: '#6c757d',
-  }
+  scrollContainer: { flex: 1, backgroundColor: '#F1EFEC' },
+  contentContainer: { alignItems: 'center', justifyContent: 'flex-start', paddingVertical: 30 },
+  innerContainer: { padding: 20, backgroundColor: '#fff', alignSelf: 'center', width: '100%', maxWidth: 900 },
+  formHeader: { marginBottom: 18, alignItems: 'center', width: '100%' },
+  title: { fontSize: 26, color: '#123458', fontWeight: '700' },
+  subtitle: { fontSize: 14, color: '#666', marginTop: 6, textAlign: 'center' },
+  formRow: { flexDirection: 'row', marginBottom: 14, width: '100%', flexWrap: 'wrap', alignItems: 'flex-start' },
+  columnLayout: { flexDirection: 'column' },
+  formControl: { flex: 1, minWidth: 140 },
+  formControlFull: { width: '100%' },
+  formControlSpacing: { marginLeft: 12 },
+  label: { marginBottom: 8, color: '#1b1b1b', fontWeight: '600', fontSize: 15 },
+  input: { borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 12, paddingVertical: 12, paddingHorizontal: 14, fontSize: 16, backgroundColor: '#fff', color: '#222' },
+  conditionalInput: { borderColor: '#123458', borderWidth: 2, backgroundColor: '#f6f6ff' },
+  helpText: { fontSize: 12, color: '#777', marginTop: 6 },
+  pickerContainer: { borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 10, overflow: 'hidden', backgroundColor: '#fff' },
+  btnPrimary: { marginTop: 22, backgroundColor: '#123458', paddingVertical: 14, borderRadius: 12, width: '100%', alignItems: 'center' },
+  btnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  btnDisabled: { backgroundColor: '#6c757d' }
 });

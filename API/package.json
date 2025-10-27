@@ -1,21 +1,26 @@
 {
-    "name": "appfabricantes",
-    "version": "1.0.0",
-    "description": "exemplo PHP",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "costasilvati",
-    "license": "ISC",
-    "dependencies": {
-        "body-parser": "^2.2.0",
-        "ejs": "^3.1.10",
-        "express": "^5.1.0",
-        "fs": "^0.0.1-security",
-        "mysql": "^2.18.1",
-        "mysql2": "^3.14.1",
-        "nodemin": "^1.0.1",
-        "path": "^0.12.7"
-    }
+  "name": "applab",
+  "version": "1.0.0",
+  "description": "api para o lab",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "costasilvati",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "fs": "^0.0.1-security",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }
