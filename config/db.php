@@ -22,7 +22,7 @@ CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,
     senha VARCHAR(100) NOT NULL,
-    nivel ENUM('user', 'admin') NOT NULL DEFAULT 'user'
+    is_admin BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE pacientes (
