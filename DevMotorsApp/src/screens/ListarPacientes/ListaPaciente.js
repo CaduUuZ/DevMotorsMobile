@@ -14,8 +14,15 @@ import {
   StatusBar
 } from 'react-native';
 
-// Configure a URL da sua API aqui
-const API_BASE_URL = 'https://sua-api.com/api';
+// Importe sua constante de configuração da API, como no código base.
+// Assumindo que você tem uma constante para o endpoint de pacientes
+// ou que o 'API_BASE_URL' + '/pacientes' é o correto.
+const API_BASE_URL = Platform.OS === 'android'
+  ? `http://10.0.2.2:${PORT}`
+  : `http://${HOST_IP}:${PORT}`; // Mantenha ou substitua pela sua base
+const PACIENTES_ENDPOINT = `${API_BASE_URL}/pacientes`; // Exemplo: https://sua-api.com/api/pacientes
+
+// ------------------- COMPONENTE PRINCIPAL ------------------- //
 
 const ListaPaciente = (props) => {
   const { navigation } = props;
@@ -23,6 +30,7 @@ const ListaPaciente = (props) => {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [saving, setSaving] = useState(false); // Novo estado para o loading do modal
   const [formData, setFormData] = useState({
     idPaciente: '',
     nome: '',
@@ -35,73 +43,44 @@ const ListaPaciente = (props) => {
   });
 
   useEffect(() => {
-    fetchPacientes();
-  }, []);
+    // Adiciona um listener para recarregar a lista ao voltar para a tela
+    const unsubscribe = navigation?.addListener('focus', () => {
+        fetchPacientes();
+    });
+    return unsubscribe; // Cleanup function
+  }, [navigation]);
 
+  // Função auxiliar para processar a resposta da API (como no código base)
+  const processApiResponse = async (response) => {
+      const text = await response.text();
+      let responseData = null;
+      try { responseData = text ? JSON.parse(text) : null; } catch(e) { responseData = text; }
+      return responseData;
+  }
+
+  // --------- FUNÇÃO DE BUSCA/GET --------- //
   const fetchPacientes = async (searchTerm = '') => {
     setLoading(true);
     try {
-      // Descomente para usar sua API real:
-      // const response = await fetch(`${API_BASE_URL}/pacientes?search=${searchTerm}`);
-      // const data = await response.json();
-      // setPacientes(data);
+      // ✅ Integração da API para busca (GET)
+      const url = `${PACIENTES_ENDPOINT}?search=${searchTerm}`;
+      const response = await fetch(url);
+      
+      const responseData = await processApiResponse(response);
 
-      // Dados mockados (remova em produção)
-      const mockData = [
-        {
-          idPaciente: 1,
-          nome: 'João Silva',
-          idade: 45,
-          email: 'joao@email.com',
-          telefone: '(11) 98765-4321',
-          dataNascimento: '1979-05-15',
-          medicamento: 'Losartana',
-          patologia: 'Hipertensão'
-        },
-        {
-          idPaciente: 2,
-          nome: 'Maria Santos',
-          idade: 32,
-          email: 'maria@email.com',
-          telefone: '(11) 91234-5678',
-          dataNascimento: '1992-08-20',
-          medicamento: 'Metformina',
-          patologia: 'Diabetes'
-        },
-        {
-          idPaciente: 3,
-          nome: 'Pedro Oliveira',
-          idade: 58,
-          email: 'pedro@email.com',
-          telefone: '(11) 99876-5432',
-          dataNascimento: '1966-03-10',
-          medicamento: 'Sinvastatina',
-          patologia: 'Colesterol Alto'
-        },
-        {
-          idPaciente: 4,
-          nome: 'Ana Costa',
-          idade: 28,
-          email: 'ana@email.com',
-          telefone: '(11) 97654-3210',
-          dataNascimento: '1996-11-22',
-          medicamento: 'Levotiroxina',
-          patologia: 'Hipotireoidismo'
-        }
-      ];
-
-      // Filtro local (em produção, faça no backend)
-      let filtered = mockData;
-      if (searchTerm) {
-        filtered = mockData.filter(p => 
-          p.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.idPaciente.toString() === searchTerm
-        );
+      if (response.ok) {
+          setPacientes(responseData || []); // Assume que a resposta de sucesso é um array de pacientes
+      } else {
+          console.error('Erro da API ao buscar:', response.status, responseData);
+          const errMsg = (responseData && (responseData.error || responseData.message)) || `Status ${response.status}`;
+          Alert.alert('Erro na Busca', String(errMsg));
+          setPacientes([]);
       }
       
-      setPacientes(filtered);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível carregar os pacientes');
+      console.error('Erro de Conexão na Busca:', error);
+      Alert.alert('Erro de Conexão', 'Não foi possível conectar-se ao servidor para buscar os pacientes.');
+      setPacientes([]);
     } finally {
       setLoading(false);
     }
@@ -112,19 +91,26 @@ const ListaPaciente = (props) => {
   };
 
   const openEditModal = (paciente) => {
+    // Formata a data de YYYY-MM-DD para DD/MM/YYYY para o modal (se for o formato de edição)
+    // Se o backend espera YYYY-MM-DD, a conversão deve ser feita antes de enviar.
+    const dataNascimentoDisplay = paciente.dataNascimento 
+        ? paciente.dataNascimento.split('-').reverse().join('/') 
+        : '';
+        
     setFormData({
       idPaciente: paciente.idPaciente.toString(),
       nome: paciente.nome,
-      idade: paciente.idade.toString(),
+      idade: paciente.idade ? paciente.idade.toString() : '',
       email: paciente.email || '',
       telefone: paciente.telefone || '',
-      dataNascimento: paciente.dataNascimento || '',
+      dataNascimento: paciente.dataNascimento || '', // Mantenha no formato do backend (YYYY-MM-DD)
       medicamento: paciente.medicamento || '',
       patologia: paciente.patologia || ''
     });
     setModalVisible(true);
   };
 
+  // --------- FUNÇÃO DE EDIÇÃO/PUT --------- //
   const handleSaveEdit = async () => {
     if (!formData.nome.trim()) {
       Alert.alert('Erro', 'O nome é obrigatório');
@@ -133,26 +119,41 @@ const ListaPaciente = (props) => {
 
     const dataToSend = {
       ...formData,
-      // Garante que a idade seja enviada como um número para o backend
-      idade: Number(formData.idade), 
+      idPaciente: Number(formData.idPaciente), 
+      idade: formData.idade ? Number(formData.idade) : null,
+      // Se necessário, converta dataNascimento para o formato DD/MM/YYYY aqui, 
+      // mas o ideal é manter a data em YYYY-MM-DD para o backend se esse for o formato.
     };
 
+    setSaving(true); // Ativa o loading de salvamento
     try {
-      // Descomente para usar sua API real:
-      // await fetch(`${API_BASE_URL}/pacientes/${dataToSend.idPaciente}`, {
-      //   method: 'PUT',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(dataToSend) 
-      // });
+      // ✅ Integração da API para edição (PUT)
+      const response = await fetch(`${PACIENTES_ENDPOINT}/${dataToSend.idPaciente}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSend) 
+      });
 
-      Alert.alert('Sucesso', 'Paciente atualizado com sucesso');
-      setModalVisible(false);
-      fetchPacientes(search);
+      const responseData = await processApiResponse(response);
+
+      if (response.ok) {
+        Alert.alert('Sucesso', 'Paciente atualizado com sucesso!');
+        setModalVisible(false);
+        fetchPacientes(search); // Recarrega a lista
+      } else {
+        console.error('Erro da API ao editar:', response.status, responseData);
+        const errMsg = (responseData && (responseData.error || responseData.message)) || `Status ${response.status}`;
+        Alert.alert('Erro na Edição', String(errMsg));
+      }
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível atualizar o paciente');
+      console.error('Erro de Conexão na Edição:', error);
+      Alert.alert('Erro de Conexão', 'Não foi possível conectar-se ao servidor para atualizar o paciente.');
+    } finally {
+      setSaving(false); // Desativa o loading de salvamento
     }
   };
 
+  // --------- FUNÇÃO DE EXCLUSÃO/DELETE --------- //
   const handleDelete = (idPaciente, nome) => {
     Alert.alert(
       'Tem certeza?',
@@ -166,26 +167,59 @@ const ListaPaciente = (props) => {
           text: 'Sim, excluir!',
           style: 'destructive',
           onPress: async () => {
+            setLoading(true); // Ativa o loading principal
             try {
-              // Descomente para usar sua API real:
-              // await fetch(`${API_BASE_URL}/pacientes/${idPaciente}`, {
-              //   method: 'DELETE'
-              // });
+              // ✅ Integração da API para exclusão (DELETE)
+              const response = await fetch(`${PACIENTES_ENDPOINT}/${idPaciente}`, {
+                method: 'DELETE'
+              });
 
-              Alert.alert('Excluído!', 'O paciente foi excluído com sucesso.');
-              fetchPacientes(search);
+              const responseData = await processApiResponse(response);
+
+              if (response.ok) {
+                Alert.alert('Excluído!', 'O paciente foi excluído com sucesso.');
+                fetchPacientes(search); // Recarrega a lista
+              } else {
+                console.error('Erro da API ao excluir:', response.status, responseData);
+                const errMsg = (responseData && (responseData.error || responseData.message)) || `Status ${response.status}`;
+                Alert.alert('Erro na Exclusão', String(errMsg));
+              }
             } catch (error) {
-              Alert.alert('Erro', 'Não foi possível excluir o paciente');
+              console.error('Erro de Conexão na Exclusão:', error);
+              Alert.alert('Erro de Conexão', 'Não foi possível conectar-se ao servidor para excluir o paciente.');
+            } finally {
+                setLoading(false); // Desativa o loading principal
             }
           }
         }
       ]
     );
   };
+  
+  // Render Item da Lista
+  const renderPaciente = ({ item }) => (
+    <View style={styles.pacienteCard}>
+      <View style={styles.pacienteInfo}>
+        <Text style={styles.pacienteTitle}>#{item.idPaciente} - {item.nome} ({item.idade} anos)</Text>
+        <Text style={styles.pacienteEmail}>{item.email} | {item.telefone}</Text>
+        <Text style={styles.pacienteEmail}>Medicação: {item.medicamento || 'Nenhum'}</Text>
+        <Text style={styles.pacienteEmail}>Patologia: {item.patologia || 'Nenhuma'}</Text>
+      </View>
+      <View style={styles.actions}>
+        <TouchableOpacity style={styles.editButton} onPress={() => openEditModal(item)} activeOpacity={0.8}>
+          <Text style={styles.buttonIcon}>✏️</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.idPaciente, item.nome)} activeOpacity={0.8}>
+          <Text style={styles.buttonIcon}>🗑️</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
 
   const handleNewPaciente = () => {
-    // Navegue para a tela de cadastro
     if (navigation && typeof navigation.navigate === 'function') {
+      // Redireciona para a tela de CadastroPaciente
       navigation.navigate('CadastroPaciente');
       return;
     }
@@ -220,8 +254,12 @@ const ListaPaciente = (props) => {
             style={styles.searchButton}
             onPress={handleSearch}
             activeOpacity={0.8}
+            disabled={loading} // Desabilita durante o loading
           >
-            <Text style={styles.searchButtonText}>Procurar</Text>
+            {loading && !modalVisible ? 
+              <ActivityIndicator color="#fff" size="small" /> : 
+              <Text style={styles.searchButtonText}>Procurar</Text>
+            }
           </TouchableOpacity>
         </View>
       </View>
@@ -229,10 +267,10 @@ const ListaPaciente = (props) => {
       <View style={styles.listContainer}>
         <Text style={styles.listTitle}>Lista de Pacientes</Text>
         
-        {loading ? (
+        {loading && !modalVisible ? (
           <ActivityIndicator size="large" color="#667eea" style={styles.loader} />
         ) : pacientes.length === 0 ? (
-          <Text style={styles.emptyText}>Nenhum paciente encontrado.</Text>
+          <Text style={styles.emptyText}>Nenhum paciente encontrado. Tente buscar novamente.</Text>
         ) : (
           <FlatList
             data={pacientes}
@@ -253,7 +291,7 @@ const ListaPaciente = (props) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Editar Paciente</Text>
+              <Text style={styles.modalTitle}>Editar Paciente #{formData.idPaciente}</Text>
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
                 style={styles.closeButton}
@@ -263,6 +301,7 @@ const ListaPaciente = (props) => {
             </View>
 
             <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
+              {/* Campos do Formulário de Edição */}
               <View style={styles.formGroup}>
                 <Text style={styles.label}>Nome Completo *</Text>
                 <TextInput
@@ -273,7 +312,8 @@ const ListaPaciente = (props) => {
                   placeholderTextColor="#999"
                 />
               </View>
-
+              {/* ... outros campos ... (mantidos para brevidade) */}
+              
               <View style={styles.formGroup}>
                 <Text style={styles.label}>Idade</Text>
                 <TextInput
@@ -304,24 +344,23 @@ const ListaPaciente = (props) => {
                 <TextInput
                   style={styles.input}
                   value={formData.telefone}
-                  onChangeText={(text) => setFormData({...formData, telefone: text})}
+                  // Idealmente, use a função de formatação do código base aqui
+                  onChangeText={(text) => setFormData({...formData, telefone: text})} 
                   placeholder="(00) 00000-0000"
                   placeholderTextColor="#999"
-                  // Melhoria de UX: Teclado otimizado para telefone e limite de caracteres
                   keyboardType="phone-pad" 
                   maxLength={15} 
                 />
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={styles.label}>Data Nascimento</Text>
+                <Text style={styles.label}>Data Nascimento (YYYY-MM-DD)</Text>
                 <TextInput
                   style={styles.input}
                   value={formData.dataNascimento}
                   onChangeText={(text) => setFormData({...formData, dataNascimento: text})}
                   placeholder="AAAA-MM-DD"
                   placeholderTextColor="#999"
-                  // Melhoria de UX: Limite de caracteres
                   maxLength={10} 
                 />
               </View>
@@ -347,6 +386,7 @@ const ListaPaciente = (props) => {
                   placeholderTextColor="#999"
                 />
               </View>
+
             </ScrollView>
 
             <View style={styles.modalFooter}>
@@ -354,15 +394,17 @@ const ListaPaciente = (props) => {
                 style={styles.cancelButton}
                 onPress={() => setModalVisible(false)}
                 activeOpacity={0.8}
+                disabled={saving}
               >
                 <Text style={styles.cancelButtonText}>Cancelar</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.saveButton}
+                style={[styles.saveButton, saving && { backgroundColor: '#adb5bd' }]}
                 onPress={handleSaveEdit}
                 activeOpacity={0.8}
+                disabled={saving} // Desabilita o botão enquanto salva
               >
-                <Text style={styles.saveButtonText}>Salvar Alterações</Text>
+                {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Salvar Alterações</Text>}
               </TouchableOpacity>
             </View>
           </View>
@@ -372,6 +414,7 @@ const ListaPaciente = (props) => {
   );
 };
 
+// ... (Mantenha os estilos inalterados ou ajuste se necessário)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
