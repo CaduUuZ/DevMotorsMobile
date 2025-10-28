@@ -1,34 +1,121 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, } from 'react-native';
+import {  View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Alert, ActivityIndicator} from 'react-native';
+import { API_BASE_URL } from '../../config/api.js'; // ajuste o caminho conforme sua estrutura
 
-// Pega a largura da tela para calcular layouts responsivos
 const { width } = Dimensions.get('window');
 
-// Componente principal da tela de Login / Registro
 export default function LoginRegisterScreen(props) {
-  // Recebe callback de login via props (ex.: navegação ou autenticação)
   const { onLogin } = props;
-
-  // Estado que controla se a tela está em modo de registro ou login
   const [isRegisterMode, setIsRegisterMode] = useState(false);
-
-  // Estados para armazenar valores dos formulários
   const [loginForm, setLoginForm] = useState({ email: '', senha: '' });
   const [registerForm, setRegisterForm] = useState({ email: '', senha: '' });
+  const [loading, setLoading] = useState(false);
 
-  // Handler chamado ao submeter o formulário de login
-  const handleLogin = () => {
-    console.log('Login:', loginForm); // para debug
-    if (onLogin) onLogin(); // chama callback externo se fornecido
+  // Handler de login com integração API
+  const handleLogin = async () => {
+    // Validação básica
+    if (!loginForm.email || !loginForm.senha) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: loginForm.email,
+          senha: loginForm.senha,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login bem-sucedido
+        Alert.alert('Sucesso', 'Login realizado com sucesso!');
+        // Aqui você pode salvar o token se a API retornar
+        // await AsyncStorage.setItem('token', data.token);
+        if (onLogin) onLogin(data); // passa os dados do usuário
+      } else {
+        // Erro retornado pela API
+        Alert.alert('Erro', data.message || 'Credenciais inválidas');
+      }
+    } catch (error) {
+      console.error('Erro no login:', error);
+      Alert.alert('Erro', 'Não foi possível conectar ao servidor');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Handler chamado ao submeter o formulário de registro
-  const handleRegister = () => {
-    console.log('Register:', registerForm); // para debug
-    if (onLogin) onLogin(); // aqui também chama onLogin — ajustar se quiser comportamento diferente
+  // Handler de registro com integração API
+  const handleRegister = async () => {
+    // Validação básica
+    if (!registerForm.email || !registerForm.senha) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      return;
+    }
+
+    // Validação de email simples
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(registerForm.email)) {
+      Alert.alert('Erro', 'Por favor, insira um email válido');
+      return;
+    }
+
+    // Validação de senha (mínimo 6 caracteres)
+    if (registerForm.senha.length < 6) {
+      Alert.alert('Erro', 'A senha deve ter no mínimo 6 caracteres');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: registerForm.email,
+          senha: registerForm.senha,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Registro bem-sucedido
+        Alert.alert(
+          'Sucesso', 
+          'Conta criada com sucesso!',
+          [
+            { 
+              text: 'OK', 
+              onPress: () => {
+                // Limpa o formulário e volta para login
+                setRegisterForm({ email: '', senha: '' });
+                switchToLogin();
+              }
+            }
+          ]
+        );
+      } else {
+        // Erro retornado pela API
+        Alert.alert('Erro', data.message || 'Não foi possível criar a conta');
+      }
+    } catch (error) {
+      console.error('Erro no registro:', error);
+      Alert.alert('Erro', 'Não foi possível conectar ao servidor');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Funções para alternar entre modos
   const switchToRegister = () => setIsRegisterMode(true);
   const switchToLogin = () => setIsRegisterMode(false);
 
@@ -37,20 +124,19 @@ export default function LoginRegisterScreen(props) {
     <View style={styles.formBox}>
       <Text style={styles.formTitle}>Entrar</Text>
 
-      {/* Campo de email */}
       <View style={styles.inputGroup}>
         <TextInput
-          style={[styles.inputField, loginForm.email ? styles.inputFieldFilled : null]} // altera borda quando preenchido
+          style={[styles.inputField, loginForm.email ? styles.inputFieldFilled : null]}
           placeholder="Email"
           placeholderTextColor="#666"
           value={loginForm.email}
-          onChangeText={(text) => setLoginForm({ ...loginForm, email: text })} // atualiza estado
+          onChangeText={(text) => setLoginForm({ ...loginForm, email: text })}
           keyboardType="email-address"
           autoCapitalize="none"
+          editable={!loading}
         />
       </View>
 
-      {/* Campo de senha */}
       <View style={styles.inputGroup}>
         <TextInput
           style={[styles.inputField, loginForm.senha ? styles.inputFieldFilled : null]}
@@ -59,15 +145,24 @@ export default function LoginRegisterScreen(props) {
           value={loginForm.senha}
           onChangeText={(text) => setLoginForm({ ...loginForm, senha: text })}
           secureTextEntry
+          autoComplete="password" // Adicionar
+          textContentType="password" // Adicionar para iOS
+          editable={!loading}
         />
       </View>
 
-      {/* Botão de entrar */}
-      <TouchableOpacity style={styles.btn} onPress={handleLogin}>
-        <Text style={styles.btnText}>Entrar</Text>
+      <TouchableOpacity 
+        style={[styles.btn, loading && styles.btnDisabled]} 
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text style={styles.btnText}>Entrar</Text>
+        )}
       </TouchableOpacity>
 
-      {/* Link para trocar para o registro */}
       <View style={styles.switchForm}>
         <Text style={styles.switchText}>
           Não tem uma conta?{' '}
@@ -84,7 +179,6 @@ export default function LoginRegisterScreen(props) {
     <View style={styles.formBox}>
       <Text style={styles.formTitle}>Registrar</Text>
 
-      {/* Campo de email para registro */}
       <View style={styles.inputGroup}>
         <TextInput
           style={[styles.inputField, registerForm.email ? styles.inputFieldFilled : null]}
@@ -94,27 +188,36 @@ export default function LoginRegisterScreen(props) {
           onChangeText={(text) => setRegisterForm({ ...registerForm, email: text })}
           keyboardType="email-address"
           autoCapitalize="none"
+          editable={!loading}
         />
       </View>
 
-      {/* Campo de senha para registro */}
       <View style={styles.inputGroup}>
         <TextInput
           style={[styles.inputField, registerForm.senha ? styles.inputFieldFilled : null]}
-          placeholder="Senha"
+          placeholder="Senha (mínimo 6 caracteres)"
           placeholderTextColor="#666"
           value={registerForm.senha}
           onChangeText={(text) => setRegisterForm({ ...registerForm, senha: text })}
           secureTextEntry
+          autoComplete="password" // Adicionar
+          textContentType="password" // Adicionar para iOS
+          editable={!loading}
         />
       </View>
 
-      {/* Botão de registrar */}
-      <TouchableOpacity style={styles.btn} onPress={handleRegister}>
-        <Text style={styles.btnText}>Registrar</Text>
+      <TouchableOpacity 
+        style={[styles.btn, loading && styles.btnDisabled]} 
+        onPress={handleRegister}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text style={styles.btnText}>Registrar</Text>
+        )}
       </TouchableOpacity>
 
-      {/* Link para voltar ao login */}
       <View style={styles.switchForm}>
         <Text style={styles.switchText}>
           Já tem uma conta?{' '}
@@ -126,9 +229,6 @@ export default function LoginRegisterScreen(props) {
     </View>
   );
 
-  // Estrutura principal: SafeArea -> KeyboardAvoiding -> Scroll -> Container
-  // A ideia do layout é ter dois formulários lado a lado (largura total = 2 * 100%)
-  // e mover o container horizontalmente para mostrar apenas um deles conforme isRegisterMode.
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardAvoid}>
@@ -145,11 +245,10 @@ export default function LoginRegisterScreen(props) {
   );
 }
 
-// Estilos do componente
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#f5f5f5' }, // cor de fundo da tela
-  keyboardAvoid: { flex: 1 }, // permite o KeyboardAvoidingView preencher a tela
-  scrollContainer: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }, // centraliza o conteúdo
+  safeArea: { flex: 1, backgroundColor: '#f5f5f5' },
+  keyboardAvoid: { flex: 1 },
+  scrollContainer: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   container: {
     position: 'relative', 
     width: '100%', 
@@ -163,18 +262,15 @@ const styles = StyleSheet.create({
     elevation: 10, 
     overflow: 'hidden',
   },
-  // Container que segura os dois formulários lado a lado. largura = 200% (2x)
   formContainer: { 
     position: 'relative', 
     width: '200%', 
     flexDirection: 'row', 
     transform: [{ translateX: 0 }] 
   },
-  // Quando em modo registro, aplica uma translação de -50% para mostrar o segundo formulário
   showRegister: { 
     transform: [{ translateX: '-50%' }] 
   },
-  // Caixa individual do formulário (tamanho 50% da largura total = 100% do container visível)
   formBox: { 
     width: '50%', 
     padding: 40, 
@@ -204,7 +300,7 @@ const styles = StyleSheet.create({
   },
   inputFieldFilled: { 
     borderColor: '#007bff' 
-  }, // mudança visual quando o campo tem valor
+  },
   btn: {
     width: '100%', 
     padding: 15, 
@@ -217,6 +313,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3, 
     shadowRadius: 10, 
     elevation: 5,
+  },
+  btnDisabled: {
+    opacity: 0.6,
   },
   btnText: { 
     color: 'white', 
