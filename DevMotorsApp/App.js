@@ -6,7 +6,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 // Telas existentes
 import CadastroPaciente from './src/screens/CadastroPaciente/CadastroPaciente';
-import LoginRegisterScreen from './src/screens/LoginCadastro/Login';
+import LoginCadastro from './src/screens/LoginCadastro/LoginCadastro';
 import Home from './src/screens/Home/Home';
 import ListaExame from './src/screens/ListaExame/ListaExame'; 
 import NovoExame from './src/screens/CadastroExame/NovoExame';
@@ -21,47 +21,69 @@ const RootStack = createNativeStackNavigator();
 
 export default function App() {
   const [userToken, setUserToken] = useState(null);
+  const [userData, setUserData] = useState(null); // Armazena dados do usuário
   const [isLoading, setIsLoading] = useState(false);
 
-  const setIsLoggedIn = (isLoggedIn) => {
+  // Função chamada quando o usuário faz login ou registro
+  const handleLogin = (usuario) => {
     setIsLoading(true);
+    console.log('Usuário autenticado:', usuario);
+    
     setTimeout(() => {
-      setUserToken(isLoggedIn ? 'dummy-token' : null);
+      setUserToken('dummy-token'); // Define token
+      setUserData(usuario); // Salva dados do usuário (id, email)
       setIsLoading(false);
-    }, 700);
+    }, 500); // Animação suave
+  };
+
+  // Função de logout
+  const handleLogout = () => {
+    setIsLoading(true);
+    
+    setTimeout(() => {
+      setUserToken(null);
+      setUserData(null);
+      setIsLoading(false);
+    }, 300);
   };
 
   function MainDrawer() {
     return (
-      <Drawer.Navigator screenOptions={{ drawerActiveTintColor: '#123458' }}>
+      <Drawer.Navigator 
+        screenOptions={{ 
+          drawerActiveTintColor: '#123458',
+          headerStyle: { backgroundColor: '#123458' },
+          headerTintColor: '#fff',
+        }}
+      >
         <Drawer.Screen name="Home">
-          {props => <Home {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <Home {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
-
+        
         <Drawer.Screen 
           name="CadastroPaciente" 
           component={CadastroPaciente} 
           options={{ title: 'Novo Paciente' }}
         />
-
+        
         <Drawer.Screen name="Lista Paciente">
-          {props => <ListaPaciente {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <ListaPaciente {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
-
+        
         <Drawer.Screen name="Novo Exame">
-          {props => <NovoExame {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <NovoExame {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
-
+        
         <Drawer.Screen name="Lista Exame">
-          {props => <ListaExame {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <ListaExame {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
-
+        
         <Drawer.Screen name="Relatório" options={{ title: 'Relatório (Admin)' }}>
-          {props => <TelaRelatorio {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <TelaRelatorio {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
-
+        
         <Drawer.Screen name="Listar Pacientes Admin" options={{ title: 'Pacientes (Admin)' }}>
-          {props => <ListaPacienteAdmin {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <ListaPacienteAdmin {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
       </Drawer.Navigator>
     );
@@ -71,7 +93,7 @@ export default function App() {
     return (
       <AuthStack.Navigator screenOptions={{ headerShown: false }}>
         <AuthStack.Screen name="Login">
-          {props => <LoginRegisterScreen {...props} onLogin={() => setIsLoggedIn(true)} />}
+          {props => <LoginCadastro {...props} onLogin={handleLogin} />}
         </AuthStack.Screen>
       </AuthStack.Navigator>
     );
@@ -81,7 +103,7 @@ export default function App() {
     return (
       <View style={styles.screen}>
         <ActivityIndicator size="large" color="#123458" />
-        <Text style={{ marginTop: 10 }}>Carregando...</Text>
+        <Text style={{ marginTop: 10, color: '#123458', fontSize: 16 }}>Carregando...</Text>
       </View>
     );
   }
@@ -101,6 +123,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F1EFEC',
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#F1EFEC',
   },
 });

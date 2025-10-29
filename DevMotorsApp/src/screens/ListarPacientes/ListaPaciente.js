@@ -14,14 +14,6 @@ import {
   StatusBar
 } from 'react-native';
 
-// Importe sua constante de configuração da API, como no código base.
-// Assumindo que você tem uma constante para o endpoint de pacientes
-// ou que o 'API_BASE_URL' + '/pacientes' é o correto.
-const API_BASE_URL = Platform.OS === 'android'
-  ? `http://10.0.2.2:${PORT}`
-  : `http://${HOST_IP}:${PORT}`; // Mantenha ou substitua pela sua base
-const PACIENTES_ENDPOINT = `${API_BASE_URL}/pacientes`; // Exemplo: https://sua-api.com/api/pacientes
-
 // ------------------- COMPONENTE PRINCIPAL ------------------- //
 
 const ListaPaciente = (props) => {

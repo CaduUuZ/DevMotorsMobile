@@ -9,10 +9,12 @@ app.use(cors());
 app.use(express.json());
 
 // Importando as rotas
+const usuarioRoutes = require('./routes/usuario');
 const pacienteRoutes = require('./routes/paciente');
 const exameRoutes = require('./routes/exame');
 
 // Usando as rotas com prefixos
+app.use('/usuarios', usuarioRoutes);
 app.use('/pacientes', pacienteRoutes);
 app.use('/exames', exameRoutes);
 
