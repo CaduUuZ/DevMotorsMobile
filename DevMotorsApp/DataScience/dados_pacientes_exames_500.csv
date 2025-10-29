@@ -1,0 +1,1001 @@
+id_exame,id_paciente,laboratorio,exame_texto,data_exame,resultado,idade,patologia,medicamento
+1,1,LabD,Hemograma,2024-11-10,alterado,36,pressao alta,amoxicilina
+2,1,LabC,ECG,2025-04-03,normal,36,pressao alta,amoxicilina
+3,2,LabB,Raio X torax,2025-02-03,normal,9,colesterol alto,captopril
+4,2,LabB,Raio X torax,2025-07-13,normal,9,colesterol alto,captopril
+5,3,LabC,Hemograma,2024-05-04,alterado,4,asma,sertralina
+6,3,LabA,ECG,2023-11-30,normal,4,asma,sertralina
+7,4,LabB,ECG,2025-02-02,alterado,19,asma,sertralina
+8,4,LabC,Ultrassom abdominal,2024-08-26,normal,19,asma,sertralina
+9,5,LabD,Ultrassom abdominal,2025-05-30,normal,69,hipotireoidismo,paracetamol
+10,5,LabC,Raio X torax,2024-05-04,alterado,69,hipotireoidismo,paracetamol
+11,6,LabC,ECG,2025-06-25,alterado,81,hepatite,enalapril
+12,6,LabB,ECG,2024-07-22,alterado,81,hepatite,enalapril
+13,7,LabD,Hemograma,2024-10-30,normal,9,insuficiencia renal,cetirizina
+14,7,LabB,Raio X torax,2024-09-23,alterado,9,insuficiencia renal,cetirizina
+15,8,LabD,Ultrassom abdominal,2024-03-30,normal,23,insuficiencia renal,paracetamol
+16,8,LabA,Colesterol,2023-10-30,alterado,23,insuficiencia renal,paracetamol
+17,9,LabD,ECG,2025-08-14,alterado,65,anemia,sertralina
+18,9,LabC,Colesterol,2024-02-15,normal,65,anemia,sertralina
+19,10,LabD,Ultrassom abdominal,2024-11-30,normal,24,gripe,furosemida
+20,10,LabC,Ultrassom abdominal,2024-09-27,normal,24,gripe,furosemida
+21,11,LabD,Raio X torax,2024-12-26,alterado,86,bronquite,simvastatina
+22,11,LabA,Ultrassom abdominal,2024-02-28,alterado,86,bronquite,simvastatina
+23,12,LabB,Raio X torax,2024-10-18,normal,16,insuficiencia renal,simvastatina
+24,12,LabA,Hemograma,2024-03-23,normal,16,insuficiencia renal,simvastatina
+25,13,LabB,Hemograma,2024-09-01,normal,81,hipertensao,losartana
+26,13,LabA,Ultrassom abdominal,2024-12-21,alterado,81,hipertensao,losartana
+27,14,LabA,Raio X torax,2024-08-14,normal,78,bronquite,metformina
+28,14,LabA,Colesterol,2025-07-19,normal,78,bronquite,metformina
+29,15,LabC,Hemograma,2025-02-02,alterado,5,hepatite,atenolol
+30,15,LabB,ECG,2024-01-25,alterado,5,hepatite,atenolol
+31,16,LabD,Raio X torax,2024-06-24,normal,90,gripe,furosemida
+32,16,LabD,Hemograma,2024-02-03,alterado,90,gripe,furosemida
+33,17,LabC,Glicemia,2024-10-27,normal,39,ansiedade,sertralina
+34,17,LabB,ECG,2025-10-05,alterado,39,ansiedade,sertralina
+35,18,LabB,Ultrassom abdominal,2023-12-02,normal,12,hipertensao,ibuprofeno
+36,18,LabC,Colesterol,2025-03-03,alterado,12,hipertensao,ibuprofeno
+37,19,LabA,Colesterol,2024-03-20,normal,63,obesidade,cetirizina
+38,19,LabA,ECG,2025-08-24,normal,63,obesidade,cetirizina
+39,20,LabA,Glicemia,2025-01-24,normal,16,diabetes,cetirizina
+40,20,LabA,Colesterol,2024-02-17,alterado,16,diabetes,cetirizina
+41,21,LabB,Hemograma,2025-07-26,alterado,8,depressao,prednisona
+42,21,LabB,Colesterol,2024-08-26,normal,8,depressao,prednisona
+43,22,LabB,Glicemia,2024-09-13,normal,50,hepatite,ibuprofeno
+44,22,LabD,Raio X torax,2024-09-18,normal,50,hepatite,ibuprofeno
+45,23,LabD,Glicemia,2024-05-02,normal,46,hipotireoidismo,omeprazol
+46,23,LabD,ECG,2025-03-14,normal,46,hipotireoidismo,omeprazol
+47,24,LabD,ECG,2025-08-28,normal,32,insuficiencia renal,captopril
+48,24,LabB,ECG,2025-08-22,alterado,32,insuficiencia renal,captopril
+49,25,LabB,Hemograma,2024-03-20,normal,37,depressao,paracetamol
+50,25,LabC,Hemograma,2024-11-30,alterado,37,depressao,paracetamol
+51,26,LabB,Hemograma,2025-01-21,normal,21,gripe,prednisona
+52,26,LabC,Glicemia,2023-12-30,alterado,21,gripe,prednisona
+53,27,LabC,Colesterol,2024-11-09,alterado,20,diabetes,ibuprofeno
+54,27,LabC,Hemograma,2024-10-03,alterado,20,diabetes,ibuprofeno
+55,28,LabD,Colesterol,2024-12-18,alterado,17,pressao alta,sertralina
+56,28,LabB,Glicemia,2025-01-01,normal,17,pressao alta,sertralina
+57,29,LabC,Glicemia,2025-03-20,alterado,6,anemia,furosemida
+58,29,LabB,Glicemia,2024-12-02,alterado,6,anemia,furosemida
+59,30,LabA,Ultrassom abdominal,2024-04-05,normal,19,hipotireoidismo,enalapril
+60,30,LabC,Glicemia,2024-01-29,alterado,19,hipotireoidismo,enalapril
+61,31,LabC,Ultrassom abdominal,2025-05-31,alterado,89,anemia,simvastatina
+62,31,LabD,Colesterol,2025-04-03,alterado,89,anemia,simvastatina
+63,32,LabC,Colesterol,2024-11-09,alterado,20,fibromialgia,enalapril
+64,32,LabA,Hemograma,2024-06-30,alterado,20,fibromialgia,enalapril
+65,33,LabA,Hemograma,2025-08-28,alterado,26,hipertensao,fluoxetina
+66,33,LabD,ECG,2024-05-07,alterado,26,hipertensao,fluoxetina
+67,34,LabC,ECG,2025-06-09,normal,6,ansiedade,losartana
+68,34,LabC,ECG,2024-04-01,alterado,6,ansiedade,losartana
+69,35,LabC,ECG,2024-02-25,normal,64,fibromialgia,paracetamol
+70,35,LabD,Colesterol,2024-04-09,normal,64,fibromialgia,paracetamol
+71,36,LabD,Glicemia,2025-09-22,normal,5,insuficiencia renal,paracetamol
+72,36,LabB,Glicemia,2024-07-19,normal,5,insuficiencia renal,paracetamol
+73,37,LabB,ECG,2025-05-07,normal,29,gastrite,simvastatina
+74,37,LabB,Raio X torax,2025-10-22,normal,29,gastrite,simvastatina
+75,38,LabA,Colesterol,2025-08-02,alterado,76,hepatite,atenolol
+76,38,LabB,ECG,2025-03-06,normal,76,hepatite,atenolol
+77,39,LabA,Colesterol,2024-08-02,alterado,31,gripe,captopril
+78,39,LabD,ECG,2024-07-31,alterado,31,gripe,captopril
+79,40,LabD,Hemograma,2023-11-10,alterado,23,gripe,enalapril
+80,40,LabA,Raio X torax,2025-04-18,normal,23,gripe,enalapril
+81,41,LabB,Hemograma,2024-02-25,alterado,11,pressao alta,paracetamol
+82,41,LabB,ECG,2023-12-05,normal,11,pressao alta,paracetamol
+83,42,LabB,Hemograma,2024-11-14,normal,10,hepatite,amoxicilina
+84,42,LabB,Colesterol,2025-09-28,alterado,10,hepatite,amoxicilina
+85,43,LabD,Hemograma,2025-03-12,normal,87,insulina alta,omeprazol
+86,43,LabA,Hemograma,2024-08-27,normal,87,insulina alta,omeprazol
+87,44,LabC,Colesterol,2025-08-21,normal,36,anemia,losartana
+88,44,LabC,Glicemia,2025-02-10,alterado,36,anemia,losartana
+89,45,LabC,ECG,2025-09-02,alterado,57,depressao,prednisona
+90,45,LabB,Raio X torax,2025-05-21,normal,57,depressao,prednisona
+91,46,LabD,Colesterol,2025-01-20,alterado,53,asma,enalapril
+92,46,LabA,ECG,2025-01-24,alterado,53,asma,enalapril
+93,47,LabD,Raio X torax,2024-08-30,normal,12,asma,prednisona
+94,47,LabA,Raio X torax,2024-08-01,normal,12,asma,prednisona
+95,48,LabA,Colesterol,2024-03-30,alterado,27,artrite,fluoxetina
+96,48,LabA,Hemograma,2025-02-13,normal,27,artrite,fluoxetina
+97,49,LabD,Hemograma,2025-08-21,alterado,49,insuficiencia renal,simvastatina
+98,49,LabA,Hemograma,2024-06-21,normal,49,insuficiencia renal,simvastatina
+99,50,LabD,Ultrassom abdominal,2025-02-18,normal,31,hepatite,enalapril
+100,50,LabD,Glicemia,2024-06-30,alterado,31,hepatite,enalapril
+101,51,LabB,Ultrassom abdominal,2024-10-24,normal,57,artrite,prednisona
+102,51,LabC,Raio X torax,2024-07-11,normal,57,artrite,prednisona
+103,52,LabD,Colesterol,2025-10-11,normal,14,hipotireoidismo,ibuprofeno
+104,52,LabA,ECG,2024-08-20,normal,14,hipotireoidismo,ibuprofeno
+105,53,LabD,Ultrassom abdominal,2024-04-10,alterado,76,hipertensao,captopril
+106,53,LabC,Colesterol,2024-10-30,normal,76,hipertensao,captopril
+107,54,LabB,Colesterol,2025-08-15,alterado,35,bronquite,metformina
+108,54,LabD,Colesterol,2025-07-22,alterado,35,bronquite,metformina
+109,55,LabA,Raio X torax,2024-05-10,alterado,54,depressao,cetirizina
+110,55,LabC,Ultrassom abdominal,2025-02-26,alterado,54,depressao,cetirizina
+111,56,LabC,Hemograma,2025-08-12,alterado,16,hipotireoidismo,simvastatina
+112,56,LabB,Raio X torax,2025-02-11,alterado,16,hipotireoidismo,simvastatina
+113,57,LabB,Hemograma,2024-10-07,alterado,66,insuficiencia renal,furosemida
+114,57,LabB,Glicemia,2025-09-07,normal,66,insuficiencia renal,furosemida
+115,58,LabD,Raio X torax,2024-02-07,normal,50,obesidade,cetirizina
+116,58,LabC,Hemograma,2025-07-11,normal,50,obesidade,cetirizina
+117,59,LabC,Glicemia,2024-10-25,alterado,25,diabetes,sertralina
+118,59,LabC,Raio X torax,2024-03-07,normal,25,diabetes,sertralina
+119,60,LabD,ECG,2024-06-08,normal,52,diabetes,prednisona
+120,60,LabB,Colesterol,2025-08-06,normal,52,diabetes,prednisona
+121,61,LabB,Glicemia,2024-03-08,alterado,39,hepatite,cetirizina
+122,61,LabB,Raio X torax,2025-08-15,alterado,39,hepatite,cetirizina
+123,62,LabA,Hemograma,2023-12-09,normal,2,gastrite,simvastatina
+124,62,LabB,Colesterol,2024-02-25,normal,2,gastrite,simvastatina
+125,63,LabB,Raio X torax,2024-09-19,alterado,54,colesterol alto,paracetamol
+126,63,LabB,Hemograma,2024-09-05,normal,54,colesterol alto,paracetamol
+127,64,LabA,ECG,2025-09-15,alterado,43,ansiedade,paracetamol
+128,64,LabC,Raio X torax,2025-06-02,alterado,43,ansiedade,paracetamol
+129,65,LabB,Hemograma,2024-08-30,alterado,47,obesidade,paracetamol
+130,65,LabA,Hemograma,2025-08-06,normal,47,obesidade,paracetamol
+131,66,LabD,Colesterol,2023-12-27,normal,18,gripe,captopril
+132,66,LabC,ECG,2025-10-17,alterado,18,gripe,captopril
+133,67,LabA,Hemograma,2024-03-18,alterado,89,ansiedade,omeprazol
+134,67,LabC,Hemograma,2025-03-30,normal,89,ansiedade,omeprazol
+135,68,LabC,Raio X torax,2025-07-05,normal,64,hipotireoidismo,enalapril
+136,68,LabD,ECG,2024-07-16,normal,64,hipotireoidismo,enalapril
+137,69,LabC,Hemograma,2025-02-13,alterado,35,asma,sertralina
+138,69,LabD,Colesterol,2024-09-05,normal,35,asma,sertralina
+139,70,LabD,Raio X torax,2025-08-21,normal,1,insuficiencia renal,prednisona
+140,70,LabD,Raio X torax,2024-08-27,alterado,1,insuficiencia renal,prednisona
+141,71,LabB,Hemograma,2025-07-26,normal,67,gripe,atenolol
+142,71,LabB,Ultrassom abdominal,2024-07-22,normal,67,gripe,atenolol
+143,72,LabB,Raio X torax,2025-03-25,alterado,40,pressao alta,simvastatina
+144,72,LabD,ECG,2025-01-13,normal,40,pressao alta,simvastatina
+145,73,LabC,Ultrassom abdominal,2025-05-30,alterado,79,pressao alta,enalapril
+146,73,LabA,ECG,2025-07-21,alterado,79,pressao alta,enalapril
+147,74,LabD,Ultrassom abdominal,2023-11-24,alterado,59,fibromialgia,prednisona
+148,74,LabA,Glicemia,2023-10-29,normal,59,fibromialgia,prednisona
+149,75,LabB,Colesterol,2024-11-26,normal,37,hipertensao,atenolol
+150,75,LabA,Hemograma,2025-07-20,alterado,37,hipertensao,atenolol
+151,76,LabA,Colesterol,2025-03-16,alterado,21,colesterol alto,sertralina
+152,76,LabD,Colesterol,2025-01-22,normal,21,colesterol alto,sertralina
+153,77,LabA,Ultrassom abdominal,2024-10-01,alterado,33,gripe,losartana
+154,77,LabC,ECG,2025-07-16,normal,33,gripe,losartana
+155,78,LabA,Ultrassom abdominal,2025-05-12,alterado,40,colesterol alto,captopril
+156,78,LabB,Raio X torax,2025-06-01,normal,40,colesterol alto,captopril
+157,79,LabD,Colesterol,2025-03-30,normal,57,gripe,simvastatina
+158,79,LabA,Raio X torax,2025-07-16,alterado,57,gripe,simvastatina
+159,80,LabC,Glicemia,2025-02-18,alterado,73,insulina alta,cetirizina
+160,80,LabA,ECG,2025-10-16,normal,73,insulina alta,cetirizina
+161,81,LabC,Colesterol,2024-08-16,alterado,69,hipertensao,losartana
+162,81,LabC,Ultrassom abdominal,2024-08-29,alterado,69,hipertensao,losartana
+163,82,LabA,Ultrassom abdominal,2024-06-23,normal,26,insuficiencia renal,losartana
+164,82,LabB,Raio X torax,2025-08-21,normal,26,insuficiencia renal,losartana
+165,83,LabC,ECG,2023-11-10,normal,85,hipertensao,amoxicilina
+166,83,LabC,Raio X torax,2024-12-11,normal,85,hipertensao,amoxicilina
+167,84,LabC,Raio X torax,2024-07-25,alterado,12,anemia,ibuprofeno
+168,84,LabD,Glicemia,2024-07-15,normal,12,anemia,ibuprofeno
+169,85,LabD,Colesterol,2025-06-17,alterado,6,pressao alta,sertralina
+170,85,LabA,Glicemia,2025-01-03,alterado,6,pressao alta,sertralina
+171,86,LabA,ECG,2025-05-29,normal,20,insuficiencia renal,amoxicilina
+172,86,LabA,ECG,2025-07-10,normal,20,insuficiencia renal,amoxicilina
+173,87,LabA,Hemograma,2024-11-20,normal,61,depressao,sertralina
+174,87,LabB,Glicemia,2023-11-30,alterado,61,depressao,sertralina
+175,88,LabA,Glicemia,2024-04-05,alterado,3,fibromialgia,sertralina
+176,88,LabA,Glicemia,2024-12-06,normal,3,fibromialgia,sertralina
+177,89,LabD,Raio X torax,2025-04-15,alterado,30,hepatite,paracetamol
+178,89,LabC,Colesterol,2025-03-10,alterado,30,hepatite,paracetamol
+179,90,LabA,Colesterol,2025-01-19,normal,35,depressao,prednisona
+180,90,LabB,Raio X torax,2024-12-09,alterado,35,depressao,prednisona
+181,91,LabB,Raio X torax,2024-06-13,alterado,42,artrite,omeprazol
+182,91,LabD,ECG,2024-04-23,normal,42,artrite,omeprazol
+183,92,LabA,Ultrassom abdominal,2023-11-07,alterado,64,obesidade,cetirizina
+184,92,LabD,Raio X torax,2025-03-30,normal,64,obesidade,cetirizina
+185,93,LabA,Raio X torax,2024-06-13,normal,66,fibromialgia,ibuprofeno
+186,93,LabA,Hemograma,2024-04-29,alterado,66,fibromialgia,ibuprofeno
+187,94,LabA,ECG,2025-08-09,alterado,9,pressao alta,prednisona
+188,94,LabB,ECG,2024-11-29,normal,9,pressao alta,prednisona
+189,95,LabC,ECG,2025-06-18,alterado,90,ansiedade,captopril
+190,95,LabA,Glicemia,2025-01-12,normal,90,ansiedade,captopril
+191,96,LabD,Raio X torax,2025-10-22,normal,37,colesterol alto,ibuprofeno
+192,96,LabA,ECG,2024-10-11,alterado,37,colesterol alto,ibuprofeno
+193,97,LabC,ECG,2024-04-29,alterado,14,diabetes,fluoxetina
+194,97,LabA,Hemograma,2024-11-28,normal,14,diabetes,fluoxetina
+195,98,LabA,Raio X torax,2025-01-18,normal,41,artrite,simvastatina
+196,98,LabC,Glicemia,2025-05-17,alterado,41,artrite,simvastatina
+197,99,LabA,Raio X torax,2024-04-02,alterado,61,hipotireoidismo,atenolol
+198,99,LabC,Glicemia,2024-05-01,alterado,61,hipotireoidismo,atenolol
+199,100,LabB,Colesterol,2024-01-08,normal,27,hipotireoidismo,fluoxetina
+200,100,LabA,Ultrassom abdominal,2024-07-09,alterado,27,hipotireoidismo,fluoxetina
+201,101,LabB,Hemograma,2024-06-26,normal,21,insulina alta,paracetamol
+202,101,LabA,Raio X torax,2024-09-05,normal,21,insulina alta,paracetamol
+203,102,LabA,Colesterol,2024-06-04,alterado,42,pressao alta,paracetamol
+204,102,LabA,Glicemia,2024-07-13,alterado,42,pressao alta,paracetamol
+205,103,LabA,Hemograma,2024-04-12,alterado,59,depressao,furosemida
+206,103,LabC,ECG,2024-02-16,normal,59,depressao,furosemida
+207,104,LabD,Raio X torax,2025-02-24,alterado,59,hipotireoidismo,enalapril
+208,104,LabD,Raio X torax,2025-09-01,normal,59,hipotireoidismo,enalapril
+209,105,LabB,Raio X torax,2024-03-23,alterado,83,asma,sertralina
+210,105,LabB,Hemograma,2024-12-07,alterado,83,asma,sertralina
+211,106,LabA,Glicemia,2025-06-28,normal,15,pressao alta,captopril
+212,106,LabD,Colesterol,2024-05-21,normal,15,pressao alta,captopril
+213,107,LabD,Hemograma,2024-01-14,normal,19,asma,paracetamol
+214,107,LabB,Colesterol,2024-08-08,normal,19,asma,paracetamol
+215,108,LabA,Raio X torax,2023-12-07,alterado,36,obesidade,furosemida
+216,108,LabD,ECG,2024-09-08,alterado,36,obesidade,furosemida
+217,109,LabD,Colesterol,2024-05-07,normal,58,gripe,captopril
+218,109,LabC,Ultrassom abdominal,2025-10-08,normal,58,gripe,captopril
+219,110,LabB,Glicemia,2024-06-30,normal,18,colesterol alto,captopril
+220,110,LabA,ECG,2024-12-03,alterado,18,colesterol alto,captopril
+221,111,LabD,Hemograma,2025-04-14,alterado,30,artrite,ibuprofeno
+222,111,LabB,Hemograma,2025-10-13,alterado,30,artrite,ibuprofeno
+223,112,LabD,ECG,2024-07-25,normal,52,artrite,simvastatina
+224,112,LabC,Raio X torax,2024-02-06,alterado,52,artrite,simvastatina
+225,113,LabD,ECG,2024-08-27,alterado,67,fibromialgia,sertralina
+226,113,LabA,Raio X torax,2024-06-13,normal,67,fibromialgia,sertralina
+227,114,LabD,Colesterol,2024-03-02,alterado,71,ansiedade,amoxicilina
+228,114,LabD,Hemograma,2025-01-29,alterado,71,ansiedade,amoxicilina
+229,115,LabA,Colesterol,2024-04-14,normal,67,hipotireoidismo,enalapril
+230,115,LabB,Ultrassom abdominal,2024-04-06,alterado,67,hipotireoidismo,enalapril
+231,116,LabA,Raio X torax,2024-07-12,normal,59,gastrite,simvastatina
+232,116,LabA,Glicemia,2023-11-01,alterado,59,gastrite,simvastatina
+233,117,LabB,Raio X torax,2025-05-16,alterado,9,diabetes,prednisona
+234,117,LabD,ECG,2024-05-20,normal,9,diabetes,prednisona
+235,118,LabB,Ultrassom abdominal,2025-08-30,alterado,85,asma,ibuprofeno
+236,118,LabA,Colesterol,2024-07-03,normal,85,asma,ibuprofeno
+237,119,LabC,Raio X torax,2025-04-04,normal,45,insulina alta,furosemida
+238,119,LabC,ECG,2024-04-11,normal,45,insulina alta,furosemida
+239,120,LabB,Glicemia,2024-09-28,normal,89,anemia,losartana
+240,120,LabD,Colesterol,2024-10-20,normal,89,anemia,losartana
+241,121,LabA,ECG,2025-09-03,normal,86,depressao,fluoxetina
+242,121,LabC,Glicemia,2025-05-01,normal,86,depressao,fluoxetina
+243,122,LabC,Hemograma,2024-02-10,normal,16,insuficiencia renal,furosemida
+244,122,LabD,Colesterol,2024-01-28,normal,16,insuficiencia renal,furosemida
+245,123,LabD,Raio X torax,2024-07-31,alterado,27,gripe,captopril
+246,123,LabC,ECG,2024-04-21,normal,27,gripe,captopril
+247,124,LabB,Ultrassom abdominal,2024-05-10,normal,83,insulina alta,amoxicilina
+248,124,LabD,Hemograma,2024-01-15,alterado,83,insulina alta,amoxicilina
+249,125,LabD,Colesterol,2025-06-02,alterado,67,diabetes,enalapril
+250,125,LabC,Hemograma,2024-11-13,alterado,67,diabetes,enalapril
+251,126,LabA,ECG,2025-02-01,alterado,42,anemia,furosemida
+252,126,LabC,Raio X torax,2024-06-02,normal,42,anemia,furosemida
+253,127,LabC,Colesterol,2025-01-08,alterado,59,colesterol alto,losartana
+254,127,LabB,Colesterol,2025-04-21,alterado,59,colesterol alto,losartana
+255,128,LabD,Ultrassom abdominal,2025-08-22,normal,18,hipotireoidismo,furosemida
+256,128,LabB,Colesterol,2025-02-22,normal,18,hipotireoidismo,furosemida
+257,129,LabA,Raio X torax,2023-12-11,normal,75,obesidade,furosemida
+258,129,LabA,Ultrassom abdominal,2024-10-06,normal,75,obesidade,furosemida
+259,130,LabD,ECG,2024-03-20,alterado,23,gastrite,paracetamol
+260,130,LabA,Hemograma,2024-04-13,alterado,23,gastrite,paracetamol
+261,131,LabC,Colesterol,2025-05-27,alterado,40,gastrite,enalapril
+262,131,LabC,Hemograma,2024-05-20,normal,40,gastrite,enalapril
+263,132,LabC,Ultrassom abdominal,2024-08-17,normal,52,pressao alta,enalapril
+264,132,LabC,Raio X torax,2024-07-11,normal,52,pressao alta,enalapril
+265,133,LabB,Ultrassom abdominal,2025-07-30,alterado,24,colesterol alto,enalapril
+266,133,LabD,Raio X torax,2025-06-10,normal,24,colesterol alto,enalapril
+267,134,LabD,Colesterol,2025-09-30,alterado,76,anemia,prednisona
+268,134,LabB,Glicemia,2025-08-03,alterado,76,anemia,prednisona
+269,135,LabB,Ultrassom abdominal,2024-11-06,alterado,31,depressao,prednisona
+270,135,LabC,Hemograma,2025-07-16,normal,31,depressao,prednisona
+271,136,LabC,Ultrassom abdominal,2025-04-01,alterado,50,fibromialgia,losartana
+272,136,LabC,Hemograma,2024-10-30,alterado,50,fibromialgia,losartana
+273,137,LabC,Glicemia,2025-03-28,alterado,52,obesidade,sertralina
+274,137,LabA,Hemograma,2024-12-28,normal,52,obesidade,sertralina
+275,138,LabA,Raio X torax,2025-07-16,normal,30,bronquite,enalapril
+276,138,LabB,Hemograma,2024-07-27,alterado,30,bronquite,enalapril
+277,139,LabA,Colesterol,2025-02-09,normal,44,insulina alta,ibuprofeno
+278,139,LabC,Hemograma,2025-07-14,alterado,44,insulina alta,ibuprofeno
+279,140,LabD,Raio X torax,2025-10-04,alterado,18,gastrite,prednisona
+280,140,LabB,ECG,2024-05-31,normal,18,gastrite,prednisona
+281,141,LabB,Glicemia,2025-07-02,alterado,29,depressao,fluoxetina
+282,141,LabC,Glicemia,2025-03-24,alterado,29,depressao,fluoxetina
+283,142,LabB,ECG,2024-02-04,normal,78,anemia,prednisona
+284,142,LabD,Hemograma,2025-06-19,alterado,78,anemia,prednisona
+285,143,LabC,Hemograma,2025-02-11,normal,13,obesidade,losartana
+286,143,LabB,Ultrassom abdominal,2024-08-11,normal,13,obesidade,losartana
+287,144,LabD,ECG,2025-05-12,alterado,10,hipertensao,metformina
+288,144,LabC,Colesterol,2024-11-13,alterado,10,hipertensao,metformina
+289,145,LabA,Hemograma,2024-06-02,alterado,48,gripe,captopril
+290,145,LabD,ECG,2025-06-25,normal,48,gripe,captopril
+291,146,LabC,Colesterol,2023-12-19,alterado,90,hipotireoidismo,ibuprofeno
+292,146,LabD,Ultrassom abdominal,2024-02-02,normal,90,hipotireoidismo,ibuprofeno
+293,147,LabA,Ultrassom abdominal,2025-04-13,alterado,83,diabetes,ibuprofeno
+294,147,LabA,Ultrassom abdominal,2024-06-23,normal,83,diabetes,ibuprofeno
+295,148,LabC,Raio X torax,2024-09-16,normal,60,bronquite,losartana
+296,148,LabB,Raio X torax,2025-02-03,normal,60,bronquite,losartana
+297,149,LabD,Raio X torax,2024-08-09,normal,19,colesterol alto,omeprazol
+298,149,LabC,ECG,2024-01-17,alterado,19,colesterol alto,omeprazol
+299,150,LabC,Raio X torax,2025-01-18,normal,11,pressao alta,ibuprofeno
+300,150,LabD,Ultrassom abdominal,2025-06-21,normal,11,pressao alta,ibuprofeno
+301,151,LabA,Raio X torax,2025-06-17,normal,6,diabetes,losartana
+302,151,LabB,Hemograma,2025-02-22,normal,6,diabetes,losartana
+303,152,LabD,ECG,2023-12-16,normal,57,ansiedade,captopril
+304,152,LabA,ECG,2023-12-24,alterado,57,ansiedade,captopril
+305,153,LabD,Hemograma,2024-03-08,normal,71,insuficiencia renal,furosemida
+306,153,LabD,Colesterol,2025-05-14,normal,71,insuficiencia renal,furosemida
+307,154,LabA,Raio X torax,2024-08-26,alterado,72,anemia,prednisona
+308,154,LabB,Glicemia,2025-01-14,normal,72,anemia,prednisona
+309,155,LabA,ECG,2025-09-25,alterado,62,hepatite,ibuprofeno
+310,155,LabC,Colesterol,2024-04-29,alterado,62,hepatite,ibuprofeno
+311,156,LabC,Raio X torax,2025-09-22,alterado,53,gastrite,paracetamol
+312,156,LabD,Raio X torax,2025-03-27,normal,53,gastrite,paracetamol
+313,157,LabD,Colesterol,2024-10-10,alterado,67,insulina alta,omeprazol
+314,157,LabC,Hemograma,2025-08-04,normal,67,insulina alta,omeprazol
+315,158,LabB,Hemograma,2023-11-05,alterado,10,hepatite,furosemida
+316,158,LabD,Colesterol,2025-04-20,alterado,10,hepatite,furosemida
+317,159,LabB,Glicemia,2025-04-26,normal,9,colesterol alto,ibuprofeno
+318,159,LabC,Colesterol,2024-05-04,alterado,9,colesterol alto,ibuprofeno
+319,160,LabD,Glicemia,2024-12-09,normal,36,hipotireoidismo,prednisona
+320,160,LabA,Glicemia,2024-12-05,normal,36,hipotireoidismo,prednisona
+321,161,LabB,Glicemia,2024-06-19,normal,69,anemia,sertralina
+322,161,LabC,Ultrassom abdominal,2024-08-26,normal,69,anemia,sertralina
+323,162,LabA,Glicemia,2025-03-07,alterado,22,anemia,cetirizina
+324,162,LabA,Colesterol,2024-10-22,alterado,22,anemia,cetirizina
+325,163,LabD,Ultrassom abdominal,2024-10-15,alterado,45,gripe,sertralina
+326,163,LabC,ECG,2025-06-24,normal,45,gripe,sertralina
+327,164,LabD,Glicemia,2025-01-26,normal,41,colesterol alto,atenolol
+328,164,LabC,ECG,2025-02-14,alterado,41,colesterol alto,atenolol
+329,165,LabB,Ultrassom abdominal,2023-12-07,alterado,74,asma,captopril
+330,165,LabB,Ultrassom abdominal,2025-04-23,alterado,74,asma,captopril
+331,166,LabD,Colesterol,2025-02-01,alterado,1,fibromialgia,prednisona
+332,166,LabD,Hemograma,2024-01-31,alterado,1,fibromialgia,prednisona
+333,167,LabD,Raio X torax,2024-03-26,alterado,81,hepatite,furosemida
+334,167,LabC,Hemograma,2025-06-04,normal,81,hepatite,furosemida
+335,168,LabB,Colesterol,2024-09-08,alterado,6,diabetes,atenolol
+336,168,LabD,Hemograma,2025-03-24,normal,6,diabetes,atenolol
+337,169,LabC,Raio X torax,2025-10-25,alterado,85,asma,amoxicilina
+338,169,LabD,Glicemia,2024-02-22,alterado,85,asma,amoxicilina
+339,170,LabB,Colesterol,2024-03-17,normal,65,gastrite,cetirizina
+340,170,LabD,ECG,2025-10-13,alterado,65,gastrite,cetirizina
+341,171,LabB,Raio X torax,2024-06-19,normal,13,pressao alta,amoxicilina
+342,171,LabD,ECG,2025-08-09,normal,13,pressao alta,amoxicilina
+343,172,LabC,Raio X torax,2025-04-15,normal,51,hipertensao,captopril
+344,172,LabA,Ultrassom abdominal,2025-10-11,alterado,51,hipertensao,captopril
+345,173,LabB,Colesterol,2025-08-14,normal,50,bronquite,losartana
+346,173,LabA,ECG,2024-08-22,normal,50,bronquite,losartana
+347,174,LabB,Raio X torax,2025-09-02,normal,74,hipertensao,sertralina
+348,174,LabA,Colesterol,2025-03-21,normal,74,hipertensao,sertralina
+349,175,LabA,Raio X torax,2025-05-19,alterado,88,asma,metformina
+350,175,LabA,Ultrassom abdominal,2025-10-01,alterado,88,asma,metformina
+351,176,LabB,Hemograma,2025-06-09,normal,60,anemia,ibuprofeno
+352,176,LabA,Colesterol,2025-09-27,alterado,60,anemia,ibuprofeno
+353,177,LabA,Ultrassom abdominal,2025-04-11,alterado,61,hepatite,prednisona
+354,177,LabC,Hemograma,2024-07-21,alterado,61,hepatite,prednisona
+355,178,LabA,Raio X torax,2025-05-14,alterado,7,gripe,sertralina
+356,178,LabB,Glicemia,2025-06-28,alterado,7,gripe,sertralina
+357,179,LabC,Ultrassom abdominal,2024-03-21,normal,22,insulina alta,losartana
+358,179,LabD,Hemograma,2024-12-13,normal,22,insulina alta,losartana
+359,180,LabA,ECG,2025-07-06,alterado,55,gastrite,captopril
+360,180,LabB,Glicemia,2025-09-21,normal,55,gastrite,captopril
+361,181,LabC,Raio X torax,2025-09-14,alterado,45,asma,prednisona
+362,181,LabB,Ultrassom abdominal,2024-11-18,alterado,45,asma,prednisona
+363,182,LabC,Glicemia,2024-10-29,normal,78,hipertensao,furosemida
+364,182,LabC,Hemograma,2025-09-18,normal,78,hipertensao,furosemida
+365,183,LabD,Hemograma,2025-09-19,normal,44,gastrite,amoxicilina
+366,183,LabC,ECG,2023-11-09,normal,44,gastrite,amoxicilina
+367,184,LabB,Ultrassom abdominal,2025-07-21,alterado,59,insuficiencia renal,captopril
+368,184,LabD,ECG,2024-10-31,normal,59,insuficiencia renal,captopril
+369,185,LabA,Raio X torax,2024-12-28,alterado,41,ansiedade,ibuprofeno
+370,185,LabA,Hemograma,2025-03-03,alterado,41,ansiedade,ibuprofeno
+371,186,LabA,Colesterol,2025-04-21,normal,12,anemia,captopril
+372,186,LabD,Ultrassom abdominal,2025-05-26,normal,12,anemia,captopril
+373,187,LabB,Hemograma,2025-01-28,normal,78,hipotireoidismo,cetirizina
+374,187,LabA,ECG,2024-09-25,alterado,78,hipotireoidismo,cetirizina
+375,188,LabB,Glicemia,2024-12-05,normal,64,gripe,sertralina
+376,188,LabB,Glicemia,2025-06-21,alterado,64,gripe,sertralina
+377,189,LabB,Raio X torax,2023-12-09,normal,27,bronquite,sertralina
+378,189,LabA,Hemograma,2025-05-26,normal,27,bronquite,sertralina
+379,190,LabB,Ultrassom abdominal,2025-08-17,alterado,33,artrite,paracetamol
+380,190,LabD,ECG,2024-06-25,alterado,33,artrite,paracetamol
+381,191,LabC,Colesterol,2025-07-15,alterado,12,artrite,simvastatina
+382,191,LabB,ECG,2024-03-15,normal,12,artrite,simvastatina
+383,192,LabC,Colesterol,2025-03-11,normal,70,hipotireoidismo,paracetamol
+384,192,LabD,ECG,2025-04-06,normal,70,hipotireoidismo,paracetamol
+385,193,LabA,Hemograma,2024-09-18,alterado,40,hipertensao,metformina
+386,193,LabB,Colesterol,2025-09-20,alterado,40,hipertensao,metformina
+387,194,LabA,ECG,2024-10-13,normal,66,insuficiencia renal,simvastatina
+388,194,LabA,Colesterol,2025-01-29,normal,66,insuficiencia renal,simvastatina
+389,195,LabB,Raio X torax,2024-03-28,normal,44,pressao alta,sertralina
+390,195,LabC,Raio X torax,2025-10-22,normal,44,pressao alta,sertralina
+391,196,LabC,ECG,2025-06-24,normal,27,pressao alta,atenolol
+392,196,LabC,Colesterol,2024-03-24,alterado,27,pressao alta,atenolol
+393,197,LabB,Ultrassom abdominal,2025-10-13,alterado,29,gastrite,metformina
+394,197,LabC,Colesterol,2025-08-06,normal,29,gastrite,metformina
+395,198,LabB,Colesterol,2024-08-15,alterado,28,hipertensao,furosemida
+396,198,LabC,Raio X torax,2025-03-29,normal,28,hipertensao,furosemida
+397,199,LabA,Colesterol,2024-08-11,normal,18,hipotireoidismo,fluoxetina
+398,199,LabD,Glicemia,2025-02-24,normal,18,hipotireoidismo,fluoxetina
+399,200,LabA,Ultrassom abdominal,2023-11-03,normal,28,insuficiencia renal,ibuprofeno
+400,200,LabA,Hemograma,2025-07-31,alterado,28,insuficiencia renal,ibuprofeno
+401,201,LabC,Raio X torax,2025-06-12,normal,78,colesterol alto,losartana
+402,201,LabA,Ultrassom abdominal,2024-01-28,normal,78,colesterol alto,losartana
+403,202,LabC,Colesterol,2024-09-25,alterado,61,hipertensao,furosemida
+404,202,LabA,Hemograma,2025-05-24,alterado,61,hipertensao,furosemida
+405,203,LabA,Raio X torax,2024-12-09,alterado,7,diabetes,losartana
+406,203,LabC,Colesterol,2024-12-15,alterado,7,diabetes,losartana
+407,204,LabD,Raio X torax,2024-07-04,normal,79,asma,captopril
+408,204,LabB,ECG,2023-11-13,alterado,79,asma,captopril
+409,205,LabA,Glicemia,2025-08-31,alterado,5,depressao,atenolol
+410,205,LabD,Hemograma,2024-04-24,alterado,5,depressao,atenolol
+411,206,LabB,Hemograma,2023-12-05,alterado,56,insuficiencia renal,losartana
+412,206,LabB,ECG,2024-04-02,alterado,56,insuficiencia renal,losartana
+413,207,LabB,Colesterol,2024-10-17,normal,65,ansiedade,cetirizina
+414,207,LabA,Glicemia,2024-07-11,normal,65,ansiedade,cetirizina
+415,208,LabD,Ultrassom abdominal,2024-07-13,normal,76,obesidade,enalapril
+416,208,LabB,Colesterol,2025-06-29,alterado,76,obesidade,enalapril
+417,209,LabD,Colesterol,2024-06-10,normal,1,gripe,paracetamol
+418,209,LabD,Colesterol,2025-03-05,normal,1,gripe,paracetamol
+419,210,LabA,ECG,2025-01-27,alterado,64,artrite,metformina
+420,210,LabC,Hemograma,2024-04-13,alterado,64,artrite,metformina
+421,211,LabD,Colesterol,2025-10-11,normal,60,artrite,sertralina
+422,211,LabD,ECG,2024-11-05,normal,60,artrite,sertralina
+423,212,LabC,Ultrassom abdominal,2025-09-05,normal,34,insuficiencia renal,omeprazol
+424,212,LabA,Glicemia,2024-03-02,alterado,34,insuficiencia renal,omeprazol
+425,213,LabD,Glicemia,2024-10-16,alterado,66,asma,amoxicilina
+426,213,LabA,Hemograma,2023-10-31,normal,66,asma,amoxicilina
+427,214,LabB,Colesterol,2024-06-16,normal,62,gastrite,atenolol
+428,214,LabA,Ultrassom abdominal,2024-05-29,normal,62,gastrite,atenolol
+429,215,LabD,Glicemia,2025-07-18,alterado,41,bronquite,metformina
+430,215,LabB,Glicemia,2023-10-30,normal,41,bronquite,metformina
+431,216,LabD,Hemograma,2024-12-23,normal,61,hipertensao,enalapril
+432,216,LabD,Hemograma,2023-11-03,alterado,61,hipertensao,enalapril
+433,217,LabB,Hemograma,2023-11-12,alterado,88,gripe,metformina
+434,217,LabD,ECG,2024-07-12,alterado,88,gripe,metformina
+435,218,LabA,Raio X torax,2025-05-14,alterado,28,obesidade,losartana
+436,218,LabB,Ultrassom abdominal,2024-06-18,alterado,28,obesidade,losartana
+437,219,LabC,Hemograma,2023-11-16,alterado,18,gastrite,amoxicilina
+438,219,LabC,Ultrassom abdominal,2024-04-02,normal,18,gastrite,amoxicilina
+439,220,LabC,Ultrassom abdominal,2025-10-07,normal,13,colesterol alto,metformina
+440,220,LabB,Ultrassom abdominal,2024-10-17,normal,13,colesterol alto,metformina
+441,221,LabC,Glicemia,2024-09-23,alterado,9,pressao alta,atenolol
+442,221,LabC,Colesterol,2025-08-23,normal,9,pressao alta,atenolol
+443,222,LabA,Glicemia,2024-09-08,normal,49,hipotireoidismo,ibuprofeno
+444,222,LabA,Ultrassom abdominal,2024-11-24,alterado,49,hipotireoidismo,ibuprofeno
+445,223,LabB,Hemograma,2025-03-12,alterado,13,hipertensao,prednisona
+446,223,LabC,Ultrassom abdominal,2024-01-08,normal,13,hipertensao,prednisona
+447,224,LabA,Raio X torax,2024-10-14,alterado,37,gripe,omeprazol
+448,224,LabD,Glicemia,2023-12-07,alterado,37,gripe,omeprazol
+449,225,LabA,Colesterol,2024-05-01,normal,28,anemia,ibuprofeno
+450,225,LabA,Raio X torax,2025-03-30,alterado,28,anemia,ibuprofeno
+451,226,LabB,Hemograma,2025-01-26,alterado,6,insulina alta,losartana
+452,226,LabA,Glicemia,2025-10-16,alterado,6,insulina alta,losartana
+453,227,LabB,ECG,2023-12-07,alterado,9,gripe,captopril
+454,227,LabA,Raio X torax,2024-06-29,alterado,9,gripe,captopril
+455,228,LabC,ECG,2023-11-22,normal,31,depressao,furosemida
+456,228,LabD,Ultrassom abdominal,2023-12-17,normal,31,depressao,furosemida
+457,229,LabC,Hemograma,2024-03-05,alterado,44,bronquite,cetirizina
+458,229,LabA,Glicemia,2024-02-12,normal,44,bronquite,cetirizina
+459,230,LabA,ECG,2024-08-15,alterado,55,diabetes,furosemida
+460,230,LabB,Ultrassom abdominal,2024-02-08,normal,55,diabetes,furosemida
+461,231,LabB,Colesterol,2024-11-14,normal,64,hepatite,enalapril
+462,231,LabC,Ultrassom abdominal,2025-06-03,alterado,64,hepatite,enalapril
+463,232,LabD,Glicemia,2023-11-04,alterado,88,pressao alta,simvastatina
+464,232,LabA,Ultrassom abdominal,2025-09-19,alterado,88,pressao alta,simvastatina
+465,233,LabA,Hemograma,2025-05-31,normal,31,gripe,cetirizina
+466,233,LabA,Colesterol,2025-03-24,alterado,31,gripe,cetirizina
+467,234,LabB,Hemograma,2024-01-13,normal,77,pressao alta,simvastatina
+468,234,LabB,Hemograma,2024-09-13,alterado,77,pressao alta,simvastatina
+469,235,LabC,Raio X torax,2025-04-11,alterado,74,gastrite,metformina
+470,235,LabA,ECG,2024-07-08,alterado,74,gastrite,metformina
+471,236,LabC,Raio X torax,2024-02-04,normal,75,hipotireoidismo,fluoxetina
+472,236,LabB,Colesterol,2024-10-19,normal,75,hipotireoidismo,fluoxetina
+473,237,LabD,Ultrassom abdominal,2025-04-06,alterado,79,fibromialgia,cetirizina
+474,237,LabA,Hemograma,2025-10-04,normal,79,fibromialgia,cetirizina
+475,238,LabC,Ultrassom abdominal,2025-07-16,normal,82,insuficiencia renal,paracetamol
+476,238,LabC,Glicemia,2023-10-30,alterado,82,insuficiencia renal,paracetamol
+477,239,LabA,ECG,2025-07-19,normal,49,anemia,fluoxetina
+478,239,LabB,ECG,2024-12-02,alterado,49,anemia,fluoxetina
+479,240,LabB,ECG,2024-02-13,normal,17,gripe,ibuprofeno
+480,240,LabB,Ultrassom abdominal,2025-06-01,alterado,17,gripe,ibuprofeno
+481,241,LabB,Hemograma,2025-07-09,alterado,39,artrite,metformina
+482,241,LabA,Ultrassom abdominal,2024-03-05,alterado,39,artrite,metformina
+483,242,LabA,Ultrassom abdominal,2024-06-02,normal,28,pressao alta,sertralina
+484,242,LabD,Raio X torax,2025-01-27,alterado,28,pressao alta,sertralina
+485,243,LabC,Ultrassom abdominal,2025-01-13,normal,25,depressao,atenolol
+486,243,LabA,Hemograma,2024-01-19,alterado,25,depressao,atenolol
+487,244,LabD,Ultrassom abdominal,2024-01-03,normal,20,insuficiencia renal,ibuprofeno
+488,244,LabD,Glicemia,2025-04-30,alterado,20,insuficiencia renal,ibuprofeno
+489,245,LabD,Ultrassom abdominal,2024-09-05,alterado,67,colesterol alto,metformina
+490,245,LabC,Glicemia,2024-01-23,normal,67,colesterol alto,metformina
+491,246,LabC,Raio X torax,2024-11-03,normal,41,insulina alta,paracetamol
+492,246,LabC,ECG,2024-07-04,normal,41,insulina alta,paracetamol
+493,247,LabB,Raio X torax,2024-07-21,alterado,37,gastrite,paracetamol
+494,247,LabA,Ultrassom abdominal,2025-07-06,normal,37,gastrite,paracetamol
+495,248,LabB,Glicemia,2024-01-29,alterado,13,obesidade,prednisona
+496,248,LabC,Raio X torax,2024-02-25,normal,13,obesidade,prednisona
+497,249,LabD,Raio X torax,2025-07-26,normal,81,anemia,cetirizina
+498,249,LabC,Hemograma,2025-09-23,alterado,81,anemia,cetirizina
+499,250,LabA,Hemograma,2024-04-27,alterado,44,insulina alta,enalapril
+500,250,LabC,Ultrassom abdominal,2025-08-16,normal,44,insulina alta,enalapril
+501,251,LabA,Glicemia,2024-09-15,alterado,47,bronquite,atenolol
+502,251,LabC,Ultrassom abdominal,2024-11-02,alterado,47,bronquite,atenolol
+503,252,LabD,Hemograma,2025-03-13,normal,88,gastrite,losartana
+504,252,LabD,Raio X torax,2025-08-22,normal,88,gastrite,losartana
+505,253,LabC,Hemograma,2025-01-08,alterado,57,depressao,omeprazol
+506,253,LabD,ECG,2024-05-12,normal,57,depressao,omeprazol
+507,254,LabA,Raio X torax,2025-04-23,normal,55,hepatite,sertralina
+508,254,LabD,Hemograma,2024-05-19,normal,55,hepatite,sertralina
+509,255,LabC,Colesterol,2024-04-02,alterado,8,insuficiencia renal,metformina
+510,255,LabC,Ultrassom abdominal,2025-01-09,alterado,8,insuficiencia renal,metformina
+511,256,LabD,Glicemia,2024-08-13,normal,25,asma,captopril
+512,256,LabA,ECG,2024-01-12,alterado,25,asma,captopril
+513,257,LabB,Raio X torax,2023-11-20,normal,77,pressao alta,cetirizina
+514,257,LabC,Raio X torax,2023-11-23,alterado,77,pressao alta,cetirizina
+515,258,LabB,ECG,2025-10-13,normal,70,hepatite,enalapril
+516,258,LabB,Hemograma,2025-06-26,alterado,70,hepatite,enalapril
+517,259,LabD,Ultrassom abdominal,2025-03-16,normal,87,bronquite,cetirizina
+518,259,LabC,Glicemia,2025-08-23,alterado,87,bronquite,cetirizina
+519,260,LabC,Colesterol,2024-11-18,alterado,77,diabetes,captopril
+520,260,LabC,Glicemia,2024-05-07,alterado,77,diabetes,captopril
+521,261,LabD,Ultrassom abdominal,2025-06-22,alterado,13,gastrite,metformina
+522,261,LabA,ECG,2025-09-13,normal,13,gastrite,metformina
+523,262,LabC,ECG,2024-05-07,normal,18,asma,prednisona
+524,262,LabB,Ultrassom abdominal,2024-09-30,normal,18,asma,prednisona
+525,263,LabB,Colesterol,2025-07-04,alterado,16,anemia,captopril
+526,263,LabD,Raio X torax,2025-04-20,normal,16,anemia,captopril
+527,264,LabB,Hemograma,2024-01-29,normal,6,artrite,losartana
+528,264,LabB,Ultrassom abdominal,2024-01-31,alterado,6,artrite,losartana
+529,265,LabC,Colesterol,2024-03-09,alterado,8,diabetes,furosemida
+530,265,LabA,Raio X torax,2024-05-22,normal,8,diabetes,furosemida
+531,266,LabC,Colesterol,2024-05-06,normal,35,asma,losartana
+532,266,LabA,ECG,2024-05-10,normal,35,asma,losartana
+533,267,LabB,Raio X torax,2024-11-19,normal,87,depressao,metformina
+534,267,LabD,ECG,2024-09-29,normal,87,depressao,metformina
+535,268,LabA,Ultrassom abdominal,2023-11-26,normal,7,hepatite,metformina
+536,268,LabB,Colesterol,2025-06-22,alterado,7,hepatite,metformina
+537,269,LabA,Ultrassom abdominal,2025-06-09,normal,33,insuficiencia renal,enalapril
+538,269,LabA,Raio X torax,2025-07-01,alterado,33,insuficiencia renal,enalapril
+539,270,LabB,Colesterol,2025-04-20,alterado,84,ansiedade,ibuprofeno
+540,270,LabD,Colesterol,2025-04-13,alterado,84,ansiedade,ibuprofeno
+541,271,LabC,ECG,2025-05-12,normal,56,diabetes,omeprazol
+542,271,LabB,ECG,2025-10-09,alterado,56,diabetes,omeprazol
+543,272,LabD,Colesterol,2025-04-09,normal,38,asma,simvastatina
+544,272,LabB,Ultrassom abdominal,2025-07-30,alterado,38,asma,simvastatina
+545,273,LabA,Raio X torax,2024-11-01,alterado,69,bronquite,captopril
+546,273,LabB,Raio X torax,2023-12-01,normal,69,bronquite,captopril
+547,274,LabD,Raio X torax,2025-05-20,alterado,3,depressao,paracetamol
+548,274,LabD,Glicemia,2024-09-14,normal,3,depressao,paracetamol
+549,275,LabA,Raio X torax,2024-10-23,normal,31,ansiedade,losartana
+550,275,LabA,Colesterol,2025-08-10,alterado,31,ansiedade,losartana
+551,276,LabD,ECG,2025-09-15,alterado,34,asma,simvastatina
+552,276,LabD,ECG,2025-08-31,normal,34,asma,simvastatina
+553,277,LabD,ECG,2025-05-22,normal,88,anemia,omeprazol
+554,277,LabB,Ultrassom abdominal,2025-05-19,normal,88,anemia,omeprazol
+555,278,LabB,Ultrassom abdominal,2024-07-01,normal,81,insulina alta,cetirizina
+556,278,LabA,Colesterol,2025-09-28,normal,81,insulina alta,cetirizina
+557,279,LabD,Ultrassom abdominal,2024-10-25,alterado,9,asma,metformina
+558,279,LabA,ECG,2025-01-18,alterado,9,asma,metformina
+559,280,LabC,Colesterol,2023-12-14,normal,77,hepatite,cetirizina
+560,280,LabB,Raio X torax,2025-05-16,normal,77,hepatite,cetirizina
+561,281,LabD,Ultrassom abdominal,2024-12-11,alterado,52,colesterol alto,cetirizina
+562,281,LabB,Raio X torax,2024-07-25,normal,52,colesterol alto,cetirizina
+563,282,LabB,Hemograma,2025-10-06,normal,39,gastrite,atenolol
+564,282,LabC,Ultrassom abdominal,2024-11-10,alterado,39,gastrite,atenolol
+565,283,LabA,Ultrassom abdominal,2024-09-27,normal,28,hepatite,furosemida
+566,283,LabA,Colesterol,2025-01-05,normal,28,hepatite,furosemida
+567,284,LabD,Hemograma,2024-08-23,alterado,74,artrite,enalapril
+568,284,LabC,ECG,2025-02-07,alterado,74,artrite,enalapril
+569,285,LabB,Hemograma,2025-10-24,normal,37,artrite,paracetamol
+570,285,LabB,Hemograma,2025-01-11,normal,37,artrite,paracetamol
+571,286,LabD,Glicemia,2023-11-18,normal,48,asma,ibuprofeno
+572,286,LabA,Colesterol,2024-02-13,normal,48,asma,ibuprofeno
+573,287,LabD,Hemograma,2024-07-02,alterado,78,gastrite,prednisona
+574,287,LabD,Raio X torax,2024-02-08,normal,78,gastrite,prednisona
+575,288,LabA,Ultrassom abdominal,2025-07-08,normal,85,obesidade,fluoxetina
+576,288,LabC,Raio X torax,2025-01-25,alterado,85,obesidade,fluoxetina
+577,289,LabC,Glicemia,2023-11-10,normal,29,bronquite,enalapril
+578,289,LabD,Colesterol,2024-10-15,normal,29,bronquite,enalapril
+579,290,LabC,Hemograma,2024-06-14,alterado,65,ansiedade,paracetamol
+580,290,LabA,ECG,2025-06-30,alterado,65,ansiedade,paracetamol
+581,291,LabA,Hemograma,2024-07-07,normal,63,pressao alta,prednisona
+582,291,LabB,Raio X torax,2025-08-15,normal,63,pressao alta,prednisona
+583,292,LabC,Ultrassom abdominal,2024-09-08,alterado,66,hipertensao,fluoxetina
+584,292,LabC,Raio X torax,2025-07-13,alterado,66,hipertensao,fluoxetina
+585,293,LabB,Glicemia,2024-05-01,normal,47,asma,losartana
+586,293,LabB,Raio X torax,2025-05-30,alterado,47,asma,losartana
+587,294,LabB,ECG,2025-02-27,normal,31,asma,simvastatina
+588,294,LabD,ECG,2024-05-04,normal,31,asma,simvastatina
+589,295,LabD,Ultrassom abdominal,2025-10-10,normal,66,bronquite,fluoxetina
+590,295,LabB,Glicemia,2024-05-08,alterado,66,bronquite,fluoxetina
+591,296,LabB,Glicemia,2025-04-11,alterado,71,gastrite,furosemida
+592,296,LabD,Raio X torax,2024-08-14,alterado,71,gastrite,furosemida
+593,297,LabD,Colesterol,2025-09-18,alterado,50,fibromialgia,prednisona
+594,297,LabD,Hemograma,2025-02-02,alterado,50,fibromialgia,prednisona
+595,298,LabB,Ultrassom abdominal,2025-03-28,normal,64,fibromialgia,simvastatina
+596,298,LabB,Raio X torax,2024-05-20,normal,64,fibromialgia,simvastatina
+597,299,LabB,ECG,2024-05-17,normal,17,gastrite,enalapril
+598,299,LabA,Raio X torax,2025-06-28,normal,17,gastrite,enalapril
+599,300,LabB,Glicemia,2024-01-06,normal,52,hipotireoidismo,prednisona
+600,300,LabB,ECG,2024-01-25,alterado,52,hipotireoidismo,prednisona
+601,301,LabD,Colesterol,2024-03-26,normal,9,ansiedade,metformina
+602,301,LabB,Glicemia,2024-01-25,alterado,9,ansiedade,metformina
+603,302,LabD,Glicemia,2025-07-26,normal,20,pressao alta,ibuprofeno
+604,302,LabA,Hemograma,2025-07-29,alterado,20,pressao alta,ibuprofeno
+605,303,LabD,Glicemia,2025-04-09,alterado,2,gastrite,paracetamol
+606,303,LabA,ECG,2024-11-27,alterado,2,gastrite,paracetamol
+607,304,LabB,Hemograma,2025-10-02,alterado,3,bronquite,losartana
+608,304,LabA,Colesterol,2023-10-31,alterado,3,bronquite,losartana
+609,305,LabD,Colesterol,2024-12-31,normal,64,artrite,furosemida
+610,305,LabC,Hemograma,2024-05-22,normal,64,artrite,furosemida
+611,306,LabD,Hemograma,2024-04-25,normal,24,insulina alta,metformina
+612,306,LabA,Glicemia,2025-04-04,normal,24,insulina alta,metformina
+613,307,LabC,Raio X torax,2023-12-09,normal,81,insuficiencia renal,fluoxetina
+614,307,LabC,Raio X torax,2025-09-14,normal,81,insuficiencia renal,fluoxetina
+615,308,LabB,Ultrassom abdominal,2025-02-11,alterado,23,colesterol alto,sertralina
+616,308,LabA,ECG,2025-02-01,alterado,23,colesterol alto,sertralina
+617,309,LabC,ECG,2024-10-08,normal,76,insuficiencia renal,enalapril
+618,309,LabC,Glicemia,2025-02-17,alterado,76,insuficiencia renal,enalapril
+619,310,LabB,Raio X torax,2024-01-01,alterado,73,obesidade,metformina
+620,310,LabD,Ultrassom abdominal,2025-06-07,normal,73,obesidade,metformina
+621,311,LabA,Glicemia,2024-09-22,normal,36,anemia,metformina
+622,311,LabD,Hemograma,2025-01-10,alterado,36,anemia,metformina
+623,312,LabC,Ultrassom abdominal,2024-09-28,alterado,37,diabetes,metformina
+624,312,LabC,Raio X torax,2024-02-23,alterado,37,diabetes,metformina
+625,313,LabB,Hemograma,2025-10-13,alterado,70,gripe,sertralina
+626,313,LabA,Ultrassom abdominal,2024-04-15,normal,70,gripe,sertralina
+627,314,LabA,Glicemia,2025-02-18,normal,14,hipertensao,fluoxetina
+628,314,LabC,Ultrassom abdominal,2025-04-25,alterado,14,hipertensao,fluoxetina
+629,315,LabA,Colesterol,2023-11-03,alterado,17,hipertensao,amoxicilina
+630,315,LabC,Hemograma,2025-02-01,alterado,17,hipertensao,amoxicilina
+631,316,LabB,Ultrassom abdominal,2024-03-15,alterado,81,anemia,paracetamol
+632,316,LabD,Colesterol,2024-07-27,alterado,81,anemia,paracetamol
+633,317,LabC,Glicemia,2024-06-02,normal,2,obesidade,cetirizina
+634,317,LabA,Glicemia,2024-12-09,normal,2,obesidade,cetirizina
+635,318,LabB,Glicemia,2024-03-11,normal,17,anemia,amoxicilina
+636,318,LabB,Ultrassom abdominal,2025-10-19,alterado,17,anemia,amoxicilina
+637,319,LabB,Glicemia,2024-03-10,alterado,37,fibromialgia,sertralina
+638,319,LabB,Ultrassom abdominal,2024-11-30,normal,37,fibromialgia,sertralina
+639,320,LabD,Ultrassom abdominal,2024-04-07,alterado,65,depressao,metformina
+640,320,LabA,Glicemia,2024-11-26,normal,65,depressao,metformina
+641,321,LabD,Raio X torax,2025-03-23,alterado,88,gripe,fluoxetina
+642,321,LabC,Hemograma,2025-01-16,normal,88,gripe,fluoxetina
+643,322,LabA,Raio X torax,2025-08-18,normal,70,insulina alta,ibuprofeno
+644,322,LabD,Ultrassom abdominal,2025-03-10,normal,70,insulina alta,ibuprofeno
+645,323,LabA,Raio X torax,2025-02-24,alterado,27,artrite,metformina
+646,323,LabA,ECG,2023-11-18,normal,27,artrite,metformina
+647,324,LabD,ECG,2025-01-07,normal,56,hepatite,enalapril
+648,324,LabC,Hemograma,2023-11-06,alterado,56,hepatite,enalapril
+649,325,LabB,Ultrassom abdominal,2025-03-31,normal,21,hipotireoidismo,enalapril
+650,325,LabB,Colesterol,2025-04-10,alterado,21,hipotireoidismo,enalapril
+651,326,LabB,Glicemia,2025-08-05,normal,50,bronquite,cetirizina
+652,326,LabA,Colesterol,2025-06-24,normal,50,bronquite,cetirizina
+653,327,LabA,Ultrassom abdominal,2025-04-30,normal,22,gripe,furosemida
+654,327,LabC,Hemograma,2025-04-20,alterado,22,gripe,furosemida
+655,328,LabD,Colesterol,2023-11-03,alterado,13,gripe,enalapril
+656,328,LabB,ECG,2024-09-17,normal,13,gripe,enalapril
+657,329,LabD,ECG,2024-03-01,alterado,35,insuficiencia renal,losartana
+658,329,LabD,Hemograma,2024-07-06,normal,35,insuficiencia renal,losartana
+659,330,LabB,Colesterol,2024-07-01,alterado,62,pressao alta,simvastatina
+660,330,LabC,Glicemia,2025-08-29,alterado,62,pressao alta,simvastatina
+661,331,LabC,Colesterol,2025-07-13,normal,78,pressao alta,enalapril
+662,331,LabA,Ultrassom abdominal,2025-09-22,normal,78,pressao alta,enalapril
+663,332,LabD,Glicemia,2025-08-04,normal,38,hipotireoidismo,fluoxetina
+664,332,LabC,Raio X torax,2025-07-31,normal,38,hipotireoidismo,fluoxetina
+665,333,LabC,Hemograma,2025-04-22,normal,88,gripe,prednisona
+666,333,LabA,Raio X torax,2025-09-17,alterado,88,gripe,prednisona
+667,334,LabD,Glicemia,2023-12-06,alterado,53,hepatite,prednisona
+668,334,LabA,Raio X torax,2025-09-26,alterado,53,hepatite,prednisona
+669,335,LabC,ECG,2025-05-21,alterado,36,colesterol alto,omeprazol
+670,335,LabB,Glicemia,2025-05-02,normal,36,colesterol alto,omeprazol
+671,336,LabC,Raio X torax,2024-08-04,normal,9,obesidade,sertralina
+672,336,LabD,Colesterol,2024-04-28,normal,9,obesidade,sertralina
+673,337,LabC,ECG,2025-05-29,alterado,83,insulina alta,cetirizina
+674,337,LabA,Hemograma,2025-10-16,alterado,83,insulina alta,cetirizina
+675,338,LabC,Glicemia,2024-12-13,normal,46,hipertensao,atenolol
+676,338,LabC,Hemograma,2024-01-13,normal,46,hipertensao,atenolol
+677,339,LabD,Ultrassom abdominal,2024-03-27,alterado,61,hepatite,losartana
+678,339,LabC,Raio X torax,2023-12-28,normal,61,hepatite,losartana
+679,340,LabD,Ultrassom abdominal,2024-04-23,alterado,78,diabetes,cetirizina
+680,340,LabB,Colesterol,2024-04-17,normal,78,diabetes,cetirizina
+681,341,LabD,Ultrassom abdominal,2025-03-11,normal,80,colesterol alto,ibuprofeno
+682,341,LabB,Colesterol,2023-11-08,alterado,80,colesterol alto,ibuprofeno
+683,342,LabB,Hemograma,2023-12-14,alterado,78,hipotireoidismo,losartana
+684,342,LabD,Raio X torax,2025-02-20,alterado,78,hipotireoidismo,losartana
+685,343,LabC,ECG,2023-12-01,normal,52,gripe,captopril
+686,343,LabB,Colesterol,2025-05-17,normal,52,gripe,captopril
+687,344,LabC,Colesterol,2024-11-16,alterado,18,anemia,cetirizina
+688,344,LabA,Raio X torax,2024-08-30,alterado,18,anemia,cetirizina
+689,345,LabB,Colesterol,2023-11-30,normal,52,obesidade,paracetamol
+690,345,LabD,Raio X torax,2024-11-08,normal,52,obesidade,paracetamol
+691,346,LabD,Colesterol,2025-04-10,alterado,9,colesterol alto,losartana
+692,346,LabB,Glicemia,2025-08-05,normal,9,colesterol alto,losartana
+693,347,LabB,Hemograma,2024-10-30,normal,15,colesterol alto,prednisona
+694,347,LabB,ECG,2024-10-26,alterado,15,colesterol alto,prednisona
+695,348,LabD,ECG,2024-12-26,alterado,10,gripe,metformina
+696,348,LabB,Glicemia,2024-06-29,normal,10,gripe,metformina
+697,349,LabA,ECG,2024-12-09,alterado,59,hipertensao,prednisona
+698,349,LabA,Raio X torax,2024-08-12,alterado,59,hipertensao,prednisona
+699,350,LabA,Hemograma,2024-01-25,alterado,27,colesterol alto,captopril
+700,350,LabD,Raio X torax,2024-12-22,normal,27,colesterol alto,captopril
+701,351,LabC,Colesterol,2025-03-11,normal,55,asma,fluoxetina
+702,351,LabC,Hemograma,2025-05-14,alterado,55,asma,fluoxetina
+703,352,LabA,Glicemia,2025-02-06,normal,70,depressao,paracetamol
+704,352,LabC,Hemograma,2024-08-26,alterado,70,depressao,paracetamol
+705,353,LabC,Colesterol,2024-03-05,normal,8,hipotireoidismo,sertralina
+706,353,LabD,Colesterol,2023-11-22,alterado,8,hipotireoidismo,sertralina
+707,354,LabC,Glicemia,2025-05-18,normal,42,insulina alta,captopril
+708,354,LabB,Glicemia,2024-05-22,alterado,42,insulina alta,captopril
+709,355,LabD,Colesterol,2025-02-06,normal,8,colesterol alto,paracetamol
+710,355,LabB,Colesterol,2024-02-10,normal,8,colesterol alto,paracetamol
+711,356,LabC,Raio X torax,2024-02-06,normal,51,pressao alta,metformina
+712,356,LabA,ECG,2025-10-01,normal,51,pressao alta,metformina
+713,357,LabA,ECG,2024-12-27,alterado,30,artrite,atenolol
+714,357,LabB,Colesterol,2023-11-14,normal,30,artrite,atenolol
+715,358,LabD,Hemograma,2024-10-25,alterado,70,asma,amoxicilina
+716,358,LabC,ECG,2025-02-03,normal,70,asma,amoxicilina
+717,359,LabB,Colesterol,2025-05-25,normal,28,gastrite,fluoxetina
+718,359,LabC,Glicemia,2025-09-01,normal,28,gastrite,fluoxetina
+719,360,LabC,Ultrassom abdominal,2025-10-13,alterado,71,hipertensao,omeprazol
+720,360,LabC,ECG,2025-10-17,alterado,71,hipertensao,omeprazol
+721,361,LabA,Colesterol,2024-11-21,alterado,14,hipertensao,prednisona
+722,361,LabA,Raio X torax,2024-01-07,normal,14,hipertensao,prednisona
+723,362,LabC,Raio X torax,2023-12-16,normal,25,insuficiencia renal,atenolol
+724,362,LabC,Colesterol,2025-01-21,normal,25,insuficiencia renal,atenolol
+725,363,LabA,ECG,2024-03-15,normal,87,depressao,metformina
+726,363,LabC,Glicemia,2025-08-28,alterado,87,depressao,metformina
+727,364,LabC,ECG,2024-06-22,normal,78,pressao alta,simvastatina
+728,364,LabB,Hemograma,2024-10-13,alterado,78,pressao alta,simvastatina
+729,365,LabB,Hemograma,2024-08-22,alterado,47,asma,enalapril
+730,365,LabA,ECG,2025-04-19,alterado,47,asma,enalapril
+731,366,LabC,Raio X torax,2025-07-23,alterado,65,gripe,paracetamol
+732,366,LabB,Hemograma,2024-10-22,alterado,65,gripe,paracetamol
+733,367,LabD,Ultrassom abdominal,2023-11-24,normal,16,hipertensao,sertralina
+734,367,LabC,ECG,2023-12-29,alterado,16,hipertensao,sertralina
+735,368,LabD,Ultrassom abdominal,2023-12-21,alterado,16,hipertensao,atenolol
+736,368,LabC,Hemograma,2025-05-20,alterado,16,hipertensao,atenolol
+737,369,LabB,Colesterol,2024-12-23,normal,35,hipertensao,losartana
+738,369,LabC,Ultrassom abdominal,2024-10-30,normal,35,hipertensao,losartana
+739,370,LabB,Raio X torax,2024-08-23,alterado,68,anemia,cetirizina
+740,370,LabB,Glicemia,2023-11-06,normal,68,anemia,cetirizina
+741,371,LabC,Glicemia,2025-07-18,alterado,19,hipertensao,paracetamol
+742,371,LabA,Hemograma,2025-01-29,alterado,19,hipertensao,paracetamol
+743,372,LabA,Hemograma,2025-09-06,normal,4,ansiedade,amoxicilina
+744,372,LabB,Raio X torax,2024-10-30,normal,4,ansiedade,amoxicilina
+745,373,LabA,Glicemia,2024-06-24,normal,36,gastrite,captopril
+746,373,LabA,Colesterol,2023-12-26,normal,36,gastrite,captopril
+747,374,LabD,Raio X torax,2024-05-12,normal,45,diabetes,amoxicilina
+748,374,LabD,ECG,2024-10-07,alterado,45,diabetes,amoxicilina
+749,375,LabC,Raio X torax,2023-11-04,normal,34,insulina alta,ibuprofeno
+750,375,LabB,Colesterol,2025-07-13,normal,34,insulina alta,ibuprofeno
+751,376,LabC,Glicemia,2025-02-06,alterado,16,fibromialgia,omeprazol
+752,376,LabB,Raio X torax,2025-01-30,alterado,16,fibromialgia,omeprazol
+753,377,LabB,Colesterol,2023-11-30,normal,57,depressao,omeprazol
+754,377,LabA,Raio X torax,2025-10-22,alterado,57,depressao,omeprazol
+755,378,LabA,Raio X torax,2024-08-26,normal,48,hipertensao,fluoxetina
+756,378,LabB,ECG,2024-05-26,alterado,48,hipertensao,fluoxetina
+757,379,LabC,Ultrassom abdominal,2024-03-13,normal,36,insulina alta,prednisona
+758,379,LabD,Hemograma,2025-09-16,normal,36,insulina alta,prednisona
+759,380,LabD,Colesterol,2024-04-06,alterado,55,bronquite,cetirizina
+760,380,LabA,Hemograma,2024-02-22,alterado,55,bronquite,cetirizina
+761,381,LabD,Glicemia,2025-04-01,alterado,69,insulina alta,paracetamol
+762,381,LabB,Ultrassom abdominal,2025-05-20,alterado,69,insulina alta,paracetamol
+763,382,LabA,Colesterol,2025-08-02,alterado,80,gastrite,sertralina
+764,382,LabA,Colesterol,2025-01-21,alterado,80,gastrite,sertralina
+765,383,LabD,Colesterol,2024-03-24,normal,20,hepatite,enalapril
+766,383,LabC,Raio X torax,2024-11-17,normal,20,hepatite,enalapril
+767,384,LabB,Hemograma,2025-03-29,normal,33,fibromialgia,fluoxetina
+768,384,LabC,ECG,2025-10-01,alterado,33,fibromialgia,fluoxetina
+769,385,LabC,Raio X torax,2025-05-15,alterado,6,insuficiencia renal,cetirizina
+770,385,LabB,Raio X torax,2023-12-09,alterado,6,insuficiencia renal,cetirizina
+771,386,LabC,Raio X torax,2025-01-19,normal,75,bronquite,fluoxetina
+772,386,LabC,Raio X torax,2025-04-23,normal,75,bronquite,fluoxetina
+773,387,LabC,Glicemia,2023-12-03,alterado,55,colesterol alto,fluoxetina
+774,387,LabD,Raio X torax,2024-04-27,normal,55,colesterol alto,fluoxetina
+775,388,LabA,Ultrassom abdominal,2025-04-28,normal,84,depressao,furosemida
+776,388,LabC,Hemograma,2023-12-20,normal,84,depressao,furosemida
+777,389,LabD,Raio X torax,2024-02-01,normal,48,gastrite,fluoxetina
+778,389,LabC,Colesterol,2024-08-09,alterado,48,gastrite,fluoxetina
+779,390,LabA,Raio X torax,2023-12-04,normal,70,fibromialgia,captopril
+780,390,LabA,Colesterol,2023-12-02,alterado,70,fibromialgia,captopril
+781,391,LabB,Hemograma,2024-09-30,normal,28,insulina alta,paracetamol
+782,391,LabA,Hemograma,2025-10-15,alterado,28,insulina alta,paracetamol
+783,392,LabB,Ultrassom abdominal,2025-04-12,normal,71,artrite,prednisona
+784,392,LabD,Colesterol,2025-07-30,alterado,71,artrite,prednisona
+785,393,LabD,ECG,2024-04-05,normal,21,artrite,metformina
+786,393,LabB,ECG,2024-05-11,normal,21,artrite,metformina
+787,394,LabA,ECG,2023-11-26,alterado,67,obesidade,furosemida
+788,394,LabA,Glicemia,2024-08-19,alterado,67,obesidade,furosemida
+789,395,LabD,Hemograma,2025-08-17,alterado,73,depressao,cetirizina
+790,395,LabD,Ultrassom abdominal,2025-05-20,alterado,73,depressao,cetirizina
+791,396,LabC,Hemograma,2024-01-09,normal,5,pressao alta,sertralina
+792,396,LabA,ECG,2024-05-09,alterado,5,pressao alta,sertralina
+793,397,LabB,Colesterol,2024-12-19,normal,40,pressao alta,omeprazol
+794,397,LabD,Ultrassom abdominal,2024-11-03,alterado,40,pressao alta,omeprazol
+795,398,LabC,Hemograma,2025-08-03,alterado,19,fibromialgia,amoxicilina
+796,398,LabC,ECG,2024-04-07,normal,19,fibromialgia,amoxicilina
+797,399,LabC,Raio X torax,2024-08-24,alterado,38,insulina alta,ibuprofeno
+798,399,LabB,Ultrassom abdominal,2024-10-12,normal,38,insulina alta,ibuprofeno
+799,400,LabA,Ultrassom abdominal,2023-12-10,alterado,74,insuficiencia renal,amoxicilina
+800,400,LabA,Raio X torax,2025-08-22,normal,74,insuficiencia renal,amoxicilina
+801,401,LabA,ECG,2025-08-06,normal,51,fibromialgia,metformina
+802,401,LabB,Ultrassom abdominal,2025-06-16,normal,51,fibromialgia,metformina
+803,402,LabD,Ultrassom abdominal,2024-03-01,alterado,4,obesidade,captopril
+804,402,LabD,ECG,2025-01-29,alterado,4,obesidade,captopril
+805,403,LabD,ECG,2025-01-12,normal,79,asma,ibuprofeno
+806,403,LabB,Colesterol,2024-06-05,normal,79,asma,ibuprofeno
+807,404,LabC,Hemograma,2024-09-19,alterado,23,hipertensao,simvastatina
+808,404,LabB,ECG,2024-11-10,alterado,23,hipertensao,simvastatina
+809,405,LabB,ECG,2025-09-10,alterado,65,depressao,amoxicilina
+810,405,LabB,ECG,2025-06-19,alterado,65,depressao,amoxicilina
+811,406,LabB,Ultrassom abdominal,2023-12-20,alterado,2,pressao alta,atenolol
+812,406,LabC,Ultrassom abdominal,2025-10-19,normal,2,pressao alta,atenolol
+813,407,LabB,ECG,2024-04-23,normal,27,bronquite,furosemida
+814,407,LabD,Glicemia,2025-05-21,normal,27,bronquite,furosemida
+815,408,LabD,ECG,2025-05-26,alterado,47,anemia,captopril
+816,408,LabB,Raio X torax,2023-10-30,alterado,47,anemia,captopril
+817,409,LabD,Glicemia,2025-01-28,normal,60,colesterol alto,ibuprofeno
+818,409,LabD,Raio X torax,2025-09-26,alterado,60,colesterol alto,ibuprofeno
+819,410,LabD,ECG,2024-09-08,alterado,53,insuficiencia renal,cetirizina
+820,410,LabB,Raio X torax,2024-04-30,normal,53,insuficiencia renal,cetirizina
+821,411,LabB,Raio X torax,2024-06-23,alterado,89,colesterol alto,cetirizina
+822,411,LabC,Ultrassom abdominal,2024-04-17,alterado,89,colesterol alto,cetirizina
+823,412,LabD,Glicemia,2024-10-23,normal,53,hipotireoidismo,fluoxetina
+824,412,LabD,Glicemia,2024-02-11,alterado,53,hipotireoidismo,fluoxetina
+825,413,LabB,ECG,2024-11-26,normal,84,obesidade,captopril
+826,413,LabD,Colesterol,2023-11-01,normal,84,obesidade,captopril
+827,414,LabC,Raio X torax,2025-02-09,normal,83,hipertensao,furosemida
+828,414,LabD,Raio X torax,2024-05-10,alterado,83,hipertensao,furosemida
+829,415,LabA,Ultrassom abdominal,2025-04-11,alterado,53,gastrite,furosemida
+830,415,LabB,Ultrassom abdominal,2025-08-05,alterado,53,gastrite,furosemida
+831,416,LabA,Glicemia,2024-08-20,normal,27,colesterol alto,metformina
+832,416,LabA,Raio X torax,2024-06-03,alterado,27,colesterol alto,metformina
+833,417,LabA,ECG,2025-05-04,normal,85,insuficiencia renal,amoxicilina
+834,417,LabA,ECG,2024-01-14,normal,85,insuficiencia renal,amoxicilina
+835,418,LabA,ECG,2024-01-14,normal,40,gripe,metformina
+836,418,LabB,Colesterol,2025-05-24,alterado,40,gripe,metformina
+837,419,LabC,Raio X torax,2024-11-25,alterado,21,depressao,simvastatina
+838,419,LabB,ECG,2024-02-24,normal,21,depressao,simvastatina
+839,420,LabC,Colesterol,2024-01-08,alterado,85,gripe,metformina
+840,420,LabD,Raio X torax,2025-08-25,alterado,85,gripe,metformina
+841,421,LabC,Hemograma,2024-03-26,alterado,27,diabetes,atenolol
+842,421,LabC,Raio X torax,2024-06-13,normal,27,diabetes,atenolol
+843,422,LabC,Glicemia,2024-08-03,normal,58,insulina alta,sertralina
+844,422,LabD,ECG,2024-05-19,alterado,58,insulina alta,sertralina
+845,423,LabA,ECG,2024-07-09,normal,78,hipotireoidismo,atenolol
+846,423,LabA,Raio X torax,2024-11-20,alterado,78,hipotireoidismo,atenolol
+847,424,LabB,ECG,2024-03-03,normal,13,bronquite,ibuprofeno
+848,424,LabB,Colesterol,2024-12-03,normal,13,bronquite,ibuprofeno
+849,425,LabD,Ultrassom abdominal,2025-06-26,normal,12,asma,metformina
+850,425,LabD,Ultrassom abdominal,2023-12-23,normal,12,asma,metformina
+851,426,LabA,ECG,2025-09-18,alterado,35,gastrite,amoxicilina
+852,426,LabD,Hemograma,2024-10-29,alterado,35,gastrite,amoxicilina
+853,427,LabA,Colesterol,2025-06-25,alterado,16,pressao alta,captopril
+854,427,LabC,Raio X torax,2024-09-20,normal,16,pressao alta,captopril
+855,428,LabA,Colesterol,2024-01-20,normal,26,fibromialgia,atenolol
+856,428,LabC,ECG,2024-12-03,alterado,26,fibromialgia,atenolol
+857,429,LabD,Glicemia,2024-10-28,normal,79,insuficiencia renal,captopril
+858,429,LabA,Raio X torax,2024-11-02,normal,79,insuficiencia renal,captopril
+859,430,LabD,Glicemia,2024-11-16,alterado,28,insuficiencia renal,captopril
+860,430,LabB,Colesterol,2024-07-13,normal,28,insuficiencia renal,captopril
+861,431,LabA,Raio X torax,2024-06-15,alterado,58,insulina alta,prednisona
+862,431,LabD,Colesterol,2025-04-21,normal,58,insulina alta,prednisona
+863,432,LabA,Hemograma,2025-07-04,alterado,41,hipertensao,furosemida
+864,432,LabC,Colesterol,2024-08-22,alterado,41,hipertensao,furosemida
+865,433,LabA,Colesterol,2025-01-14,alterado,78,asma,fluoxetina
+866,433,LabD,Hemograma,2025-02-11,normal,78,asma,fluoxetina
+867,434,LabA,Raio X torax,2025-02-28,normal,26,colesterol alto,enalapril
+868,434,LabD,Hemograma,2025-01-14,alterado,26,colesterol alto,enalapril
+869,435,LabC,Glicemia,2024-07-26,normal,39,colesterol alto,atenolol
+870,435,LabB,Ultrassom abdominal,2024-08-22,alterado,39,colesterol alto,atenolol
+871,436,LabC,ECG,2024-12-05,normal,46,artrite,captopril
+872,436,LabC,Ultrassom abdominal,2024-03-20,normal,46,artrite,captopril
+873,437,LabB,Raio X torax,2024-11-30,alterado,22,asma,sertralina
+874,437,LabD,ECG,2024-12-03,alterado,22,asma,sertralina
+875,438,LabD,Colesterol,2024-10-27,alterado,50,hipertensao,furosemida
+876,438,LabA,Ultrassom abdominal,2024-05-23,alterado,50,hipertensao,furosemida
+877,439,LabC,ECG,2024-10-23,alterado,38,colesterol alto,furosemida
+878,439,LabC,Ultrassom abdominal,2023-12-27,alterado,38,colesterol alto,furosemida
+879,440,LabA,Colesterol,2025-09-25,normal,87,depressao,cetirizina
+880,440,LabA,Ultrassom abdominal,2024-04-09,normal,87,depressao,cetirizina
+881,441,LabD,Hemograma,2025-01-31,normal,58,asma,fluoxetina
+882,441,LabC,ECG,2025-06-27,normal,58,asma,fluoxetina
+883,442,LabB,ECG,2024-08-16,normal,3,bronquite,metformina
+884,442,LabC,Ultrassom abdominal,2025-03-05,normal,3,bronquite,metformina
+885,443,LabB,Colesterol,2024-08-13,normal,45,asma,prednisona
+886,443,LabA,Ultrassom abdominal,2024-02-18,alterado,45,asma,prednisona
+887,444,LabC,Raio X torax,2025-07-03,normal,46,asma,simvastatina
+888,444,LabB,Hemograma,2025-05-04,normal,46,asma,simvastatina
+889,445,LabC,ECG,2024-08-29,alterado,8,obesidade,amoxicilina
+890,445,LabC,Hemograma,2024-09-08,alterado,8,obesidade,amoxicilina
+891,446,LabA,ECG,2024-01-14,alterado,39,gripe,losartana
+892,446,LabA,Raio X torax,2024-02-28,normal,39,gripe,losartana
+893,447,LabA,Raio X torax,2023-12-07,alterado,66,hepatite,metformina
+894,447,LabD,Glicemia,2024-10-26,normal,66,hepatite,metformina
+895,448,LabB,Colesterol,2024-11-20,alterado,41,hipertensao,metformina
+896,448,LabB,Glicemia,2024-12-09,normal,41,hipertensao,metformina
+897,449,LabD,Glicemia,2025-09-12,alterado,38,gastrite,fluoxetina
+898,449,LabA,Colesterol,2024-11-01,alterado,38,gastrite,fluoxetina
+899,450,LabB,Colesterol,2024-08-29,normal,52,colesterol alto,sertralina
+900,450,LabB,ECG,2024-07-03,normal,52,colesterol alto,sertralina
+901,451,LabB,Colesterol,2023-12-23,normal,20,colesterol alto,ibuprofeno
+902,451,LabD,Glicemia,2024-04-16,alterado,20,colesterol alto,ibuprofeno
+903,452,LabA,Colesterol,2025-01-23,normal,40,ansiedade,captopril
+904,452,LabD,ECG,2025-08-18,alterado,40,ansiedade,captopril
+905,453,LabC,ECG,2024-11-07,alterado,64,ansiedade,metformina
+906,453,LabB,Hemograma,2024-06-22,alterado,64,ansiedade,metformina
+907,454,LabA,Colesterol,2025-08-11,normal,2,obesidade,paracetamol
+908,454,LabD,ECG,2025-05-16,alterado,2,obesidade,paracetamol
+909,455,LabD,Colesterol,2025-07-31,alterado,87,ansiedade,amoxicilina
+910,455,LabB,Ultrassom abdominal,2024-03-26,alterado,87,ansiedade,amoxicilina
+911,456,LabA,ECG,2024-07-04,normal,25,hipotireoidismo,atenolol
+912,456,LabA,Raio X torax,2024-12-29,alterado,25,hipotireoidismo,atenolol
+913,457,LabD,ECG,2023-12-16,alterado,18,ansiedade,captopril
+914,457,LabA,Colesterol,2025-01-06,normal,18,ansiedade,captopril
+915,458,LabD,Ultrassom abdominal,2024-07-14,alterado,47,insulina alta,enalapril
+916,458,LabD,ECG,2025-07-06,normal,47,insulina alta,enalapril
+917,459,LabD,Raio X torax,2025-09-29,alterado,78,gastrite,ibuprofeno
+918,459,LabA,Hemograma,2025-08-10,alterado,78,gastrite,ibuprofeno
+919,460,LabA,Ultrassom abdominal,2025-06-29,alterado,66,artrite,atenolol
+920,460,LabD,Raio X torax,2025-03-26,alterado,66,artrite,atenolol
+921,461,LabA,Ultrassom abdominal,2025-03-12,normal,70,fibromialgia,captopril
+922,461,LabB,Glicemia,2024-05-31,normal,70,fibromialgia,captopril
+923,462,LabC,Colesterol,2023-10-31,normal,4,hipotireoidismo,metformina
+924,462,LabD,Glicemia,2025-09-18,alterado,4,hipotireoidismo,metformina
+925,463,LabD,Ultrassom abdominal,2025-09-04,alterado,86,ansiedade,captopril
+926,463,LabB,Ultrassom abdominal,2024-06-12,alterado,86,ansiedade,captopril
+927,464,LabC,Hemograma,2025-03-27,normal,84,obesidade,amoxicilina
+928,464,LabD,Raio X torax,2024-03-03,normal,84,obesidade,amoxicilina
+929,465,LabC,Hemograma,2025-03-30,alterado,80,anemia,cetirizina
+930,465,LabA,ECG,2025-06-22,alterado,80,anemia,cetirizina
+931,466,LabC,Glicemia,2025-07-31,alterado,34,gripe,losartana
+932,466,LabB,Raio X torax,2025-10-20,normal,34,gripe,losartana
+933,467,LabD,Ultrassom abdominal,2025-10-04,normal,6,bronquite,cetirizina
+934,467,LabA,ECG,2025-01-21,alterado,6,bronquite,cetirizina
+935,468,LabB,Raio X torax,2024-11-28,alterado,36,diabetes,losartana
+936,468,LabD,Hemograma,2025-08-08,alterado,36,diabetes,losartana
+937,469,LabC,Colesterol,2024-07-19,alterado,68,hipertensao,amoxicilina
+938,469,LabB,Glicemia,2024-09-11,normal,68,hipertensao,amoxicilina
+939,470,LabD,Ultrassom abdominal,2023-11-22,normal,38,hepatite,ibuprofeno
+940,470,LabB,Raio X torax,2024-09-11,normal,38,hepatite,ibuprofeno
+941,471,LabB,Raio X torax,2024-10-23,normal,37,hepatite,furosemida
+942,471,LabD,ECG,2023-12-31,normal,37,hepatite,furosemida
+943,472,LabB,Glicemia,2024-01-02,alterado,79,hepatite,fluoxetina
+944,472,LabC,ECG,2024-07-05,alterado,79,hepatite,fluoxetina
+945,473,LabC,Glicemia,2025-05-12,normal,76,hipotireoidismo,atenolol
+946,473,LabB,ECG,2024-03-23,normal,76,hipotireoidismo,atenolol
+947,474,LabD,Hemograma,2024-06-22,alterado,48,depressao,fluoxetina
+948,474,LabB,Ultrassom abdominal,2024-07-03,alterado,48,depressao,fluoxetina
+949,475,LabB,Raio X torax,2025-02-25,alterado,49,asma,simvastatina
+950,475,LabD,Raio X torax,2025-07-16,alterado,49,asma,simvastatina
+951,476,LabA,Ultrassom abdominal,2024-04-23,alterado,49,insulina alta,prednisona
+952,476,LabA,Ultrassom abdominal,2024-12-01,normal,49,insulina alta,prednisona
+953,477,LabD,Ultrassom abdominal,2024-11-05,alterado,62,hipotireoidismo,metformina
+954,477,LabA,Ultrassom abdominal,2024-08-12,normal,62,hipotireoidismo,metformina
+955,478,LabB,Hemograma,2025-02-16,normal,25,depressao,atenolol
+956,478,LabD,Ultrassom abdominal,2023-11-20,normal,25,depressao,atenolol
+957,479,LabD,Glicemia,2024-04-29,normal,23,anemia,enalapril
+958,479,LabC,Ultrassom abdominal,2023-11-16,alterado,23,anemia,enalapril
+959,480,LabC,Glicemia,2025-03-17,normal,14,insulina alta,amoxicilina
+960,480,LabC,ECG,2024-11-23,alterado,14,insulina alta,amoxicilina
+961,481,LabC,Ultrassom abdominal,2025-01-29,alterado,58,hipertensao,ibuprofeno
+962,481,LabA,Raio X torax,2025-05-27,alterado,58,hipertensao,ibuprofeno
+963,482,LabD,Raio X torax,2025-08-06,alterado,21,hipotireoidismo,captopril
+964,482,LabB,Colesterol,2025-09-08,alterado,21,hipotireoidismo,captopril
+965,483,LabB,ECG,2024-12-01,alterado,35,obesidade,atenolol
+966,483,LabB,Raio X torax,2025-07-23,alterado,35,obesidade,atenolol
+967,484,LabA,Ultrassom abdominal,2024-12-23,normal,21,hipotireoidismo,ibuprofeno
+968,484,LabB,Glicemia,2025-06-19,normal,21,hipotireoidismo,ibuprofeno
+969,485,LabC,Raio X torax,2025-10-15,alterado,32,obesidade,sertralina
+970,485,LabA,Hemograma,2025-07-30,alterado,32,obesidade,sertralina
+971,486,LabC,Hemograma,2025-10-28,alterado,83,bronquite,enalapril
+972,486,LabD,Ultrassom abdominal,2025-03-01,normal,83,bronquite,enalapril
+973,487,LabB,Glicemia,2024-05-27,normal,25,bronquite,prednisona
+974,487,LabC,ECG,2023-12-13,alterado,25,bronquite,prednisona
+975,488,LabD,Colesterol,2024-12-18,normal,37,insulina alta,sertralina
+976,488,LabA,Colesterol,2025-07-30,normal,37,insulina alta,sertralina
+977,489,LabD,Raio X torax,2025-09-30,alterado,74,pressao alta,omeprazol
+978,489,LabB,ECG,2025-09-14,normal,74,pressao alta,omeprazol
+979,490,LabC,ECG,2025-10-25,normal,2,ansiedade,losartana
+980,490,LabA,Colesterol,2024-06-12,normal,2,ansiedade,losartana
+981,491,LabB,ECG,2024-06-19,alterado,18,fibromialgia,ibuprofeno
+982,491,LabC,Glicemia,2025-10-24,normal,18,fibromialgia,ibuprofeno
+983,492,LabB,Raio X torax,2024-12-28,alterado,4,ansiedade,losartana
+984,492,LabA,Raio X torax,2025-02-09,normal,4,ansiedade,losartana
+985,493,LabB,Hemograma,2024-07-10,alterado,76,anemia,omeprazol
+986,493,LabB,Colesterol,2024-08-26,alterado,76,anemia,omeprazol
+987,494,LabB,Hemograma,2024-02-21,normal,54,gripe,omeprazol
+988,494,LabC,Raio X torax,2025-02-22,normal,54,gripe,omeprazol
+989,495,LabD,ECG,2025-01-08,normal,56,asma,losartana
+990,495,LabD,Hemograma,2025-03-30,alterado,56,asma,losartana
+991,496,LabC,Glicemia,2025-06-25,normal,24,colesterol alto,captopril
+992,496,LabC,Hemograma,2023-12-22,normal,24,colesterol alto,captopril
+993,497,LabD,Hemograma,2025-10-18,alterado,50,gastrite,sertralina
+994,497,LabC,Colesterol,2024-01-24,alterado,50,gastrite,sertralina
+995,498,LabB,ECG,2024-07-19,alterado,53,asma,simvastatina
+996,498,LabB,Glicemia,2023-12-11,normal,53,asma,simvastatina
+997,499,LabB,Raio X torax,2025-10-08,alterado,51,obesidade,enalapril
+998,499,LabC,Glicemia,2024-04-24,normal,51,obesidade,enalapril
+999,500,LabB,Ultrassom abdominal,2023-11-19,normal,37,asma,sertralina
+1000,500,LabB,Raio X torax,2024-11-20,alterado,37,asma,sertralina
