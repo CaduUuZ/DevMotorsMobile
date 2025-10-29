@@ -1,16 +1,15 @@
-const mysql = require('mysql2');
+// db.js
+const mysql = require('mysql2/promise'); // <-- versão promise
 
-const connection = mysql.createConnection({
+const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'lab_faculdade',
-  port: 3307 // porta customizada do seu MySQL
+  port: 3307,           // sua porta customizada
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-connection.connect((err) => {
-  if (err) throw err;
-  console.log('Conectado ao MySQL na porta 3307!');
-});
-
-module.exports = connection;
+module.exports = db;

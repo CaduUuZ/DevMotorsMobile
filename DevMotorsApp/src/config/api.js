@@ -8,3 +8,6 @@ export const API_BASE_URL = Platform.OS === 'android'
   : `http://${HOST_IP}:${PORT}`;
 
 export const PACIENTES_ENDPOINT = `${API_BASE_URL}/pacientes`;
+export const EXAMES_ENDPOINT = `${API_BASE_URL}/exames`;
+export const REGISTER_ENDPOINT = `${API_BASE_URL}/usuarios/register`;
+export const LOGIN_ENDPOINT = `${API_BASE_URL}/usuarios/login`;

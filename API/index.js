@@ -14,7 +14,7 @@ const pacienteRoutes = require('./routes/paciente');
 const exameRoutes = require('./routes/exame');
 
 // Usando as rotas com prefixos
-app.use('/usuarios', usuarioRoutes);
+app.use('/users', usuarioRoutes);
 app.use('/pacientes', pacienteRoutes);
 app.use('/exames', exameRoutes);
 

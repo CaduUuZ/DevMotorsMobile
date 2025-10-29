@@ -1,81 +1,91 @@
+// routes/usuario.js
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const db = require('../db'); // db.js usando mysql2/promise
 const bcrypt = require('bcrypt');
 
-// ========== ROTA DE REGISTRO ==========
-router.post('/registrar', async (req, res) => {
+// ======= ROTA DE REGISTRO =======
+router.post('/register', async (req, res) => {
   const { email, senha } = req.body;
-  // Validação básica
+
   if (!email || !senha) {
     return res.status(400).json({ message: 'Email e senha são obrigatórios' });
   }
+
   try {
-    // Verifica se o email já existe no banco
-    const usuarioExistente = await db.query(
+    // Consulta se o usuário já existe
+    const [usuarioExistente] = await db.query(
       'SELECT * FROM usuarios WHERE email = ?',
       [email]
     );
+
     if (usuarioExistente.length > 0) {
       return res.status(409).json({ message: 'Email já cadastrado' });
     }
-    
-    // Criptografa a senha
+
+    // Hash da senha
     const saltRounds = 10;
     const senhaHash = await bcrypt.hash(senha, saltRounds);
-    
-    // Insere o usuário no banco de dados
-    const resultado = await db.query(
+
+    // Insere o usuário
+    const [resultado] = await db.query(
       'INSERT INTO usuarios (email, senha) VALUES (?, ?)',
       [email, senhaHash]
     );
-    // Retorna sucesso
-    res.status(201).json({ 
+
+    return res.status(201).json({
       message: 'Usuário registrado com sucesso',
-      id: resultado.insertId 
+      id: resultado.insertId
     });
+
   } catch (erro) {
     console.error('Erro ao registrar usuário:', erro);
-    res.status(500).json({ message: 'Erro ao registrar usuário' });
+    return res.status(500).json({
+      message: 'Erro ao registrar usuário',
+      error: erro.message
+    });
   }
 });
 
-// ========== ROTA DE LOGIN ==========
+// ======= ROTA DE LOGIN =======
 router.post('/login', async (req, res) => {
   const { email, senha } = req.body;
-  // Validação básica
+
   if (!email || !senha) {
     return res.status(400).json({ message: 'Email e senha são obrigatórios' });
   }
+
   try {
-    // Busca usuário no banco pelo email
-    const usuarios = await db.query(
+    const [usuarios] = await db.query(
       'SELECT * FROM usuarios WHERE email = ?',
       [email]
     );
-    // Verifica se o usuário existe
+
     if (usuarios.length === 0) {
       return res.status(401).json({ message: 'Email ou senha incorretos' });
     }
-    
+
     const usuario = usuarios[0];
-    // Compara a senha digitada com a senha criptografada do banco
+
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
-    
     if (!senhaValida) {
       return res.status(401).json({ message: 'Email ou senha incorretos' });
     }
-    // Login bem-sucedido - retorna dados do usuário (SEM a senha)
-    res.status(200).json({ 
+
+    return res.status(200).json({
       message: 'Login realizado com sucesso',
       usuario: {
         id: usuario.id,
         email: usuario.email
       }
     });
+
   } catch (erro) {
     console.error('Erro ao fazer login:', erro);
-    res.status(500).json({ message: 'Erro ao fazer login' });
+    return res.status(500).json({
+      message: 'Erro ao fazer login',
+      error: erro.message
+    });
   }
 });
 
