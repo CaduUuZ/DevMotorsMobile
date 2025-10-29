@@ -1,23 +1,26 @@
+// LoginCadastro.js
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   SafeAreaView, KeyboardAvoidingView, ScrollView, Alert
 } from 'react-native';
-import { REGISTER_ENDPOINT, LOGIN_ENDPOINT } from '../../config/api.js';
+import { REGISTER_ENDPOINT, LOGIN_ENDPOINT } from '../../config/api';
 
 export default function LoginCadastro({ onLogin }) {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [form, setForm] = useState({ email: '', senha: '' });
+
   const modeText = isRegisterMode ? 'Registrar' : 'Entrar';
   const toggleMode = () => setIsRegisterMode(!isRegisterMode);
 
   const handleSubmit = async () => {
     if (!form.email || !form.senha) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      Alert.alert('Erro', 'Preencha todos os campos!');
       return;
     }
 
     const endpoint = isRegisterMode ? REGISTER_ENDPOINT : LOGIN_ENDPOINT;
+    console.log('[LoginCadastro] endpoint:', endpoint, 'payload:', form);
 
     try {
       const response = await fetch(endpoint, {
@@ -27,65 +30,53 @@ export default function LoginCadastro({ onLogin }) {
       });
 
       const data = await response.json();
+      console.log('[LoginCadastro] status:', response.status, 'body:', data);
 
       if (!response.ok) {
-        Alert.alert("Erro", data.message || "Falha na operação.");
+        Alert.alert('Erro', data.message || 'Falha na operação');
         return;
       }
 
-      console.log(`${modeText} bem-sucedido:`, data);
+      console.log('Sucesso:', data);
 
-      const usuario = data.usuario || { id: data.id, email: form.email };
-      if (onLogin) onLogin(usuario);
+      // ✅ Chama onLogin para avisar o App que o usuário logou
+      if (onLogin) onLogin(data.usuario || { id: data.id, email: form.email });
 
-    } catch (error) {
-      console.error('Erro de rede:', error);
-      Alert.alert("Erro de Conexão", "Não foi possível conectar ao servidor.");
+    } catch (err) {
+      console.error('Erro de rede:', err);
+      Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor.');
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView behavior='padding' style={styles.keyboardAvoid}>
+      <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoid}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.container}>
-            <View style={styles.formBox}>
-              <Text style={styles.formTitle}>{modeText}</Text>
+            <Text style={styles.title}>{modeText}</Text>
 
-              {/* Campos */}
-              {['email', 'senha'].map((field) => (
-                <View style={styles.inputGroup} key={field}>
-                  <TextInput
-                    style={[
-                      styles.inputField,
-                      form[field] ? styles.inputFieldFilled : null
-                    ]}
-                    placeholder={field === 'email' ? 'Email' : 'Senha'}
-                    placeholderTextColor="#666"
-                    value={form[field]}
-                    onChangeText={(text) => setForm({ ...form, [field]: text })}
-                    keyboardType={field === 'email' ? 'email-address' : 'default'}
-                    autoCapitalize="none"
-                    secureTextEntry={field === 'senha'}
-                  />
-                </View>
-              ))}
+            {['email', 'senha'].map((field) => (
+              <TextInput
+                key={field}
+                style={styles.input}
+                placeholder={field === 'email' ? 'Email' : 'Senha'}
+                value={form[field]}
+                onChangeText={(text) => setForm({ ...form, [field]: text })}
+                keyboardType={field === 'email' ? 'email-address' : 'default'}
+                autoCapitalize="none"
+                secureTextEntry={field === 'senha'}
+              />
+            ))}
 
-              {/* Botão principal */}
-              <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-                <Text style={styles.btnText}>{modeText}</Text>
-              </TouchableOpacity>
+            <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
+              <Text style={styles.btnText}>{modeText}</Text>
+            </TouchableOpacity>
 
-              {/* Alternar modo */}
-              <View style={styles.switchForm}>
-                <Text style={styles.switchText}>
-                  {isRegisterMode ? 'Já tem uma conta? ' : 'Não tem uma conta? '}
-                  <Text style={styles.switchLink} onPress={toggleMode}>
-                    {isRegisterMode ? 'Entre aqui' : 'Registre-se'}
-                  </Text>
-                </Text>
-              </View>
-            </View>
+            <TouchableOpacity onPress={toggleMode}>
+              <Text style={styles.switch}>
+                {isRegisterMode ? 'Já tem uma conta? Entre' : 'Não tem conta? Registre-se'}
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -97,56 +88,17 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#f5f5f5' },
   keyboardAvoid: { flex: 1 },
   scrollContainer: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-  container: {
-    width: '100%',
-    maxWidth: 400,
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.1,
-    shadowRadius: 40,
-    elevation: 10,
-    padding: 40,
-  },
-  formBox: { alignItems: 'center', width: '100%' },
-  formTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#333',
-    marginBottom: 30,
-    textAlign: 'center'
-  },
-  inputGroup: { width: '100%', marginBottom: 25 },
-  inputField: {
+  container: { width: '100%', maxWidth: 400, padding: 20, alignItems: 'center' },
+  title: { fontSize: 28, fontWeight: '700', marginBottom: 30 },
+  input: {
     width: '100%',
     padding: 15,
-    borderWidth: 2,
-    borderColor: '#e1e5e9',
-    borderRadius: 10,
-    fontSize: 16,
-    color: '#333'
-  },
-  inputFieldFilled: { borderColor: '#007bff' },
-  btn: {
-    width: '100%',
-    padding: 15,
-    backgroundColor: '#007bff',
-    borderRadius: 10,
-    alignItems: 'center',
     marginBottom: 20,
-    shadowColor: '#007bff',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    borderWidth: 2,
+    borderColor: '#ccc',
+    borderRadius: 10,
   },
-  btnText: { color: 'white', fontSize: 16, fontWeight: '600' },
-  switchForm: { alignItems: 'center' },
-  switchText: { color: '#666', fontSize: 14 },
-  switchLink: {
-    color: '#007bff',
-    fontWeight: '600',
-    textDecorationLine: 'underline'
-  },
+  btn: { width: '100%', padding: 15, backgroundColor: '#007bff', borderRadius: 10, alignItems: 'center', marginBottom: 10 },
+  btnText: { color: '#fff', fontWeight: '600' },
+  switch: { color: '#007bff', textDecorationLine: 'underline', marginTop: 10 },
 });

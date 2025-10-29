@@ -1,7 +1,7 @@
 // routes/usuario.js
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // db.js usando mysql2/promise
+const db = require('../db');
 const bcrypt = require('bcrypt');
 
 // ======= ROTA DE REGISTRO =======
