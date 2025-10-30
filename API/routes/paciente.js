@@ -1,62 +1,69 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const db = require('../db'); // db deve ser importado do mysql2/promise
 
-// Listar todos os pacientes
-router.get('/', (req, res) => {
-  db.query('SELECT * FROM pacientes', (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+// ------------------- LISTAR TODOS OS PACIENTES ------------------- //
+router.get('/', async (req, res) => {
+  try {
+    const [results] = await db.query('SELECT * FROM pacientes');
     res.json(results);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Buscar paciente por ID
-router.get('/:id', (req, res) => {
+// ------------------- BUSCAR PACIENTE POR ID ------------------- //
+router.get('/:id', async (req, res) => {
   const id = parseInt(req.params.id);
-  db.query('SELECT * FROM pacientes WHERE idPaciente = ?', [id], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+  try {
+    const [results] = await db.query('SELECT * FROM pacientes WHERE idPaciente = ?', [id]);
     if (results.length === 0) return res.status(404).json({ message: 'Paciente não encontrado' });
-    // Retorne o resultado como está, pois o campo já é idPaciente
     res.json(results[0]);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Inserir novo paciente
-router.post('/', (req, res) => {
+// ------------------- INSERIR NOVO PACIENTE ------------------- //
+router.post('/', async (req, res) => {
   const { nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia } = req.body;
-  db.query(
-    'INSERT INTO pacientes (nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.status(201).json({ id: result.insertId, nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia });
-    }
-  );
+  try {
+    const [result] = await db.query(
+      'INSERT INTO pacientes (nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia]
+    );
+    res.status(201).json({ id: result.insertId, nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Editar paciente
-router.put('/:id', (req, res) => {
+// ------------------- EDITAR PACIENTE ------------------- //
+router.put('/:id', async (req, res) => {
   const id = parseInt(req.params.id);
   const { nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia } = req.body;
-  db.query(
-    'UPDATE pacientes SET nome=?, dataNascimento=?, telefone=?, email=?, nomeMae=?, idade=?, medicamento=?, patologia=? WHERE idPaciente=?',
-    [nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia, id],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      if (result.affectedRows === 0) return res.status(404).json({ message: 'Paciente não encontrado' });
-      res.json({ id, nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia });
-    }
-  );
+  try {
+    const [result] = await db.query(
+      'UPDATE pacientes SET nome=?, dataNascimento=?, telefone=?, email=?, nomeMae=?, idade=?, medicamento=?, patologia=? WHERE idPaciente=?',
+      [nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia, id]
+    );
+    if (result.affectedRows === 0) return res.status(404).json({ message: 'Paciente não encontrado' });
+    res.json({ id, nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Excluir paciente
-router.delete('/:id', (req, res) => {
+// ------------------- EXCLUIR PACIENTE ------------------- //
+router.delete('/:id', async (req, res) => {
   const id = parseInt(req.params.id);
-  db.query('DELETE FROM pacientes WHERE idPaciente = ?', [id], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+  try {
+    const [result] = await db.query('DELETE FROM pacientes WHERE idPaciente = ?', [id]);
     if (result.affectedRows === 0) return res.status(404).json({ message: 'Paciente não encontrado' });
     res.status(204).send();
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

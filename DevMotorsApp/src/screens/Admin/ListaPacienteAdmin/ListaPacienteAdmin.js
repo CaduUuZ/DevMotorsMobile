@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  Modal,
-  ScrollView,
-  Alert,
-  StyleSheet,
-  SafeAreaView,
-  ActivityIndicator,
-  StatusBar
+  View, Text, TextInput, TouchableOpacity, FlatList, Modal,
+  ScrollView, Alert, StyleSheet, SafeAreaView, ActivityIndicator, StatusBar
 } from 'react-native';
+// Ajuste do caminho para o arquivo de config (três níveis acima)
+import { PACIENTES_ENDPOINT } from '../../../config/api';
 
-// Configure a URL da sua API aqui
-const API_BASE_URL = 'https://sua-api.com/api';
+// ------------------- FUNÇÕES AUXILIARES ------------------- //
+const processApiResponse = async (response) => {
+  const text = await response.text();
+  let responseData = null;
+  try { responseData = text ? JSON.parse(text) : null; } catch(e) { responseData = text; }
+  return responseData;
+};
 
-const ListaPaciente = (props) => {
-  const { navigation } = props;
+// ------------------- COMPONENTE PRINCIPAL ------------------- //
+const ListaPaciente = ({ navigation }) => {
   const [pacientes, setPacientes] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Modal de edição
   const [modalVisible, setModalVisible] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     idPaciente: '',
     nome: '',
@@ -34,88 +34,52 @@ const ListaPaciente = (props) => {
     patologia: ''
   });
 
-  useEffect(() => {
-    fetchPacientes();
-  }, []);
-
+  // ------------------- FETCH PACIENTES ------------------- //
+  // Função de busca (declarada antes do useEffect para evitar ambiguidade)
   const fetchPacientes = async (searchTerm = '') => {
     setLoading(true);
     try {
-      // Descomente para usar sua API real:
-      // const response = await fetch(`${API_BASE_URL}/pacientes?search=${searchTerm}`);
-      // const data = await response.json();
-      // setPacientes(data);
+      const url = `${PACIENTES_ENDPOINT}${searchTerm ? '?search=' + encodeURIComponent(searchTerm) : ''}`;
+      console.log('[ListaPacienteAdmin] GET', url);
+      const response = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' } });
+      const responseData = await processApiResponse(response);
 
-      // Dados mockados (remova em produção)
-      const mockData = [
-        {
-          idPaciente: 1,
-          nome: 'João Silva',
-          idade: 45,
-          email: 'joao@email.com',
-          telefone: '(11) 98765-4321',
-          dataNascimento: '1979-05-15',
-          medicamento: 'Losartana',
-          patologia: 'Hipertensão'
-        },
-        {
-          idPaciente: 2,
-          nome: 'Maria Santos',
-          idade: 32,
-          email: 'maria@email.com',
-          telefone: '(11) 91234-5678',
-          dataNascimento: '1992-08-20',
-          medicamento: 'Metformina',
-          patologia: 'Diabetes'
-        },
-        {
-          idPaciente: 3,
-          nome: 'Pedro Oliveira',
-          idade: 58,
-          email: 'pedro@email.com',
-          telefone: '(11) 99876-5432',
-          dataNascimento: '1966-03-10',
-          medicamento: 'Sinvastatina',
-          patologia: 'Colesterol Alto'
-        },
-        {
-          idPaciente: 4,
-          nome: 'Ana Costa',
-          idade: 28,
-          email: 'ana@email.com',
-          telefone: '(11) 97654-3210',
-          dataNascimento: '1996-11-22',
-          medicamento: 'Levotiroxina',
-          patologia: 'Hipotireoidismo'
-        }
-      ];
-
-      // Filtro local (em produção, faça no backend)
-      let filtered = mockData;
-      if (searchTerm) {
-        filtered = mockData.filter(p => 
-          p.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.idPaciente.toString() === searchTerm
-        );
+      if (response.ok) {
+        setPacientes(Array.isArray(responseData) ? responseData : []);
+      } else {
+        console.error('Erro da API:', response.status, responseData);
+        Alert.alert('Erro na Busca', String(responseData?.error || responseData?.message || `Status ${response.status}`));
+        setPacientes([]);
       }
-      
-      setPacientes(filtered);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível carregar os pacientes');
+      console.error('Erro de Conexão:', error);
+      Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor.');
+      setPacientes([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSearch = () => {
-    fetchPacientes(search);
-  };
+  // Recarregar ao focar a tela
+  useEffect(() => {
+    const unsubscribe = navigation?.addListener('focus', () => {
+      fetchPacientes();
+    });
+    // busca inicial
+    fetchPacientes();
+    return unsubscribe;
+  }, [navigation]);
 
+  const handleSearch = () => fetchPacientes(search);
+
+  // ------------------- CRUD ------------------- //
+
+  // Abrir modal para editar paciente
   const openEditModal = (paciente) => {
     setFormData({
-      idPaciente: paciente.idPaciente.toString(),
-      nome: paciente.nome,
-      idade: paciente.idade.toString(),
+      idPaciente: paciente.idPaciente?.toString() || paciente.id?.toString() || '',
+      nome: paciente.nome || '',
+      idade: paciente.idade?.toString() || '',
       email: paciente.email || '',
       telefone: paciente.telefone || '',
       dataNascimento: paciente.dataNascimento || '',
@@ -125,114 +89,135 @@ const ListaPaciente = (props) => {
     setModalVisible(true);
   };
 
+  // Salvar edição
   const handleSaveEdit = async () => {
-    if (!formData.nome.trim()) {
-      Alert.alert('Erro', 'O nome é obrigatório');
+    const { idPaciente, nome, idade, email, telefone, dataNascimento, medicamento, patologia } = formData;
+
+    if (!idPaciente) {
+      Alert.alert('Erro', 'ID do paciente ausente.');
       return;
     }
 
-    const dataToSend = {
-      ...formData,
-      // Garante que a idade seja enviada como um número para o backend
-      idade: Number(formData.idade), 
-    };
+    if (!nome || !email) {
+      Alert.alert('Erro', 'Preencha pelo menos nome e email.');
+      return;
+    }
 
+    setSaving(true);
     try {
-      // Descomente para usar sua API real:
-      // await fetch(`${API_BASE_URL}/pacientes/${dataToSend.idPaciente}`, {
-      //   method: 'PUT',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(dataToSend) 
-      // });
+      const url = `${PACIENTES_ENDPOINT}/${encodeURIComponent(idPaciente)}`;
+      console.log('[ListaPacienteAdmin] PUT', url, { nome, idade, email, telefone, dataNascimento, medicamento, patologia });
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ nome, idade, email, telefone, dataNascimento, medicamento, patologia })
+      });
+      const responseData = await processApiResponse(response);
 
-      Alert.alert('Sucesso', 'Paciente atualizado com sucesso');
-      setModalVisible(false);
-      fetchPacientes(search);
+      if (response.ok) {
+        Alert.alert('Sucesso', 'Paciente atualizado!');
+        setModalVisible(false);
+        fetchPacientes(search);
+      } else {
+        console.error('Erro ao atualizar:', response.status, responseData);
+        Alert.alert('Erro', String(responseData?.error || responseData?.message || `Status ${response.status}`));
+      }
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível atualizar o paciente');
+      console.error('Erro de Conexão ao salvar edição:', error);
+      Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor.');
+    } finally {
+      setSaving(false);
     }
   };
 
+  // Excluir paciente
   const handleDelete = (idPaciente, nome) => {
-    Alert.alert(
-      'Tem certeza?',
-      `Você não poderá reverter esta ação!\n\nPaciente: ${nome}`,
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel'
-        },
-        {
-          text: 'Sim, excluir!',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // Descomente para usar sua API real:
-              // await fetch(`${API_BASE_URL}/pacientes/${idPaciente}`, {
-              //   method: 'DELETE'
-              // });
+  console.log('[DEBUG] Clicou em deletar', idPaciente, nome);
 
-              Alert.alert('Excluído!', 'O paciente foi excluído com sucesso.');
+  if (!idPaciente) {
+    Alert.alert('Erro', 'ID do paciente ausente.');
+    console.error('[DEBUG] ID do paciente ausente!');
+    return;
+  }
+
+  Alert.alert(
+    'Tem certeza?', `Você não poderá reverter esta ação!\n\nPaciente: ${nome}`,
+    [
+      { text: 'Cancelar', style: 'cancel', onPress: () => console.log('[DEBUG] Cancelou exclusão') },
+      {
+        text: 'Sim, excluir!',
+        style: 'destructive',
+        onPress: async () => {
+          console.log('[DEBUG] Confirmou exclusão do paciente', idPaciente);
+          setLoading(true);
+
+          try {
+            const url = `${PACIENTES_ENDPOINT}/${encodeURIComponent(idPaciente)}`;
+            console.log('[DEBUG] URL DELETE:', url);
+
+            const response = await fetch(url, {
+              method: 'DELETE',
+              headers: { Accept: 'application/json' },
+            });
+
+            console.log('[DEBUG] Status resposta DELETE:', response.status);
+
+            if (response.status === 204 || response.ok) {
+              Alert.alert('Excluído!', 'Paciente excluído com sucesso.');
+              console.log('[DEBUG] Paciente deletado com sucesso');
               fetchPacientes(search);
-            } catch (error) {
-              Alert.alert('Erro', 'Não foi possível excluir o paciente');
+            } else {
+              const responseData = await processApiResponse(response);
+              console.error('[DEBUG] Erro ao excluir:', response.status, responseData);
+              Alert.alert(
+                'Erro na Exclusão',
+                String(responseData?.error || responseData?.message || `Status ${response.status}`)
+              );
             }
+          } catch (error) {
+            console.error('[DEBUG] Erro de conexão ao excluir:', error);
+            Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor.');
+          } finally {
+            setLoading(false);
           }
         }
-      ]
-    );
-  };
+      }
+    ]
+  );
+};
 
-  const handleNewPaciente = () => {
-    // Navegue para a tela de cadastro
-    if (navigation && typeof navigation.navigate === 'function') {
-      navigation.navigate('CadastroPaciente');
-      return;
-    }
-    Alert.alert('Info', 'Navegue para tela de cadastro de novo paciente');
-  };
 
+  // ------------------- RENDER PACIENTE ------------------- //
   const renderPaciente = ({ item }) => (
     <View style={styles.pacienteCard}>
       <View style={styles.pacienteInfo}>
-        <Text style={styles.pacienteTitle}>
-          {item.idPaciente} - {item.nome}
-        </Text>
-        <Text style={styles.pacienteEmail}>{item.email}</Text>
+        <Text style={styles.pacienteTitle}>#{item.idPaciente || item.id} - {item.nome} {item.idade ? `(${item.idade} anos)` : ''}</Text>
+        <Text style={styles.pacienteEmail}>{item.email || ''} {item.telefone ? `| ${item.telefone}` : ''}</Text>
+        <Text style={styles.pacienteEmail}>Medicação: {item.medicamento || 'Nenhum'}</Text>
+        <Text style={styles.pacienteEmail}>Patologia: {item.patologia || 'Nenhuma'}</Text>
       </View>
       <View style={styles.actions}>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => openEditModal(item)}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity style={styles.editButton} onPress={() => openEditModal(item)}>
           <Text style={styles.buttonIcon}>✏️</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => handleDelete(item.idPaciente, item.nome)}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.idPaciente || item.id, item.nome)}>
           <Text style={styles.buttonIcon}>🗑️</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 
+  // ------------------- BOTÃO NOVO ------------------- //
+  const handleNewPaciente = () => navigation?.navigate('CadastroPaciente');
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#667eea" />
-
       <View style={styles.controls}>
         <View style={styles.searchContainer}>
-          <TouchableOpacity
-            style={styles.newButton}
-            onPress={handleNewPaciente}
-            activeOpacity={0.8}
-          >
+          <TouchableOpacity style={styles.newButton} onPress={handleNewPaciente}>
             <Text style={styles.newButtonText}>+ Novo Paciente</Text>
           </TouchableOpacity>
-          
           <TextInput
             style={styles.searchInput}
             placeholder="Digite o nome ou código do paciente"
@@ -240,22 +225,15 @@ const ListaPaciente = (props) => {
             value={search}
             onChangeText={setSearch}
             onSubmitEditing={handleSearch}
-            returnKeyType="search"
           />
-          
-          <TouchableOpacity
-            style={styles.searchButton}
-            onPress={handleSearch}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.searchButtonText}>Procurar</Text>
+          <TouchableOpacity style={styles.searchButton} onPress={handleSearch} disabled={loading}>
+            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.searchButtonText}>Procurar</Text>}
           </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.listContainer}>
         <Text style={styles.listTitle}>Lista de Pacientes</Text>
-        
         {loading ? (
           <ActivityIndicator size="large" color="#667eea" style={styles.loader} />
         ) : pacientes.length === 0 ? (
@@ -264,376 +242,71 @@ const ListaPaciente = (props) => {
           <FlatList
             data={pacientes}
             renderItem={renderPaciente}
-            keyExtractor={(item) => item.idPaciente.toString()}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
+            keyExtractor={item => (item.idPaciente || item.id || '').toString()}
           />
         )}
       </View>
 
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
+      {/* ------------------- MODAL EDIÇÃO ------------------- */}
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Editar Paciente</Text>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>✕</Text>
+          <ScrollView contentContainerStyle={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Editar Paciente</Text>
+            {['nome','idade','email','telefone','dataNascimento','medicamento','patologia'].map(field => (
+              <TextInput
+                key={field}
+                style={styles.modalInput}
+                placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                value={formData[field]}
+                onChangeText={text => setFormData({...formData, [field]: text})}
+              />
+            ))}
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
+              <TouchableOpacity style={[styles.modalButton, { backgroundColor:'#667eea' }]} onPress={handleSaveEdit} disabled={saving}>
+                {saving ? <ActivityIndicator color="#fff"/> : <Text style={styles.modalButtonText}>Salvar</Text>}
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalButton, { backgroundColor:'#6c757d' }]} onPress={() => setModalVisible(false)}>
+                <Text style={styles.modalButtonText}>Cancelar</Text>
               </TouchableOpacity>
             </View>
-
-            <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Nome Completo *</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.nome}
-                  onChangeText={(text) => setFormData({...formData, nome: text})}
-                  placeholder="Digite o nome completo"
-                  placeholderTextColor="#999"
-                />
-              </View>
-
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Idade</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.idade}
-                  onChangeText={(text) => setFormData({...formData, idade: text})}
-                  placeholder="Digite a idade"
-                  placeholderTextColor="#999"
-                  keyboardType="numeric"
-                />
-              </View>
-
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => setFormData({...formData, email: text})}
-                  placeholder="Digite o email"
-                  placeholderTextColor="#999"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </View>
-
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Telefone</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.telefone}
-                  onChangeText={(text) => setFormData({...formData, telefone: text})}
-                  placeholder="(00) 00000-0000"
-                  placeholderTextColor="#999"
-                  // 🚀 Melhoria de UX: Teclado otimizado para telefone e limite de caracteres
-                  keyboardType="phone-pad" 
-                  maxLength={15} 
-                />
-              </View>
-
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Data Nascimento</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.dataNascimento}
-                  onChangeText={(text) => setFormData({...formData, dataNascimento: text})}
-                  placeholder="AAAA-MM-DD"
-                  placeholderTextColor="#999"
-                  // 🚀 Melhoria de UX: Limite de caracteres
-                  maxLength={10} 
-                />
-              </View>
-
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Nome Medicamento</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.medicamento}
-                  onChangeText={(text) => setFormData({...formData, medicamento: text})}
-                  placeholder="Digite o medicamento"
-                  placeholderTextColor="#999"
-                />
-              </View>
-
-              <View style={styles.formGroup}>
-                <Text style={styles.label}>Nome Patologia</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.patologia}
-                  onChangeText={(text) => setFormData({...formData, patologia: text})}
-                  placeholder="Digite a patologia"
-                  placeholderTextColor="#999"
-                />
-              </View>
-            </ScrollView>
-
-            <View style={styles.modalFooter}>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setModalVisible(false)}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.cancelButtonText}>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.saveButton}
-                onPress={handleSaveEdit}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.saveButtonText}>Salvar Alterações</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          </ScrollView>
         </View>
       </Modal>
+
     </SafeAreaView>
   );
 };
 
+// ------------------- ESTILOS ------------------- //
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5'
-  },
-  controls: {
-    padding: 15,
-    paddingTop: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  newButton: {
-    backgroundColor: '#667eea',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    elevation: 2,
-    shadowColor: '#667eea',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    marginRight: 8, // substitui gap
-  },
-  newButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1.5,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    backgroundColor: '#fafafa',
-    color: '#333',
-    marginRight: 8, // espaçamento para o botão de busca
-  },
-  searchButton: {
-    backgroundColor: '#667eea',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
-    elevation: 2
-  },
-  searchButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  listContainer: {
-    flex: 1,
-    padding: 15
-  },
-  listTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#333'
-  },
-  listContent: {
-    paddingBottom: 20
-  },
-  pacienteCard: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderWidth: 1,
-    borderColor: '#f0f0f0'
-  },
-  pacienteInfo: {
-    flex: 1,
-    marginRight: 10
-  },
-  pacienteTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4
-  },
-  pacienteEmail: {
-    fontSize: 14,
-    color: '#666'
-  },
-  actions: {
-    flexDirection: 'row',
-  },
-  editButton: {
-    backgroundColor: '#ffc107',
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 2
-  },
-  deleteButton: {
-    backgroundColor: '#dc3545',
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 2,
-    marginLeft: 8 // substitui gap
-  },
-  buttonIcon: {
-    fontSize: 20
-  },
-  emptyText: {
-    textAlign: 'center',
-    color: '#666',
-    fontSize: 16,
-    marginTop: 40,
-    fontStyle: 'italic'
-  },
-  loader: {
-    marginTop: 40
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'center',
-    padding: 20
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    maxHeight: '90%',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    backgroundColor: '#667eea'
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff'
-  },
-  closeButton: {
-    padding: 5
-  },
-  closeButtonText: {
-    fontSize: 28,
-    color: '#fff',
-    fontWeight: '300'
-  },
-  modalBody: {
-    padding: 20,
-    maxHeight: 400
-  },
-  formGroup: {
-    marginBottom: 16
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 6
-  },
-  input: {
-    borderWidth: 1.5,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    backgroundColor: '#fafafa',
-    color: '#333'
-  },
-  modalFooter: {
-    flexDirection: 'row',
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    backgroundColor: '#f9f9f9'
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: '#6c757d',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    elevation: 2,
-    marginRight: 10 // substitui gap
-  },
-  cancelButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  saveButton: {
-    flex: 1,
-    backgroundColor: '#667eea',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    elevation: 2
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600'
-  }
+  container: { flex: 1, backgroundColor: '#f5f5f5' },
+  controls: { padding: 15, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#e0e0e0' },
+  searchContainer: { flexDirection: 'row', alignItems: 'center' },
+  newButton: { backgroundColor: '#667eea', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 8, marginRight: 8 },
+  newButtonText: { color: '#fff', fontWeight: '600' },
+  searchInput: { flex: 1, borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, marginRight: 8 },
+  searchButton: { backgroundColor: '#667eea', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 8 },
+  searchButtonText: { color: '#fff', fontWeight: '600' },
+  listContainer: { flex: 1, padding: 15 },
+  listTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 },
+  pacienteCard: { backgroundColor: '#fff', padding: 15, borderRadius: 10, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  pacienteInfo: { flex: 1, marginRight: 10 },
+  pacienteTitle: { fontSize: 16, fontWeight: '600', marginBottom: 4 },
+  pacienteEmail: { fontSize: 14, color: '#666' },
+  actions: { flexDirection: 'row' },
+  editButton: { backgroundColor: '#ffc107', width: 42, height: 42, borderRadius: 21, justifyContent: 'center', alignItems: 'center' },
+  deleteButton: { backgroundColor: '#dc3545', width: 42, height: 42, borderRadius: 21, justifyContent: 'center', alignItems: 'center', marginLeft: 8 },
+  buttonIcon: { fontSize: 20 },
+  emptyText: { textAlign: 'center', color: '#666', fontStyle: 'italic', marginTop: 40 },
+  loader: { marginTop: 40 },
+  modalOverlay: { flex:1, backgroundColor:'rgba(0,0,0,0.5)', justifyContent:'center', alignItems:'center' },
+  modalContainer: { backgroundColor:'#fff', padding:20, borderRadius:12, width:'90%' },
+  modalTitle: { fontSize:20, fontWeight:'700', marginBottom:12, textAlign:'center' },
+  modalInput: { borderWidth:1, borderColor:'#e0e0e0', borderRadius:8, paddingHorizontal:12, paddingVertical:10, marginBottom:10 },
+  modalButton: { flex:1, paddingVertical:14, borderRadius:8, alignItems:'center', marginHorizontal:5 },
+  modalButtonText: { color:'#fff', fontWeight:'700' }
 });
 
 export default ListaPaciente;
+
