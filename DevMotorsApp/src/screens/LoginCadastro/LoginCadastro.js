@@ -199,14 +199,15 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    padding: 16,
+    height: 50,
+    paddingHorizontal: 16,
     backgroundColor: '#f8f9fa',
-    borderWidth: 2,
-    borderColor: '#e9ecef',
-    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e9ecef', 
+    borderRadius: 8,
     fontSize: 16,
     color: '#1a1a1a',
-    transition: 'all 0.3s'
+    marginBottom: 10
   },
   inputFocused: {
     borderColor: '#007bff',
