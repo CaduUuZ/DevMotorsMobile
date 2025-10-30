@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors'); // ✅ importa o CORS
+const cors = require('cors'); 
 const app = express();
 
 // Middleware CORS - permite qualquer origem
@@ -9,10 +9,12 @@ app.use(cors());
 app.use(express.json());
 
 // Importando as rotas
+const usuarioRoutes = require('./routes/usuario');
 const pacienteRoutes = require('./routes/paciente');
 const exameRoutes = require('./routes/exame');
 
 // Usando as rotas com prefixos
+app.use('/users', usuarioRoutes);
 app.use('/pacientes', pacienteRoutes);
 app.use('/exames', exameRoutes);
 

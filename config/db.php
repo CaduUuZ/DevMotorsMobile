@@ -23,11 +23,10 @@ CREATE TABLE usuarios (
     email VARCHAR(100) NOT NULL UNIQUE,
     senha VARCHAR(100) NOT NULL,
     is_admin BOOLEAN DEFAULT FALSE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE pacientes (
     idPaciente INT AUTO_INCREMENT PRIMARY KEY,
-    isAdmin BOOLEAN DEFAULT FALSE,
     dataCadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     nome VARCHAR(100) NOT NULL,
     dataNascimento DATE NOT NULL,
@@ -35,9 +34,9 @@ CREATE TABLE pacientes (
     telefone VARCHAR(20),
     email VARCHAR(100),
     nomeMae VARCHAR(100),
-    Medicamento VARCHAR(100),
-    Patologia VARCHAR(100)
-);
+    medicamento VARCHAR(100),
+    patologia VARCHAR(100)
+) ENGINE=InnoDB;
 
 CREATE TABLE exames (
     idExame INT AUTO_INCREMENT PRIMARY KEY,
@@ -48,7 +47,7 @@ CREATE TABLE exames (
     resultado TEXT,
     informacoesAdicionais TEXT,
     FOREIGN KEY (idPaciente) REFERENCES pacientes(idPaciente) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 */
 

@@ -4,38 +4,47 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-// Telas existentes
-import CadastroPaciente from './src/screens/CadastroPaciente/CadastroPaciente';
-import LoginRegisterScreen from './src/screens/LoginCadastro/Login';
+import LoginCadastro from './src/screens/LoginCadastro/LoginCadastro';
 import Home from './src/screens/Home/Home';
 import ListaExame from './src/screens/ListaExame/ListaExame'; 
 import NovoExame from './src/screens/CadastroExame/NovoExame';
 import ListaPaciente from './src/screens/ListarPacientes/ListaPaciente';
+import CadastroPaciente from './src/screens/CadastroPaciente/CadastroPaciente';
 import TelaRelatorio from './src/screens/Admin/TelaRelatorio/TelaRelatorio';
 import ListaPacienteAdmin from './src/screens/Admin/ListaPacienteAdmin/ListaPacienteAdmin';
 
-// --- NAVIGATORS ---
 const AuthStack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
-const RootStack = createNativeStackNavigator();
 
 export default function App() {
-  const [userToken, setUserToken] = useState(null);
+  const [userData, setUserData] = useState(null); // usuário logado
   const [isLoading, setIsLoading] = useState(false);
 
-  const setIsLoggedIn = (isLoggedIn) => {
+  // login: recebe usuário do LoginCadastro
+  const handleLogin = (usuario) => {
     setIsLoading(true);
     setTimeout(() => {
-      setUserToken(isLoggedIn ? 'dummy-token' : null);
+      setUserData(usuario); // salva usuário
       setIsLoading(false);
-    }, 700);
+    }, 500);
+  };
+
+  // logout: limpa usuário
+  const handleLogout = () => {
+    setUserData(null);
   };
 
   function MainDrawer() {
     return (
-      <Drawer.Navigator screenOptions={{ drawerActiveTintColor: '#123458' }}>
+      <Drawer.Navigator 
+        screenOptions={{ 
+          drawerActiveTintColor: '#123458',
+          headerStyle: { backgroundColor: '#123458' },
+          headerTintColor: '#fff',
+        }}
+      >
         <Drawer.Screen name="Home">
-          {props => <Home {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <Home {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
 
         <Drawer.Screen 
@@ -45,35 +54,25 @@ export default function App() {
         />
 
         <Drawer.Screen name="Lista Paciente">
-          {props => <ListaPaciente {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <ListaPaciente {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
 
         <Drawer.Screen name="Novo Exame">
-          {props => <NovoExame {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <NovoExame {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
 
         <Drawer.Screen name="Lista Exame">
-          {props => <ListaExame {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <ListaExame {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
 
         <Drawer.Screen name="Relatório" options={{ title: 'Relatório (Admin)' }}>
-          {props => <TelaRelatorio {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <TelaRelatorio {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
 
         <Drawer.Screen name="Listar Pacientes Admin" options={{ title: 'Pacientes (Admin)' }}>
-          {props => <ListaPacienteAdmin {...props} onLogout={() => setIsLoggedIn(false)} />}
+          {props => <ListaPacienteAdmin {...props} usuario={userData} onLogout={handleLogout} />}
         </Drawer.Screen>
       </Drawer.Navigator>
-    );
-  }
-
-  function AuthStackScreen() {
-    return (
-      <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-        <AuthStack.Screen name="Login">
-          {props => <LoginRegisterScreen {...props} onLogin={() => setIsLoggedIn(true)} />}
-        </AuthStack.Screen>
-      </AuthStack.Navigator>
     );
   }
 
@@ -81,26 +80,31 @@ export default function App() {
     return (
       <View style={styles.screen}>
         <ActivityIndicator size="large" color="#123458" />
-        <Text style={{ marginTop: 10 }}>Carregando...</Text>
+        <Text style={{ marginTop: 10, color: '#123458', fontSize: 16 }}>Carregando...</Text>
       </View>
     );
   }
 
   return (
     <NavigationContainer>
-      <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {userToken == null ? (
-          <RootStack.Screen name="Auth" component={AuthStackScreen} />
-        ) : (
-          <RootStack.Screen name="Main" component={MainDrawer} />
-        )}
-      </RootStack.Navigator>
+      {userData ? (
+        <MainDrawer />
+      ) : (
+        <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+          <AuthStack.Screen name="Login">
+            {props => <LoginCadastro {...props} onLogin={handleLogin} />}
+          </AuthStack.Screen>
+        </AuthStack.Navigator>
+      )}
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F1EFEC',
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#F1EFEC',
   },
 });
