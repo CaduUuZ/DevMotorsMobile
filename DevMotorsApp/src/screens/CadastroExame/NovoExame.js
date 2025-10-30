@@ -6,7 +6,7 @@ import {
   StyleSheet, ScrollView, Alert, ActivityIndicator
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { PACIENTES_ENDPOINT, EXAMES_ENDPOINT } from '../../config/api';
+import { PACIENTES_ENDPOINT, API_BASE_URL } from '../../config/api';
 
 // ---------- FUNÇÃO AUXILIAR ----------
 const processApiResponse = async (response) => {
@@ -39,7 +39,7 @@ const LISTA_EXAMES = {
 // ---------- COMPONENTE PRINCIPAL ----------
 export default function SolicitarExameScreen({ navigation }) {
   const [pacientes, setPacientes] = useState([]);
-  const [pacienteId, setPacienteId] = useState('');
+  const [pacienteId, setPacienteId] = useState(''); // mantém string para o TextInput
   const [laboratorio, setLaboratorio] = useState('');
   const [exameSelecionado, setExameSelecionado] = useState('');
   const [loading, setLoading] = useState(false);
@@ -66,6 +66,8 @@ export default function SolicitarExameScreen({ navigation }) {
     fetchPacientes();
   }, []);
 
+  const EXAMES_ENDPOINT = `${API_BASE_URL}/exames`;
+
   // ---------- ENVIAR EXAME ----------
   const handleSubmit = async () => {
     if (!pacienteId || !laboratorio || !exameSelecionado) {
@@ -73,35 +75,48 @@ export default function SolicitarExameScreen({ navigation }) {
       return;
     }
 
+    const pacienteIdNum = parseInt(pacienteId, 10);
+    if (isNaN(pacienteIdNum) || pacienteIdNum <= 0) {
+      Alert.alert('Erro', 'Informe um ID de paciente válido.');
+      return;
+    }
+
     const dados = {
-      pacienteId,
+      pacienteId: pacienteIdNum,
       laboratorio,
       exameTexto: exameSelecionado,
     };
 
+    console.log('[NovoExame] POST', EXAMES_ENDPOINT, dados);
     setLoading(true);
+
     try {
       const response = await fetch(EXAMES_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(dados),
       });
 
-      const data = await processApiResponse(response);
+      let body;
+      try { body = await response.json(); } catch { body = await response.text(); }
+
+      console.log('[NovoExame] status:', response.status, 'body:', body);
 
       if (response.ok) {
         Alert.alert('Sucesso', `Exame "${exameSelecionado}" solicitado com sucesso!`);
         setPacienteId('');
         setLaboratorio('');
         setExameSelecionado('');
+        // volta para a lista — a lista tem listener de focus e fará novo fetch
+        if (navigation?.goBack) navigation.goBack();
       } else {
-        console.error('Erro da API:', response.status, data);
-        const msg = (data && (data.error || data.message)) || 'Erro ao cadastrar exame.';
+        const msg = (body && (body.error || body.message)) || `Status ${response.status}`;
+        console.error('[NovoExame] erro API:', msg);
         Alert.alert('Erro', msg);
       }
     } catch (error) {
-      console.error('Erro de conexão:', error);
-      Alert.alert('Erro de Conexão', 'Falha ao conectar ao servidor.');
+      console.error('[NovoExame] erro de conexão:', error);
+      Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor.');
     } finally {
       setLoading(false);
     }
@@ -115,22 +130,14 @@ export default function SolicitarExameScreen({ navigation }) {
       </View>
 
       <View style={styles.form}>
-        <Text style={styles.label}>Paciente</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={pacienteId}
-            onValueChange={setPacienteId}
-          >
-            <Picker.Item label="Selecione..." value="" />
-            {pacientes.map(p => (
-              <Picker.Item
-                key={p.idPaciente}
-                label={`${p.nome} (${p.idade} anos)`}
-                value={p.idPaciente}
-              />
-            ))}
-          </Picker>
-        </View>
+        <Text style={styles.label}>ID do Paciente</Text>
+        <TextInput
+          style={[styles.searchInput, { marginTop: 6 }]}
+          placeholder="Digite o ID do paciente (ex: 1)"
+          value={pacienteId}
+          onChangeText={text => setPacienteId(text.replace(/\D/g, ''))} // permite só números
+          keyboardType="numeric"
+        />
 
         <Text style={styles.label}>Laboratório</Text>
         <View style={styles.pickerContainer}>
@@ -188,4 +195,12 @@ const styles = StyleSheet.create({
   btnPrimary: { backgroundColor: '#123458', padding: 14, borderRadius: 12, marginTop: 20, alignItems: 'center' },
   btnDisabled: { backgroundColor: '#6c757d' },
   btnText: { color: '#fff', fontWeight: '700' },
+  searchInput: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+  },
 });

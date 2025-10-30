@@ -88,8 +88,11 @@ export default function ListaExamesScreen({ navigation }) {
     setLoading(true);
     try {
       const url = id ? `${EXAMES_ENDPOINT}?buscaId=${id}` : EXAMES_ENDPOINT;
+     console.log('[ListaExame] GET', url);
       const response = await fetch(url);
++     console.log('[ListaExame] response status:', response.status);
       const data = await processApiResponse(response);
++     console.log('[ListaExame] response body:', data);
 
       if (response.ok) {
         setExames(Array.isArray(data) ? data : []);
@@ -108,6 +111,14 @@ export default function ListaExamesScreen({ navigation }) {
   useEffect(() => {
     buscarExames();
   }, [buscarExames]);
+
+  // Recarrega lista sempre que a tela recebe foco (ex: voltar de NovoExame)
+  useEffect(() => {
+    const unsubscribe = navigation?.addListener?.('focus', () => {
+      buscarExames(buscaId);
+    });
+    return unsubscribe;
+  }, [navigation, buscarExames, buscaId]);
 
   const handleExcluir = async (idExame) => {
     Alert.alert('Confirmação', 'Deseja realmente excluir este exame?', [
