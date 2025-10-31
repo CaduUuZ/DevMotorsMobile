@@ -4,7 +4,7 @@ import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   SafeAreaView, KeyboardAvoidingView, ScrollView, Alert
 } from 'react-native';
-import { REGISTER_ENDPOINT, LOGIN_ENDPOINT } from '../../config/api';
+import { REGISTER_ENDPOINT, LOGIN_ENDPOINT } from '../../config/api.js';
 
 export default function LoginCadastro({ onLogin }) {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
