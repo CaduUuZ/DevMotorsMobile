@@ -4,18 +4,18 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  Alert,
-  ActivityIndicator,
   StyleSheet,
-  SafeAreaView,
+  TextInput,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { USERS_ENDPOINT } from '../../config/api';
 
 export default function ListaUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
+  const [busca, setBusca] = useState('');
   const [carregando, setCarregando] = useState(false);
 
-  // ===== BUSCA USUÁRIOS =====
   const carregarUsuarios = async () => {
     setCarregando(true);
     try {
@@ -23,38 +23,29 @@ export default function ListaUsuarios() {
       const data = await resp.json();
       setUsuarios(data);
     } catch (error) {
-      console.error('Erro ao carregar usuários:', error);
-      Alert.alert('Erro', 'Não foi possível carregar os usuários.');
+      console.error(error);
+      Alert.alert('Erro', 'Erro ao carregar usuários');
     } finally {
       setCarregando(false);
     }
   };
 
-  // ===== ALTERAR ADMIN =====
   const alternarAdmin = async (id, isAdminAtual) => {
-    const novoValor = !isAdminAtual;
-
     try {
       const resp = await fetch(`${USERS_ENDPOINT}/${id}/admin`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ isAdmin: novoValor }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isAdmin: !isAdminAtual }),
       });
 
       if (resp.ok) {
-        Alert.alert(
-          'Sucesso',
-          novoValor ? 'Usuário agora é administrador.' : 'Admin removido com sucesso.'
-        );
         carregarUsuarios();
       } else {
-        Alert.alert('Erro', 'Não foi possível atualizar o status do usuário.');
+        Alert.alert('Erro', 'Falha ao atualizar o usuário');
       }
-    } catch (erro) {
-      console.error('Erro ao atualizar admin:', erro);
-      Alert.alert('Erro', 'Falha ao se comunicar com o servidor.');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Erro ao tentar atualizar usuário');
     }
   };
 
@@ -62,22 +53,23 @@ export default function ListaUsuarios() {
     carregarUsuarios();
   }, []);
 
-  // ===== RENDER ITEM =====
-  const renderUsuario = ({ item }) => (
-    <View style={styles.card}>
-      <View style={{ flex: 1 }}>
+  const usuariosFiltrados = usuarios.filter((u) =>
+    (u.email?.toLowerCase().includes(busca.toLowerCase()) ||
+     u.nome?.toLowerCase().includes(busca.toLowerCase()))
+  );
+
+  const renderItem = ({ item }) => (
+    <View style={[styles.card, item.isAdmin && styles.cardAdmin]}>
+      <View>
         <Text style={styles.id}>ID: {item.id}</Text>
         <Text style={styles.email}>{item.email}</Text>
-        <Text style={[styles.status, { color: item.isAdmin ? 'green' : 'gray' }]}>
+        <Text style={[styles.status, item.isAdmin ? styles.statusAdmin : styles.statusUser]}>
           {item.isAdmin ? 'Administrador' : 'Usuário comum'}
         </Text>
       </View>
 
       <TouchableOpacity
-        style={[
-          styles.botao,
-          { backgroundColor: item.isAdmin ? '#c0392b' : '#27ae60' },
-        ]}
+        style={[styles.botao, item.isAdmin ? styles.remover : styles.tornar]}
         onPress={() => alternarAdmin(item.id, item.isAdmin)}
       >
         <Text style={styles.textoBotao}>
@@ -88,22 +80,29 @@ export default function ListaUsuarios() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Gerenciar Usuários</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Buscar por nome ou e-mail..."
+        placeholderTextColor="#aaa"
+        value={busca}
+        onChangeText={setBusca}
+      />
+
       {carregando ? (
-        <ActivityIndicator size="large" color="#123458" />
+        <ActivityIndicator size="large" color="#123458" style={{ marginTop: 20 }} />
       ) : (
         <FlatList
-          data={usuarios}
+          data={usuariosFiltrados}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={renderUsuario}
-          onRefresh={carregarUsuarios}
-          refreshing={carregando}
-          ListEmptyComponent={
-            <Text style={styles.vazio}>Nenhum usuário cadastrado</Text>
-          }
+          renderItem={renderItem}
+          contentContainerStyle={{ paddingBottom: 80 }}
+          ListEmptyComponent={<Text style={styles.vazio}>Nenhum usuário encontrado.</Text>}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -111,48 +110,87 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F1EFEC',
-    padding: 15,
+    padding: 20,
+  },
+  titulo: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#123458',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  input: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    fontSize: 16,
+    color: '#333',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
   card: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
     marginBottom: 12,
+    padding: 15,
+    borderRadius: 14,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  cardAdmin: {
+    borderLeftWidth: 4,
+    borderLeftColor: '#0a8754',
   },
   id: {
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 3,
   },
   email: {
-    fontSize: 15,
-    color: '#555',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
   },
   status: {
-    marginTop: 4,
     fontSize: 13,
+    marginTop: 4,
+    fontWeight: '500',
+  },
+  statusAdmin: {
+    color: '#0a8754',
+  },
+  statusUser: {
+    color: '#555',
   },
   botao: {
     paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 14,
+    borderRadius: 10,
+  },
+  tornar: {
+    backgroundColor: '#0a8754',
+  },
+  remover: {
+    backgroundColor: '#c0392b',
   },
   textoBotao: {
     color: '#fff',
-    fontWeight: '600',
-    fontSize: 13,
+    fontWeight: 'bold',
   },
   vazio: {
     textAlign: 'center',
-    marginTop: 40,
-    color: '#555',
-    fontSize: 15,
+    marginTop: 30,
+    fontSize: 16,
+    color: '#777',
   },
 });
