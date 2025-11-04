@@ -48,12 +48,16 @@ const ListaPaciente = ({ navigation }) => {
   const handleNewPaciente = () => navigation?.navigate('CadastroPaciente');
 
   // ------------------- RENDER PACIENTE ANÔNIMO ------------------- //
-  const renderPaciente = ({ item }) => (
-    <View style={styles.pacienteCard}>
-      <Text style={styles.pacienteTitle}>Paciente #{item.idPaciente}</Text>
-      {/* Se quiser, pode deixar o card completamente vazio comentando a linha acima */}
-    </View>
-  );
+  const renderPaciente = ({ item }) => {
+    const id = item.idPaciente || item.id || '';
+    const nome = item.nome || item.name || '—';
+
+    return (
+      <View style={styles.pacienteCard}>
+        <Text style={styles.pacienteTitle}>#{id} - {nome}</Text>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -87,7 +91,7 @@ const ListaPaciente = ({ navigation }) => {
           <FlatList
             data={pacientes}
             renderItem={renderPaciente}
-            keyExtractor={item => item.idPaciente.toString()}
+            keyExtractor={item => (item.idPaciente || item.id || '').toString()}
           />
         )}
       </View>
@@ -109,6 +113,7 @@ const styles = StyleSheet.create({
   pacienteCard: { backgroundColor: '#fff', padding: 15, borderRadius: 10, marginBottom: 10 },
   pacienteInfo: { flex: 1 },
   pacienteTitle: { fontSize: 16, fontWeight: '600', marginBottom: 4 },
+  pacienteEmail: { fontSize: 14, color: '#666' },
   emptyText: { textAlign: 'center', color: '#666', fontStyle: 'italic', marginTop: 40 },
   loader: { marginTop: 40 },
 });

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // db deve ser importado do mysql2/promise
+const db = require('../db');
 
 // ------------------- LISTAR TODOS OS PACIENTES ------------------- //
 router.get('/', async (req, res) => {
@@ -17,7 +17,8 @@ router.get('/:id', async (req, res) => {
   const id = parseInt(req.params.id);
   try {
     const [results] = await db.query('SELECT * FROM pacientes WHERE idPaciente = ?', [id]);
-    if (results.length === 0) return res.status(404).json({ message: 'Paciente não encontrado' });
+    if (results.length === 0)
+      return res.status(404).json({ message: 'Paciente não encontrado' });
     res.json(results[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -32,7 +33,10 @@ router.post('/', async (req, res) => {
       'INSERT INTO pacientes (nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia]
     );
-    res.status(201).json({ id: result.insertId, nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia });
+    res.status(201).json({
+      id: result.insertId,
+      nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -47,7 +51,8 @@ router.put('/:id', async (req, res) => {
       'UPDATE pacientes SET nome=?, dataNascimento=?, telefone=?, email=?, nomeMae=?, idade=?, medicamento=?, patologia=? WHERE idPaciente=?',
       [nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia, id]
     );
-    if (result.affectedRows === 0) return res.status(404).json({ message: 'Paciente não encontrado' });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: 'Paciente não encontrado' });
     res.json({ id, nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -59,7 +64,8 @@ router.delete('/:id', async (req, res) => {
   const id = parseInt(req.params.id);
   try {
     const [result] = await db.query('DELETE FROM pacientes WHERE idPaciente = ?', [id]);
-    if (result.affectedRows === 0) return res.status(404).json({ message: 'Paciente não encontrado' });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: 'Paciente não encontrado' });
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ error: err.message });
