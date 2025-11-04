@@ -11,3 +11,4 @@ export const PACIENTES_ENDPOINT = `${API_BASE_URL}/pacientes`;
 export const EXAMES_ENDPOINT = `${API_BASE_URL}/exames`;
 export const REGISTER_ENDPOINT = `${API_BASE_URL}/users/register`;
 export const LOGIN_ENDPOINT = `${API_BASE_URL}/users/login`;
+export const USERS_ENDPOINT = `${API_BASE_URL}/users`;

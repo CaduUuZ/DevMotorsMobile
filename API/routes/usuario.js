@@ -16,30 +16,27 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-    const [usuarioExistente] = await db.query(
-      'SELECT * FROM usuarios WHERE email = ?',
-      [email]
-    );
-
+    const [usuarioExistente] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
     if (usuarioExistente.length > 0) {
       return res.status(409).json({ message: 'Email já cadastrado' });
     }
 
-    const saltRounds = 10;
-    const senhaHash = await bcrypt.hash(senha, saltRounds);
+    const senhaHash = await bcrypt.hash(senha, 10);
+
+    // Evita que alguém envie isAdmin=1 direto via corpo da requisição
+    const adminSeguro = isAdmin === true || isAdmin === 1 ? 1 : 0;
 
     const [resultado] = await db.query(
       'INSERT INTO usuarios (email, senha, isAdmin) VALUES (?, ?, ?)',
-      [email, senhaHash, isAdmin]
+      [email, senhaHash, adminSeguro]
     );
 
     return res.status(201).json({
       message: 'Usuário registrado com sucesso',
       id: resultado.insertId,
       email,
-      isAdmin
+      isAdmin: adminSeguro
     });
-
   } catch (erro) {
     console.error('Erro ao registrar usuário:', erro);
     return res.status(500).json({ message: 'Erro ao registrar usuário' });
@@ -56,7 +53,6 @@ router.post('/login', async (req, res) => {
 
   try {
     const [usuarios] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
-
     if (usuarios.length === 0) {
       return res.status(401).json({ message: 'Email ou senha incorretos' });
     }
@@ -67,27 +63,59 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Email ou senha incorretos' });
     }
 
-    // Gera token com isAdmin no payload
     const token = jwt.sign(
-      { id: usuario.id, isAdmin: usuario.isAdmin === 1 },
+      { id: usuario.id, isAdmin: !!usuario.isAdmin },
       JWT_SECRET,
       { expiresIn: '2h' }
     );
 
-    // Retorna dados esperados pelo app
     return res.status(200).json({
       message: 'Login realizado com sucesso',
       usuario: {
         id: usuario.id,
         email: usuario.email,
-        isAdmin: usuario.isAdmin === 1
+        isAdmin: !!usuario.isAdmin
       },
       token
     });
-
   } catch (erro) {
     console.error('Erro ao fazer login:', erro);
     return res.status(500).json({ message: 'Erro ao fazer login' });
+  }
+});
+
+// ======= ROTA PARA LISTAR TODOS OS USUÁRIOS =======
+router.get('/', async (req, res) => {
+  try {
+    const [usuarios] = await db.query(
+      'SELECT id, email, isAdmin FROM usuarios ORDER BY id ASC'
+    );
+    res.status(200).json(usuarios);
+  } catch (erro) {
+    console.error('Erro ao listar usuários:', erro);
+    res.status(500).json({ message: 'Erro ao listar usuários' });
+  }
+});
+
+// ======= ROTA PARA ATUALIZAR STATUS DE ADMIN =======
+router.put('/:id/admin', async (req, res) => {
+  const { id } = req.params;
+  const { isAdmin } = req.body;
+
+  try {
+    const [resultado] = await db.query(
+      'UPDATE usuarios SET isAdmin = ? WHERE id = ?',
+      [isAdmin ? 1 : 0, id]
+    );
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    res.status(200).json({ message: 'Status de admin atualizado com sucesso' });
+  } catch (erro) {
+    console.error('Erro ao atualizar admin:', erro);
+    res.status(500).json({ message: 'Erro ao atualizar admin' });
   }
 });
 
