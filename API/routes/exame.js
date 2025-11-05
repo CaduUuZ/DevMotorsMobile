@@ -1,98 +1,128 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const db = require('../db'); // pool promise (mysql2/promise)
 
-// Listar todos os exames
-router.get('/', (req, res) => {
-  const { paciente } = req.query;
+// Listar exames (aceita ?buscaId= ou ?paciente=)
+router.get('/', async (req, res) => {
+  const buscaId = req.query.buscaId || req.query.paciente || null;
   let sql = `
     SELECT 
-      e.idExame, e.laboratorio, e.exameTexto, e.dataExame, e.resultado, e.informacoesAdicionais,
-      p.idPaciente, p.nome, p.dataNascimento, p.telefone, p.email, p.nomeMae, p.idade, p.medicamento, p.patologia
+      e.idExame, e.idPaciente, e.laboratorio, e.exameTexto, e.dataExame, e.resultado, e.informacoesAdicionais,
+      p.nome, p.idade, p.email
     FROM exames e
-    JOIN pacientes p ON e.idPaciente = p.idPaciente
+    LEFT JOIN pacientes p ON e.idPaciente = p.idPaciente
   `;
-  let params = [];
-  if (paciente) {
+  const params = [];
+  if (buscaId) {
     sql += ' WHERE e.idPaciente = ?';
-    params.push(paciente);
+    params.push(buscaId);
   }
-  db.query(sql, params, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
+  sql += ' ORDER BY e.idExame DESC';
+
+  try {
+    const [rows] = await db.query(sql, params);
+    return res.json(rows);
+  } catch (err) {
+    console.error('[API] erro GET /exames:', err);
+    return res.status(500).json({ error: err.message || 'Erro ao buscar exames' });
+  }
 });
 
 // Buscar exame por ID
-router.get('/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  db.query('SELECT * FROM exames WHERE idExame = ?', [id], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0) return res.status(404).json({ message: 'Exame não encontrado' });
-    res.json(results[0]);
-  });
+router.get('/:id', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const [rows] = await db.query('SELECT * FROM exames WHERE idExame = ?', [id]);
+    if (!rows || rows.length === 0) return res.status(404).json({ message: 'Exame não encontrado' });
+    return res.json(rows[0]);
+  } catch (err) {
+    console.error('[API] erro GET /exames/:id', err);
+    return res.status(500).json({ error: err.message });
+  }
 });
 
-// Inserir novo exame
-router.post('/', (req, res) => {
-  const { idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais } = req.body;
+// Inserir novo exame (aceita pacienteId ou idPaciente no body)
+router.post('/', async (req, res) => {
+  const {
+    pacienteId,
+    idPaciente,
+    laboratorio,
+    exameTexto,
+    dataExame,
+    resultado,
+    informacoesAdicionais
+  } = req.body;
 
-  if (!idPaciente || !laboratorio || !exameTexto) {
-    return res.status(400).json({ message: 'Campos obrigatórios: idPaciente, laboratorio, exameTexto' });
+  const idPac = pacienteId || idPaciente;
+  if (!idPac || !laboratorio || !exameTexto) {
+    return res.status(400).json({ message: 'Campos obrigatórios: pacienteId/idPaciente, laboratorio, exameTexto' });
   }
 
-  db.query('SELECT * FROM pacientes WHERE idPaciente = ?', [idPaciente], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0) return res.status(404).json({ message: 'Paciente não encontrado' });
+  try {
+    // checa se paciente existe
+    const [pacRows] = await db.query('SELECT idPaciente FROM pacientes WHERE idPaciente = ?', [idPac]);
+    if (!pacRows || pacRows.length === 0) {
+      return res.status(404).json({ message: 'Paciente não encontrado' });
+    }
 
+    const dataVal = dataExame || new Date();
     const sql = `
       INSERT INTO exames (idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
-    const params = [idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais];
+    const params = [idPac, laboratorio, exameTexto, dataVal, resultado || null, informacoesAdicionais || null];
 
-    db.query(sql, params, (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.status(201).json({
-        idExame: result.insertId,
-        idPaciente,
-        laboratorio,
-        exameTexto,
-        dataExame,
-        resultado,
-        informacoesAdicionais
-      });
-    });
-  });
+    const [result] = await db.query(sql, params);
+    const insertedId = result.insertId;
+
+    // retornar o exame criado já com nome do paciente
+    const [rows] = await db.query(
+      `SELECT e.idExame, e.idPaciente, e.laboratorio, e.exameTexto, e.dataExame, e.resultado, e.informacoesAdicionais,
+              p.nome
+       FROM exames e LEFT JOIN pacientes p ON e.idPaciente = p.idPaciente
+       WHERE e.idExame = ?`,
+      [insertedId]
+    );
+
+    return res.status(201).json(rows[0] || { insertedId });
+  } catch (err) {
+    console.error('[API] erro POST /exames:', err);
+    return res.status(500).json({ error: err.message || 'Erro ao criar exame' });
+  }
 });
 
 // Editar exame
-router.put('/:id', (req, res) => {
-  const idExame = parseInt(req.params.id);
+router.put('/:id', async (req, res) => {
+  const idExame = parseInt(req.params.id, 10);
   const { idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais } = req.body;
 
-  const sql = `
-    UPDATE exames 
-    SET idPaciente=?, laboratorio=?, exameTexto=?, dataExame=?, resultado=?, informacoesAdicionais=?
-    WHERE idExame=?
-  `;
-  const params = [idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais, idExame];
-
-  db.query(sql, params, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+  try {
+    const sql = `
+      UPDATE exames 
+      SET idPaciente=?, laboratorio=?, exameTexto=?, dataExame=?, resultado=?, informacoesAdicionais=?
+      WHERE idExame=?
+    `;
+    const params = [idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais, idExame];
+    const [result] = await db.query(sql, params);
     if (result.affectedRows === 0) return res.status(404).json({ message: 'Exame não encontrado' });
-    res.json({ idExame, idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais });
-  });
+    return res.json({ idExame, idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais });
+  } catch (err) {
+    console.error('[API] erro PUT /exames/:id', err);
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 // Excluir exame
-router.delete('/:id', (req, res) => {
-  const idExame = parseInt(req.params.id);
-  db.query('DELETE FROM exames WHERE idExame = ?', [idExame], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+router.delete('/:id', async (req, res) => {
+  const idExame = parseInt(req.params.id, 10);
+  try {
+    const [result] = await db.query('DELETE FROM exames WHERE idExame = ?', [idExame]);
     if (result.affectedRows === 0) return res.status(404).json({ message: 'Exame não encontrado' });
-    res.status(204).send();
-  });
+    return res.status(204).send();
+  } catch (err) {
+    console.error('[API] erro DELETE /exames/:id', err);
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
