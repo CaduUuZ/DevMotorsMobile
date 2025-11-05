@@ -1,31 +1,88 @@
-// Home.js
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
+import axios from "axios";
+import { PACIENTES_ENDPOINT, EXAMES_ENDPOINT } from "../../config/api";
 
-export default function Home({ navigation, onLogout }) {
+export default function Home() {
   const [pacientesHoje, setPacientesHoje] = useState(0);
   const [examesHoje, setExamesHoje] = useState(0);
   const [tabela, setTabela] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // valores fake
-    setPacientesHoje(Math.floor(Math.random() * 10));
-    setExamesHoje(Math.floor(Math.random() * 10));
+useEffect(() => {
+  async function carregarDados() {
+    try {
+      const pacientesRes = await axios.get(PACIENTES_ENDPOINT);
+      const examesRes = await axios.get(EXAMES_ENDPOINT);
 
-    const dias = Array.from({ length: 10 }, (_, i) => i + 1);
-    setTabela(
-      dias.map((dia) => {
-        const pacientes = Math.floor(Math.random() * 10);
-        const exames = Math.floor(Math.random() * 10);
-        return { dia, pacientes, exames };
-      })
+      const pacientes = pacientesRes.data || [];
+      const exames = examesRes.data || [];
+
+      // 🔹 Contagem de hoje
+      const hoje = new Date();
+      const diaHoje = hoje.toISOString().split("T")[0];
+
+      const pacientesHojeCount = pacientes.filter(p => {
+        const data = new Date(p.dataCadastro);
+        const dia = data.toISOString().split("T")[0];
+        return dia === diaHoje;
+      }).length;
+
+      const examesHojeCount = exames.filter(e => {
+        if (!e.dataExame) return false;
+        const data = new Date(e.dataExame);
+        const dia = data.toISOString().split("T")[0];
+        return dia === diaHoje;
+      }).length;
+
+      setPacientesHoje(pacientesHojeCount);
+      setExamesHoje(examesHojeCount);
+
+      // 🔹 Agrupar estatísticas por dia
+      const dias = {};
+      pacientes.forEach(p => {
+        const dia = new Date(p.dataCadastro).toISOString().split("T")[0];
+        dias[dia] = dias[dia] || { pacientes: 0, exames: 0 };
+        dias[dia].pacientes++;
+      });
+
+      exames.forEach(e => {
+        if (!e.dataExame) return;
+        const dia = new Date(e.dataExame).toISOString().split("T")[0];
+        dias[dia] = dias[dia] || { pacientes: 0, exames: 0 };
+        dias[dia].exames++;
+      });
+
+      const tabelaFinal = Object.entries(dias)
+        .map(([dia, valores]) => ({
+          dia,
+          pacientes: valores.pacientes,
+          exames: valores.exames,
+        }))
+        .sort((a, b) => new Date(b.dia) - new Date(a.dia));
+
+      setTabela(tabelaFinal.slice(0, 10));
+    } catch (err) {
+      console.error("Erro ao carregar dados:", err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  carregarDados();
+}, []);
+
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: "center", marginTop: 40 }}>Carregando dados...</Text>
+      </View>
     );
-  }, []);
+  }
 
   return (
     <View style={styles.container}>
-      {/* CONTEÚDO */}
       <ScrollView style={styles.content}>
         <Text style={styles.title}>📊 Painel de Resumo do Dia</Text>
 
@@ -65,24 +122,9 @@ export default function Home({ navigation, onLogout }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, flexDirection: "row", backgroundColor: "#e9ecef" },
-
-  // Sidebar
-  sidebar: {
-    width: 220,
-    backgroundColor: "#343a40",
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-  },
-  logo: { color: "#fff", fontSize: 22, marginBottom: 20, textAlign: "center" },
-  menuItem: { flexDirection: "row", alignItems: "center", paddingVertical: 10 },
-  menuText: { color: "#fff", fontSize: 14, marginLeft: 10 },
-
-  // Conteúdo
+  container: { flex: 1, backgroundColor: "#e9ecef" },
   content: { flex: 1, padding: 16 },
   title: { fontSize: 20, fontWeight: "bold", marginVertical: 12 },
-
-  // Cards
   row: { flexDirection: "row", justifyContent: "space-between", marginBottom: 16 },
   card: {
     flex: 1,
@@ -94,8 +136,6 @@ const styles = StyleSheet.create({
   },
   cardTitle: { color: "#fff", fontSize: 14 },
   cardValue: { color: "#fff", fontSize: 32, fontWeight: "bold" },
-
-  // Tabela
   table: { borderWidth: 1, borderColor: "#ddd", borderRadius: 8, marginVertical: 12 },
   tableRowHeader: { flexDirection: "row", backgroundColor: "#dee2e6", padding: 6 },
   tableRow: { flexDirection: "row", padding: 6 },

@@ -1,12 +1,12 @@
 // db.js
-const mysql = require('mysql2/promise'); // <-- versão promise
+const mysql = require('mysql2/promise');
 
 const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'lab_faculdade',
-  port: 3307,           // sua porta customizada
+  port: 3306,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
