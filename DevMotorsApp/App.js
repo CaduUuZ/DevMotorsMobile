@@ -126,7 +126,7 @@ export default function App() {
           )}
         </Drawer.Screen>
 
-        {/* 🛡️ Telas que só aparecem para admin */}
+        {/* Telas que só aparecem para admin */}
         {isAdmin && (
           <>
             <Drawer.Screen
@@ -162,7 +162,9 @@ export default function App() {
             </Drawer.Screen>
             <Drawer.Screen
               name="Usuários (Admin)"
-              options={{ title: "Gerenciar Usuários" }}
+              options={{ title: "Gerenciar Usuários",
+                drawerLabelStyle:{color: "#0d6efd", fontWeight: "bold" },
+               }}
             >
               {(props) => (
                 <ListaUsuarios
