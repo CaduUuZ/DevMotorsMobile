@@ -24,6 +24,7 @@ import CadastroPaciente from "./src/screens/CadastroPaciente/CadastroPaciente";
 import TelaRelatorio from "./src/screens/Admin/TelaRelatorio/TelaRelatorio";
 import ListaPacienteAdmin from "./src/screens/Admin/ListaPacienteAdmin/ListaPacienteAdmin";
 import ListaUsuarios from "./src/screens/ListaUsuarios/ListaUsuarios";
+import { verLaudo } from "./src/screens/Laudo/VerLaudo";
 
 const AuthStack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();

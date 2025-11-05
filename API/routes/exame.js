@@ -2,6 +2,19 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db'); // pool promise (mysql2/promise)
 
+// helper para transformar rows e aninhar paciente
+function mapExameRow(row) {
+  const paciente = {
+    idPaciente: row.idPaciente,
+    nome: row.nome,
+    idade: row.idade,
+    email: row.email
+  };
+  // copia restante do exame
+  const { nome, idade, email, ...rest } = row;
+  return { ...rest, paciente };
+}
+
 // Listar exames (aceita ?buscaId= ou ?paciente=)
 router.get('/', async (req, res) => {
   const buscaId = req.query.buscaId || req.query.paciente || null;
@@ -21,7 +34,8 @@ router.get('/', async (req, res) => {
 
   try {
     const [rows] = await db.query(sql, params);
-    return res.json(rows);
+    const mapped = rows.map(mapExameRow);
+    return res.json(mapped);
   } catch (err) {
     console.error('[API] erro GET /exames:', err);
     return res.status(500).json({ error: err.message || 'Erro ao buscar exames' });
@@ -32,9 +46,13 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
   try {
-    const [rows] = await db.query('SELECT * FROM exames WHERE idExame = ?', [id]);
+    const [rows] = await db.query(
+      `SELECT e.idExame, e.idPaciente, e.laboratorio, e.exameTexto, e.dataExame, e.resultado, e.informacoesAdicionais,
+              p.nome, p.idade, p.email
+       FROM exames e LEFT JOIN pacientes p ON e.idPaciente = p.idPaciente
+       WHERE e.idExame = ?`, [id]);
     if (!rows || rows.length === 0) return res.status(404).json({ message: 'Exame não encontrado' });
-    return res.json(rows[0]);
+    return res.json(mapExameRow(rows[0]));
   } catch (err) {
     console.error('[API] erro GET /exames/:id', err);
     return res.status(500).json({ error: err.message });
@@ -60,7 +78,7 @@ router.post('/', async (req, res) => {
 
   try {
     // checa se paciente existe
-    const [pacRows] = await db.query('SELECT idPaciente FROM pacientes WHERE idPaciente = ?', [idPac]);
+    const [pacRows] = await db.query('SELECT idPaciente, nome, idade, email FROM pacientes WHERE idPaciente = ?', [idPac]);
     if (!pacRows || pacRows.length === 0) {
       return res.status(404).json({ message: 'Paciente não encontrado' });
     }
@@ -70,21 +88,23 @@ router.post('/', async (req, res) => {
       INSERT INTO exames (idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
-    const params = [idPac, laboratorio, exameTexto, dataVal, resultado || null, informacoesAdicionais || null];
+    // armazenar informacoesAdicionais como string (JSON) no DB
+    const infoStr = informacoesAdicionais ? (typeof informacoesAdicionais === 'string' ? informacoesAdicionais : JSON.stringify(informacoesAdicionais)) : null;
+    const params = [idPac, laboratorio, exameTexto, dataVal, resultado || null, infoStr];
 
     const [result] = await db.query(sql, params);
     const insertedId = result.insertId;
 
-    // retornar o exame criado já com nome do paciente
+    // retornar o exame criado já com nome do paciente (usando map)
     const [rows] = await db.query(
       `SELECT e.idExame, e.idPaciente, e.laboratorio, e.exameTexto, e.dataExame, e.resultado, e.informacoesAdicionais,
-              p.nome
+              p.nome, p.idade, p.email
        FROM exames e LEFT JOIN pacientes p ON e.idPaciente = p.idPaciente
        WHERE e.idExame = ?`,
       [insertedId]
     );
 
-    return res.status(201).json(rows[0] || { insertedId });
+    return res.status(201).json(mapExameRow(rows[0]));
   } catch (err) {
     console.error('[API] erro POST /exames:', err);
     return res.status(500).json({ error: err.message || 'Erro ao criar exame' });
