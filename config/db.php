@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = "1234";
 $dbname = "lab_faculdade";
 $port = 3307;
 

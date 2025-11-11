@@ -5,7 +5,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+// ======= CHECAGEM DO JWT_SECRET =======
 const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET não definido. Verifique o arquivo .env na raiz do projeto.');
+}
 
 // ======= ROTA DE REGISTRO =======
 router.post('/register', async (req, res) => {
@@ -23,7 +27,7 @@ router.post('/register', async (req, res) => {
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
-    // Evita que alguém envie isAdmin=1 direto via corpo da requisição
+    // Evita que alguém envie isAdmin=1 diretamente via corpo
     const adminSeguro = isAdmin === true || isAdmin === 1 ? 1 : 0;
 
     const [resultado] = await db.query(
@@ -84,7 +88,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ======= ROTA PARA LISTAR TODOS OS USUÁRIOS =======
+// ======= LISTAR TODOS OS USUÁRIOS =======
 router.get('/', async (req, res) => {
   try {
     const [usuarios] = await db.query(
@@ -97,7 +101,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ======= ROTA PARA ATUALIZAR STATUS DE ADMIN =======
+// ======= ATUALIZAR STATUS DE ADMIN =======
 router.put('/:id/admin', async (req, res) => {
   const { id } = req.params;
   const { isAdmin } = req.body;

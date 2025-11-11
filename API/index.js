@@ -1,11 +1,20 @@
-const express = require('express');
-const cors = require('cors'); 
-const app = express();
-require('dotenv').config();
+// index.js
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') }); // Carrega variáveis do .env primeiro
 
+const express = require('express');
+const cors = require('cors');
+const app = express();
+
+// Confirmação de que a variável está carregada
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
 // Middleware CORS - permite qualquer origem
 app.use(cors());
+
+const examesPdfRouter = require('./routes/examesPdf');
+app.use('/exames', examesPdfRouter);
+
 
 // Middleware para interpretar JSON
 app.use(express.json());

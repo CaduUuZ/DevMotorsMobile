@@ -88,14 +88,12 @@ router.post('/', async (req, res) => {
       INSERT INTO exames (idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
-    // armazenar informacoesAdicionais como string (JSON) no DB
     const infoStr = informacoesAdicionais ? (typeof informacoesAdicionais === 'string' ? informacoesAdicionais : JSON.stringify(informacoesAdicionais)) : null;
     const params = [idPac, laboratorio, exameTexto, dataVal, resultado || null, infoStr];
 
     const [result] = await db.query(sql, params);
     const insertedId = result.insertId;
 
-    // retornar o exame criado já com nome do paciente (usando map)
     const [rows] = await db.query(
       `SELECT e.idExame, e.idPaciente, e.laboratorio, e.exameTexto, e.dataExame, e.resultado, e.informacoesAdicionais,
               p.nome, p.idade, p.email
@@ -114,18 +112,44 @@ router.post('/', async (req, res) => {
 // Editar exame
 router.put('/:id', async (req, res) => {
   const idExame = parseInt(req.params.id, 10);
-  const { idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais } = req.body;
+  const {
+    pacienteId,
+    idPaciente,
+    laboratorio,
+    exameTexto,
+    dataExame,
+    resultado,
+    informacoesAdicionais
+  } = req.body;
+
+  const idPac = pacienteId || idPaciente;
+
+  if (!idPac || !laboratorio || !exameTexto) {
+    return res.status(400).json({ message: 'Campos obrigatórios: pacienteId/idPaciente, laboratorio, exameTexto' });
+  }
 
   try {
+    const infoStr = informacoesAdicionais ? (typeof informacoesAdicionais === 'string' ? informacoesAdicionais : JSON.stringify(informacoesAdicionais)) : null;
     const sql = `
       UPDATE exames 
       SET idPaciente=?, laboratorio=?, exameTexto=?, dataExame=?, resultado=?, informacoesAdicionais=?
       WHERE idExame=?
     `;
-    const params = [idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais, idExame];
+    const params = [idPac, laboratorio, exameTexto, dataExame, resultado, infoStr, idExame];
     const [result] = await db.query(sql, params);
+
     if (result.affectedRows === 0) return res.status(404).json({ message: 'Exame não encontrado' });
-    return res.json({ idExame, idPaciente, laboratorio, exameTexto, dataExame, resultado, informacoesAdicionais });
+
+    // retornar exame atualizado com paciente
+    const [rows] = await db.query(
+      `SELECT e.idExame, e.idPaciente, e.laboratorio, e.exameTexto, e.dataExame, e.resultado, e.informacoesAdicionais,
+              p.nome, p.idade, p.email
+       FROM exames e LEFT JOIN pacientes p ON e.idPaciente = p.idPaciente
+       WHERE e.idExame = ?`,
+      [idExame]
+    );
+
+    return res.json(mapExameRow(rows[0]));
   } catch (err) {
     console.error('[API] erro PUT /exames/:id', err);
     return res.status(500).json({ error: err.message });
