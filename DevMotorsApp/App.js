@@ -24,7 +24,7 @@ import CadastroPaciente from "./src/screens/CadastroPaciente/CadastroPaciente";
 import TelaRelatorio from "./src/screens/Admin/TelaRelatorio/TelaRelatorio";
 import ListaPacienteAdmin from "./src/screens/Admin/ListaPacienteAdmin/ListaPacienteAdmin";
 import ListaUsuarios from "./src/screens/ListaUsuarios/ListaUsuarios";
-import { verLaudo } from "./src/screens/Laudo/VerLaudo";
+import VerLaudo from "./src/screens/Laudo/VerLaudo"; // ✅ import correto
 
 const AuthStack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -33,21 +33,18 @@ export default function App() {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // --- LOGIN ---
   const handleLogin = (usuario) => {
     setIsLoading(true);
     setTimeout(() => {
-      setUserData(usuario); // { id, nome, isAdmin, token }
+      setUserData(usuario);
       setIsLoading(false);
     }, 500);
   };
 
-  // --- LOGOUT ---
   const handleLogout = () => {
     setUserData(null);
   };
 
-  // --- DRAWER PERSONALIZADO COM BOTÃO DE LOGOUT ---
   function CustomDrawerContent(props) {
     return (
       <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
@@ -70,9 +67,7 @@ export default function App() {
               color="#c62828"
               style={{ marginRight: 8 }}
             />
-            <Text
-              style={{ color: "#c62828", fontSize: 16, fontWeight: "bold" }}
-            >
+            <Text style={{ color: "#c62828", fontSize: 16, fontWeight: "bold" }}>
               Sair
             </Text>
           </TouchableOpacity>
@@ -127,7 +122,6 @@ export default function App() {
           )}
         </Drawer.Screen>
 
-        {/* Telas que só aparecem para admin */}
         {isAdmin && (
           <>
             <Drawer.Screen
@@ -161,11 +155,16 @@ export default function App() {
                 />
               )}
             </Drawer.Screen>
+
             <Drawer.Screen
               name="Usuários (Admin)"
-              options={{ title: "Gerenciar Usuários",
-                drawerLabelStyle:{color: "#0d6efd", fontWeight: "bold" },
-               }}
+              options={{
+                title: "Gerenciar Usuários",
+                drawerLabelStyle: {
+                  color: "#0d6efd",
+                  fontWeight: "bold",
+                },
+              }}
             >
               {(props) => (
                 <ListaUsuarios
@@ -178,6 +177,17 @@ export default function App() {
           </>
         )}
       </Drawer.Navigator>
+    );
+  }
+
+  // ✅ Novo Stack que contém o Drawer + VerLaudo
+  function MainStack() {
+    const Stack = createNativeStackNavigator();
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Drawer" component={MainDrawer} />
+        <Stack.Screen name="VerLaudo" component={VerLaudo} />
+      </Stack.Navigator>
     );
   }
 
@@ -195,7 +205,7 @@ export default function App() {
   return (
     <NavigationContainer>
       {userData ? (
-        <MainDrawer />
+        <MainStack /> // ✅ trocado
       ) : (
         <AuthStack.Navigator screenOptions={{ headerShown: false }}>
           <AuthStack.Screen name="Login">

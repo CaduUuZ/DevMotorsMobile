@@ -1,14 +1,11 @@
-// src/screens/exames/ListaExamesScreen.js
-
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, FlatList,
   StyleSheet, Alert, ActivityIndicator, SafeAreaView, StatusBar
 } from 'react-native';
-import { API_BASE_URL } from '../../config/api';
-
-// ---------- ENDPOINT ----------
-const EXAMES_ENDPOINT = `${API_BASE_URL}/exames`;
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
+import { EXAMES_ENDPOINT } from '../../config/api';
 
 // ---------- FUNÇÃO AUXILIAR ----------
 const processApiResponse = async (response) => {
@@ -35,6 +32,41 @@ const ItemExame = ({ exame, onDelete, navigation }) => {
 
   const temResultado = exame.resultado && exame.resultado.trim() !== '';
 
+  // 🔹 Função para gerar e salvar o PDF
+  const gerarPdf = async () => {
+    try {
+      const htmlContent = `
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <style>
+              body { font-family: Arial; padding: 20px; }
+              h1 { color: #123458; }
+              p { font-size: 14px; line-height: 1.4; }
+              .resultado { background: #f4f4f4; padding: 10px; border-radius: 8px; }
+            </style>
+          </head>
+          <body>
+            <h1>Laudo do Exame</h1>
+            <p><b>Exame:</b> ${exame.exameTexto}</p>
+            <p><b>Paciente:</b> ${exame.paciente?.nome} (${exame.paciente?.idade} anos)</p>
+            <p><b>Data:</b> ${formatarData(exame.dataExame)}</p>
+            <div class="resultado">
+              <h3>Resultado:</h3>
+              <p>${exame.resultado || 'Sem resultado disponível.'}</p>
+            </div>
+          </body>
+        </html>
+      `;
+
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      await Sharing.shareAsync(uri);
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      Alert.alert('Erro', 'Não foi possível gerar o PDF.');
+    }
+  };
+
   return (
     <View style={styles.itemContainer}>
       <Text style={styles.titleItem}>Exame: {exame.exameTexto}</Text>
@@ -44,13 +76,15 @@ const ItemExame = ({ exame, onDelete, navigation }) => {
       <View style={styles.actions}>
         {temResultado ? (
           <>
+            {/* Visualizar (PDF) */}
             <TouchableOpacity
               style={[styles.btn, styles.viewBtn]}
-              onPress={() => navigation.navigate('VerLaudo', { idExame: exame.idExame })}
+              onPress={gerarPdf}
             >
               <Text style={styles.btnText}>Visualizar</Text>
             </TouchableOpacity>
 
+            {/* Editar */}
             <TouchableOpacity
               style={[styles.btn, styles.editBtn]}
               onPress={() => navigation.navigate('EditarResultado', { idExame: exame.idExame })}
@@ -58,15 +92,15 @@ const ItemExame = ({ exame, onDelete, navigation }) => {
               <Text style={styles.btnText}>Editar</Text>
             </TouchableOpacity>
           </>
-        ) : (
-          <TouchableOpacity
-            style={[styles.btn, styles.insertBtn]}
-            onPress={() => navigation.navigate('FormResultado', { idExame: exame.idExame })}
-          >
-            <Text style={styles.btnText}>Inserir Resultado</Text>
-          </TouchableOpacity>
-        )}
+        ) : (<TouchableOpacity
+  style={[styles.btn, styles.insertBtn]}
+  onPress={() => navigation.navigate('VerLaudo', { idExame: exame.idExame })}
+>
+  <Text style={styles.btnText}>Visualizar PDF</Text>
+</TouchableOpacity> )}
 
+
+        {/* Excluir */}
         <TouchableOpacity
           style={[styles.btn, styles.deleteBtn]}
           onPress={() => onDelete(exame.idExame)}
@@ -88,11 +122,9 @@ export default function ListaExamesScreen({ navigation }) {
     setLoading(true);
     try {
       const url = id ? `${EXAMES_ENDPOINT}?buscaId=${id}` : EXAMES_ENDPOINT;
-     console.log('[ListaExame] GET', url);
+      console.log('[ListaExame] GET', url);
       const response = await fetch(url);
-+     console.log('[ListaExame] response status:', response.status);
       const data = await processApiResponse(response);
-+     console.log('[ListaExame] response body:', data);
 
       if (response.ok) {
         setExames(Array.isArray(data) ? data : []);
@@ -112,7 +144,7 @@ export default function ListaExamesScreen({ navigation }) {
     buscarExames();
   }, [buscarExames]);
 
-  // Recarrega lista sempre que a tela recebe foco (ex: voltar de NovoExame)
+  // Recarrega quando a tela recebe foco
   useEffect(() => {
     const unsubscribe = navigation?.addListener?.('focus', () => {
       buscarExames(buscaId);
