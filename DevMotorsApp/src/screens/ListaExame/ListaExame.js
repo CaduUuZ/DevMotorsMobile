@@ -32,7 +32,7 @@ const ItemExame = ({ exame, onDelete, navigation }) => {
 
   const temResultado = exame.resultado && exame.resultado.trim() !== '';
 
-  // 🔹 Função para gerar e salvar o PDF
+  // Função para gerar e salvar o PDF
   const gerarPdf = async () => {
     try {
       const htmlContent = `

@@ -156,16 +156,32 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Excluir exame
+// Excluir exame (melhor tratamento de erros e resposta JSON)
 router.delete('/:id', async (req, res) => {
   const idExame = parseInt(req.params.id, 10);
+  if (isNaN(idExame)) {
+    return res.status(400).json({ error: 'ID de exame inválido' });
+  }
+
   try {
+    console.log('[API] DELETE /exames/:id chamado para id =', idExame);
     const [result] = await db.query('DELETE FROM exames WHERE idExame = ?', [idExame]);
-    if (result.affectedRows === 0) return res.status(404).json({ message: 'Exame não encontrado' });
-    return res.status(204).send();
+
+    if (!result || result.affectedRows === 0) {
+      console.log('[API] DELETE -> nenhum registro removido para id:', idExame);
+      return res.status(404).json({ message: 'Exame não encontrado' });
+    }
+
+    console.log('[API] DELETE -> sucesso, id removido:', idExame);
+    // retornar JSON para facilitar debug no cliente
+    return res.status(200).json({ deleted: true, id: idExame });
   } catch (err) {
     console.error('[API] erro DELETE /exames/:id', err);
-    return res.status(500).json({ error: err.message });
+    // tratar erro de FK (registro referenciado)
+    if (err && (err.code === 'ER_ROW_IS_REFERENCED_2' || err.errno === 1451)) {
+      return res.status(409).json({ error: 'Não foi possível excluir: registro referenciado por outra tabela (restrição de FK).' });
+    }
+    return res.status(500).json({ error: err.message || 'Erro ao excluir exame' });
   }
 });
 

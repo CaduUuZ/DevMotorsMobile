@@ -4,8 +4,12 @@ const db = require('../db');
 const PDFDocument = require('pdfkit');
 
 // ======= ROTA PARA GERAR PDF DE UM EXAME =======
-router.get('/:id/pdf', async (req, res) => {
+router.get('/:id', async (req, res) => {
   const idExame = parseInt(req.params.id, 10);
+
+  if (isNaN(idExame)) {
+    return res.status(400).json({ message: 'ID de exame inválido' });
+  }
 
   try {
     // Buscar o exame no banco

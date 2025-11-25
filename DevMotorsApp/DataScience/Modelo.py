@@ -6,6 +6,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler, normalize
 import unicodedata
+import os
 
 # ---------------------------------------------------
 # 🔧 Normalização de texto
@@ -25,15 +26,18 @@ def normalizar(texto):
 
 
 # ---------------------------------------------------
-# 📂 Carregar dados
+# 📂 Carregar dados 
 # ---------------------------------------------------
-csv_path = "dados_pacientes_exames_500_atualizado.csv"
+BASE_DIR = os.path.dirname(__file__)
+csv_path = os.path.join(BASE_DIR, 'dados_pacientes_exames_500.csv')
 df = pd.read_csv(csv_path)
 
-# Normaliza colunas textuais
-df["patologia"] = df["patologia"].apply(normalizar)
-df["medicamento"] = df["medicamento"].apply(normalizar)
-df["mapa"] = df["mapa"].apply(normalizar)
+# Normaliza colunas textuais somente se existirem; cria coluna vazia caso contrário
+for col in ("patologia", "medicamento", "mapa"):
+    if col in df.columns:
+        df[col] = df[col].apply(normalizar)
+    else:
+        df[col] = ""  # evita KeyError em acessos posteriores
 
 # ---------------------------------------------------
 # 🧭 Sidebar – Navegação entre páginas

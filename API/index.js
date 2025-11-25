@@ -6,25 +6,27 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-// Confirmação de que a variável está carregada
 console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
-// Middleware CORS - permite qualquer origem
 app.use(cors());
 
-const examesPdfRouter = require('./routes/examesPdf');
-app.use('/exames', examesPdfRouter);
+// registrar middleware de logging curto (temporário)
+app.use((req, res, next) => {
+  console.log(`[API] ${req.method} ${req.path}`);
+  next();
+});
 
-
-// Middleware para interpretar JSON
+// interpretar JSON antes das rotas
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Importando as rotas
+const examesPdfRouter = require('./routes/examesPdf');
 const usuarioRoutes = require('./routes/usuario');
 const pacienteRoutes = require('./routes/paciente');
 const exameRoutes = require('./routes/exame');
 
-// Usando as rotas com prefixos
+// montar routers sem conflito
+app.use('/exames/pdf', examesPdfRouter);
 app.use('/users', usuarioRoutes);
 app.use('/pacientes', pacienteRoutes);
 app.use('/exames', exameRoutes);
