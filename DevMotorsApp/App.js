@@ -121,8 +121,9 @@ export default function App() {
             <ListaExame {...props} usuario={userData} onLogout={handleLogout} />
           )}
         </Drawer.Screen>
-            </Drawer.Screen>
 
+        {isAdmin && (
+          <>
             <Drawer.Screen
               name="Listar Pacientes Admin"
               options={{
@@ -143,10 +144,7 @@ export default function App() {
               name="Usuários (Admin)"
               options={{
                 title: "Gerenciar Usuários",
-                drawerLabelStyle: {
-                  color: "#0d6efd",
-                  fontWeight: "bold",
-                },
+                drawerLabelStyle: { color: "#0d6efd", fontWeight: "bold" },
               }}
             >
               {(props) => (
