@@ -1,10 +1,10 @@
 import { Platform } from 'react-native';
 
-const HOST_IP = '192.168.0.103'; // seu IP na rede
+const HOST_IP = '10.136.130.60'; // seu IP na rede
 const PORT = 3000; // porta onde seu backend HTTP responde
 
 export const API_BASE_URL = Platform.OS === 'android'
-  ? `http://192.168.0.103:${PORT}`
+  ? `http://10.136.130.60:${PORT}`
   : `http://${HOST_IP}:${PORT}`;
 
 

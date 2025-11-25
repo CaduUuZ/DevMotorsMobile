@@ -21,10 +21,9 @@ import ListaExame from "./src/screens/ListaExame/ListaExame";
 import NovoExame from "./src/screens/CadastroExame/NovoExame";
 import ListaPaciente from "./src/screens/ListarPacientes/ListaPaciente";
 import CadastroPaciente from "./src/screens/CadastroPaciente/CadastroPaciente";
-import TelaRelatorio from "./src/screens/Admin/TelaRelatorio/TelaRelatorio";
 import ListaPacienteAdmin from "./src/screens/Admin/ListaPacienteAdmin/ListaPacienteAdmin";
 import ListaUsuarios from "./src/screens/ListaUsuarios/ListaUsuarios";
-import VerLaudo from "./src/screens/Laudo/VerLaudo"; // ✅ import correto
+import VerLaudo from "./src/screens/Laudo/VerLaudo";
 
 const AuthStack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -77,7 +76,10 @@ export default function App() {
   }
 
   function MainDrawer() {
-    const isAdmin = userData?.isAdmin === 1 || userData?.isAdmin === true;
+    console.log("[App] userData:", userData);
+    const isAdmin =
+      [1, "1", true, "true", "admin", "ADMIN"].includes(userData?.isAdmin) ||
+      userData?.role === "admin";
 
     return (
       <Drawer.Navigator
@@ -144,7 +146,10 @@ export default function App() {
               name="Usuários (Admin)"
               options={{
                 title: "Gerenciar Usuários",
-                drawerLabelStyle: { color: "#0d6efd", fontWeight: "bold" },
+                drawerLabelStyle: {
+                  color: "#0d6efd",
+                  fontWeight: "bold",
+                },
               }}
             >
               {(props) => (
@@ -161,7 +166,6 @@ export default function App() {
     );
   }
 
-  // ✅ Novo Stack que contém o Drawer + VerLaudo
   function MainStack() {
     const Stack = createNativeStackNavigator();
     return (
@@ -186,7 +190,7 @@ export default function App() {
   return (
     <NavigationContainer>
       {userData ? (
-        <MainStack /> // ✅ trocado
+        <MainStack />
       ) : (
         <AuthStack.Navigator screenOptions={{ headerShown: false }}>
           <AuthStack.Screen name="Login">
