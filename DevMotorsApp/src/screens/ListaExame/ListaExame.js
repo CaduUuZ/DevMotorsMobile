@@ -74,31 +74,28 @@ const ItemExame = ({ exame, onDelete, navigation }) => {
       <Text style={styles.subText}>Data: {formatarData(exame.dataExame)}</Text>
 
       <View style={styles.actions}>
-        {temResultado ? (
-          <>
-            {/* Visualizar (PDF) */}
-            <TouchableOpacity
-              style={[styles.btn, styles.viewBtn]}
-              onPress={gerarPdf}
-            >
-              <Text style={styles.btnText}>Visualizar</Text>
-            </TouchableOpacity>
+        {/* Sempre mostrar botão Editar (antes aparecia só se temResultado) */}
+        <TouchableOpacity
+          style={[styles.btn, temResultado ? styles.editBtn : styles.insertBtn]}
+          onPress={() => {
+            // quando o Drawer está aninhado dentro do Stack, usar getParent() para acessar as rotas do Stack
+            const parentNav = navigation?.getParent ? navigation.getParent() : navigation;
+            parentNav?.navigate('EditarResultado', { idExame: exame.idExame });
+          }}
+        >
+          <Text style={styles.btnText}>Editar</Text>
+        </TouchableOpacity>
 
-            {/* Editar */}
-            <TouchableOpacity
-              style={[styles.btn, styles.editBtn]}
-              onPress={() => navigation.navigate('EditarResultado', { idExame: exame.idExame })}
-            >
-              <Text style={styles.btnText}>Editar</Text>
-            </TouchableOpacity>
-          </>
-        ) : (<TouchableOpacity
-  style={[styles.btn, styles.insertBtn]}
-  onPress={() => navigation.navigate('VerLaudo', { idExame: exame.idExame })}
->
-  <Text style={styles.btnText}>Visualizar PDF</Text>
-</TouchableOpacity> )}
-
+        {/* Visualizar (PDF) */}
+        <TouchableOpacity
+          style={[styles.btn, styles.viewBtn]}
+          onPress={() => {
+            const parentNav = navigation?.getParent ? navigation.getParent() : navigation;
+            parentNav?.navigate('VerLaudo', { idExame: exame.idExame });
+          }}
+        >
+          <Text style={styles.btnText}>Visualizar</Text>
+        </TouchableOpacity>
 
         {/* Excluir */}
         <TouchableOpacity
@@ -161,19 +158,31 @@ export default function ListaExamesScreen({ navigation }) {
         onPress: async () => {
           setLoading(true);
           try {
-            const response = await fetch(`${EXAMES_ENDPOINT}/${idExame}`, { method: 'DELETE' });
+            const response = await fetch(`${EXAMES_ENDPOINT}/${idExame}`, {
+              method: 'DELETE',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                // se sua API exigir autenticação, adicione: Authorization: `Bearer ${token}`
+              },
+            });
+
             const data = await processApiResponse(response);
+
+            console.log('[DELETE]', response.status, data);
 
             if (response.ok) {
               Alert.alert('Sucesso', 'Exame excluído com sucesso!');
               buscarExames(buscaId);
             } else {
-              console.error('Erro API ao excluir:', data);
-              Alert.alert('Erro', 'Falha ao excluir exame.');
+              // mostrar mensagem do servidor quando existir
+              const msg = (data && (data.message || data.error)) || `Status ${response.status}`;
+              console.error('Erro API ao excluir:', msg);
+              Alert.alert('Erro', msg);
             }
           } catch (err) {
             console.error('Erro conexão exclusão:', err);
-            Alert.alert('Erro de Conexão', 'Falha ao conectar ao servidor.');
+            Alert.alert('Erro de Conexão', 'Falha ao conectar ao servidor. Verifique se o backend está rodando e o IP/porta estão corretos.');
           } finally {
             setLoading(false);
           }

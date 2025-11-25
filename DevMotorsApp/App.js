@@ -21,10 +21,10 @@ import ListaExame from "./src/screens/ListaExame/ListaExame";
 import NovoExame from "./src/screens/CadastroExame/NovoExame";
 import ListaPaciente from "./src/screens/ListarPacientes/ListaPaciente";
 import CadastroPaciente from "./src/screens/CadastroPaciente/CadastroPaciente";
-import TelaRelatorio from "./src/screens/Admin/TelaRelatorio/TelaRelatorio";
 import ListaPacienteAdmin from "./src/screens/Admin/ListaPacienteAdmin/ListaPacienteAdmin";
 import ListaUsuarios from "./src/screens/ListaUsuarios/ListaUsuarios";
 import VerLaudo from "./src/screens/Laudo/VerLaudo"; // ✅ import correto
+import EditarResultado from "./src/screens/ListaExame/EditarResultado"; // <-- ADICIONAR
 
 const AuthStack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -161,13 +161,13 @@ export default function App() {
     );
   }
 
-  // ✅ Novo Stack que contém o Drawer + VerLaudo
   function MainStack() {
     const Stack = createNativeStackNavigator();
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Drawer" component={MainDrawer} />
         <Stack.Screen name="VerLaudo" component={VerLaudo} />
+        <Stack.Screen name="EditarResultado" component={EditarResultado} />
       </Stack.Navigator>
     );
   }
