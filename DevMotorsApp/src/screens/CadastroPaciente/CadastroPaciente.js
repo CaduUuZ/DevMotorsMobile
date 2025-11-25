@@ -6,10 +6,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { PACIENTES_ENDPOINT } from '../../config/api';
 
-
-// ------------------- FUNÇÕES AUXILIARES ------------------- //
-
-// Formata telefone
+// Formata telefone para exibição local
 const formatPhone = (text) => {
   const cleanText = text.replace(/\D/g, '');
   if (cleanText.length <= 10) { 
@@ -19,7 +16,7 @@ const formatPhone = (text) => {
   }
 };
 
-// Formata data DD/MM/AAAA
+// Formata data DD/MM/AAAA durante digitação
 const formatData = (text) => {
   const cleanText = text.replace(/\D/g, '');
   if (cleanText.length <= 8) {
@@ -32,7 +29,7 @@ const formatData = (text) => {
     .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
 };
 
-// Converte data para MySQL (YYYY-MM-DD)
+// Converte DD/MM/AAAA para YYYY-MM-DD (MySQL)
 const formatDataParaMysql = (data) => {
   const partes = data.split('/');
   if (partes.length === 3){
@@ -41,7 +38,7 @@ const formatDataParaMysql = (data) => {
   return data;
 };
 
-// Calcula idade a partir de DD/MM/AAAA
+// Calcula idade a partir da data DD/MM/AAAA
 const calcularIdadeFromDDMMYYYY = (dataDDMMYYYY) => {
   if (!dataDDMMYYYY) return '';
   const partes = dataDDMMYYYY.split('/');
@@ -58,14 +55,12 @@ const calcularIdadeFromDDMMYYYY = (dataDDMMYYYY) => {
   return idade >= 0 ? String(idade) : '';
 };
 
-
-// ------------------- COMPONENTE PRINCIPAL ------------------- //
-
+// Componente principal: formulário de cadastro de paciente
 export default function CadastroPaciente({ navigation }) {
   const { width } = useWindowDimensions();
   const isSmallScreen = width < 600;
 
-  // --------- ESTADOS --------- //
+  // estados do formulário
   const [nomeCompleto, setNomeCompleto] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -78,8 +73,7 @@ export default function CadastroPaciente({ navigation }) {
   const [idade, setIdade] = useState('');
   const [loading, setLoading] = useState(false);
 
-
-  // --------- FUNÇÃO DE CADASTRO --------- //
+  // Envia dados ao backend e volta à tela anterior em caso de sucesso
   const handleCadastro = async () => {
     if (!nomeCompleto || !dataNascimento || !telefone || !email) {
       Alert.alert('Erro', 'Preencha todos os campos obrigatórios (Nome, Data, Telefone e Email).');
@@ -126,6 +120,7 @@ export default function CadastroPaciente({ navigation }) {
     }
   };
 
+  // Limpa campos do formulário
   const limparFormulario = () => {
     setNomeCompleto('');
     setDataNascimento('');
@@ -139,8 +134,7 @@ export default function CadastroPaciente({ navigation }) {
     setIdade('');
   };
 
-
-  // --------- RENDER --------- //
+  // Render do formulário (componentes reutilizáveis abaixo)
   return (
     <ScrollView 
       style={styles.scrollContainer} 
@@ -148,14 +142,11 @@ export default function CadastroPaciente({ navigation }) {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.innerContainer}>
-
-        {/* HEADER */}
         <View style={styles.formHeader}>
           <Text style={styles.title}>Cadastro de Paciente</Text>
           <Text style={styles.subtitle}>Preencha os dados abaixo</Text>
         </View>
 
-        {/* NOME */}
         <CampoTexto 
           label="Nome Completo" 
           value={nomeCompleto} 
@@ -164,7 +155,6 @@ export default function CadastroPaciente({ navigation }) {
           isSmallScreen={isSmallScreen}
         />
 
-        {/* DATA DE NASCIMENTO */}
         <CampoTexto 
           label="Data de Nascimento" 
           value={dataNascimento} 
@@ -179,7 +169,6 @@ export default function CadastroPaciente({ navigation }) {
           isSmallScreen={isSmallScreen}
         />
 
-        {/* TELEFONE */}
         <CampoTexto 
           label="Telefone" 
           value={telefone} 
@@ -191,7 +180,6 @@ export default function CadastroPaciente({ navigation }) {
           isSmallScreen={isSmallScreen}
         />
 
-        {/* IDADE (somente leitura) */}
         <CampoTexto 
           label="Idade" 
           value={idade} 
@@ -200,7 +188,6 @@ export default function CadastroPaciente({ navigation }) {
           isSmallScreen={isSmallScreen}
         />
 
-        {/* EMAIL */}
         <CampoTexto 
           label="Email" 
           value={email} 
@@ -211,7 +198,6 @@ export default function CadastroPaciente({ navigation }) {
           isSmallScreen={isSmallScreen}
         />
 
-        {/* NOME DA MÃE */}
         <CampoTexto 
           label="Nome da Mãe" 
           value={nomeMae} 
@@ -220,7 +206,6 @@ export default function CadastroPaciente({ navigation }) {
           isSmallScreen={isSmallScreen}
         />
 
-        {/* PICKERS CONDICIONAIS */}
         <CampoPicker 
           label="Toma algum medicamento contínuo?" 
           selectedValue={medicamentoContinuo} 
@@ -261,7 +246,6 @@ export default function CadastroPaciente({ navigation }) {
           />
         )}
 
-        {/* BOTÃO */}
         <TouchableOpacity 
           style={[styles.btnPrimary, loading && styles.btnDisabled]} 
           onPress={handleCadastro}
@@ -275,9 +259,7 @@ export default function CadastroPaciente({ navigation }) {
   );
 }
 
-
-// ------------------- COMPONENTES REUTILIZÁVEIS ------------------- //
-
+// Componentes simples reutilizáveis (CampoTexto e CampoPicker)
 const CampoTexto = ({ label, value, onChangeText, placeholder, keyboardType, maxLength, editable=true, helpText, isSmallScreen, conditional=false, autoCapitalize='sentences' }) => (
   <View style={[styles.formRow, isSmallScreen && styles.columnLayout]}>
     <View style={[styles.formControl, styles.formControlFull]}>
@@ -313,9 +295,7 @@ const CampoPicker = ({ label, selectedValue, onValueChange, isSmallScreen }) => 
   </View>
 );
 
-
-// ------------------- ESTILOS ------------------- //
-
+// Estilos (sem comentários extras)
 const styles = StyleSheet.create({
   scrollContainer: { flex: 1, backgroundColor: '#F1EFEC' },
   contentContainer: { alignItems: 'center', justifyContent: 'flex-start', paddingVertical: 30 },
