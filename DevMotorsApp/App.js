@@ -121,23 +121,6 @@ export default function App() {
             <ListaExame {...props} usuario={userData} onLogout={handleLogout} />
           )}
         </Drawer.Screen>
-
-        {isAdmin && (
-          <>
-            <Drawer.Screen
-              name="Relatório"
-              options={{
-                title: "Relatório (Admin)",
-                drawerLabelStyle: { color: "#0d6efd", fontWeight: "bold" },
-              }}
-            >
-              {(props) => (
-                <TelaRelatorio
-                  {...props}
-                  usuario={userData}
-                  onLogout={handleLogout}
-                />
-              )}
             </Drawer.Screen>
 
             <Drawer.Screen
