@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, FlatList,
-  Alert, StyleSheet, SafeAreaView, ActivityIndicator, StatusBar
+  Alert, StyleSheet, SafeAreaView, ActivityIndicator, StatusBar, Dimensions
 } from 'react-native';
 import { PACIENTES_ENDPOINT } from '../../config/api';
+
+const { width, height } = Dimensions.get('window');
 
 const processApiResponse = async (response) => {
   const text = await response.text();
@@ -24,27 +26,41 @@ const ListaPaciente = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
-  const fetchPacientes = async (searchTerm = '') => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${PACIENTES_ENDPOINT}?search=${searchTerm}`);
-      const responseData = await processApiResponse(response);
+  const fetchPacientes = async (searchTerm = "") => {
+  setLoading(true);
+  try {
+    let url = PACIENTES_ENDPOINT;
 
-      if (response.ok) {
-        setPacientes(responseData || []);
-      } else {
-        Alert.alert('Erro na Busca', String(responseData?.error || responseData?.message || `Status ${response.status}`));
-        setPacientes([]);
-      }
-    } catch (error) {
-      Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor.');
-      setPacientes([]);
-    } finally {
-      setLoading(false);
+    if (searchTerm !== "") {
+      const s = encodeURIComponent(searchTerm);
+      url = `${PACIENTES_ENDPOINT}?search=${s}`;
     }
+
+    console.log("➡ Buscando:", url);
+
+    const response = await fetch(url);
+    const data = await processApiResponse(response);
+
+    if (!response.ok) {
+      Alert.alert("Erro", "Falha ao buscar pacientes.");
+      setPacientes([]);
+      return;
+    }
+
+    console.log("⬅ Resultados:", data);
+    setPacientes(Array.isArray(data) ? data : []);
+  } catch (error) {
+    Alert.alert("Erro de Conexão", "Não foi possível conectar ao servidor.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  const handleSearch = () => {
+  fetchPacientes(search.trim());
   };
 
-  const handleSearch = () => fetchPacientes(search);
   const handleNewPaciente = () => navigation?.navigate('CadastroPaciente');
 
   // ------------------- RENDER PACIENTE ANÔNIMO ------------------- //
@@ -62,7 +78,7 @@ const ListaPaciente = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#667eea" />
-      <View style={styles.controls}>
+      <View style={styles.controlas}>
         <View style={styles.searchContainer}>
           <TouchableOpacity style={styles.newButton} onPress={handleNewPaciente}>
             <Text style={styles.newButtonText}>+ Novo Paciente</Text>
@@ -100,22 +116,95 @@ const ListaPaciente = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
-  controls: { padding: 15, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#e0e0e0' },
-  searchContainer: { flexDirection: 'row', alignItems: 'center' },
-  newButton: { backgroundColor: '#667eea', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 8, marginRight: 8 },
-  newButtonText: { color: '#fff', fontWeight: '600' },
-  searchInput: { flex: 1, borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, marginRight: 8 },
-  searchButton: { backgroundColor: '#667eea', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 8 },
-  searchButtonText: { color: '#fff', fontWeight: '600' },
-  listContainer: { flex: 1, padding: 15 },
-  listTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 },
-  pacienteCard: { backgroundColor: '#fff', padding: 15, borderRadius: 10, marginBottom: 10 },
-  pacienteInfo: { flex: 1 },
-  pacienteTitle: { fontSize: 16, fontWeight: '600', marginBottom: 4 },
-  pacienteEmail: { fontSize: 14, color: '#666' },
-  emptyText: { textAlign: 'center', color: '#666', fontStyle: 'italic', marginTop: 40 },
-  loader: { marginTop: 40 },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#f5f5f5' 
+  },
+  controls: { 
+    padding: 15, 
+    backgroundColor: '#fff', 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#e0e0e0' 
+  },
+  searchContainer: { 
+    flexDirection: 'row', 
+    alignItems: 'center',
+    flexWrap: 'wrap'
+  },
+  newButton: { 
+    backgroundColor: '#667eea', 
+    paddingHorizontal: 16, 
+    paddingVertical: 12, 
+    borderRadius: 8, 
+    marginRight: 8,
+    marginBottom: 8
+  },
+  newButtonText: { 
+    color: '#fff', 
+    fontWeight: '600',
+    fontSize: 14
+  },
+  searchInput: { 
+    flex: 1,
+    minWidth: 200,
+    borderWidth: 1, 
+    borderColor: '#e0e0e0', 
+    borderRadius: 8, 
+    paddingHorizontal: 12, 
+    paddingVertical: 10, 
+    marginRight: 8,
+    marginBottom: 8,
+    fontSize: 14
+  },
+  searchButton: { 
+    backgroundColor: '#667eea', 
+    paddingHorizontal: 20, 
+    paddingVertical: 12, 
+    borderRadius: 8,
+    marginBottom: 8
+  },
+  searchButtonText: { 
+    color: '#fff', 
+    fontWeight: '600',
+    fontSize: 14
+  },
+  listContainer: { 
+    flex: 1, 
+    padding: 15 
+  },
+  listTitle: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    marginBottom: 12 
+  },
+  pacienteCard: { 
+    backgroundColor: '#fff', 
+    padding: 15, 
+    borderRadius: 10, 
+    marginBottom: 10 
+  },
+  pacienteInfo: { 
+    flex: 1 
+  },
+  pacienteTitle: { 
+    fontSize: 16, 
+    fontWeight: '600', 
+    marginBottom: 4 
+  },
+  pacienteEmail: { 
+    fontSize: 14, 
+    color: '#666' 
+  },
+  emptyText: { 
+    textAlign: 'center', 
+    color: '#666', 
+    fontStyle: 'italic', 
+    marginTop: 40,
+    fontSize: 16
+  },
+  loader: { 
+    marginTop: 40 
+  },
 });
 
 export default ListaPaciente;

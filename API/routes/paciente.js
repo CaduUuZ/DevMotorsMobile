@@ -2,28 +2,38 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// ------------------- LISTAR TODOS OS PACIENTES ------------------- //
+// ------------------- LISTAR / BUSCAR PACIENTES ------------------- //
 router.get('/', async (req, res) => {
+  const search = req.query.search ? req.query.search.trim() : "";
+
   try {
-    const [results] = await db.query('SELECT * FROM pacientes');
+    // Se não tiver busca → lista tudo
+    if (!search) {
+      const [results] = await db.query('SELECT * FROM pacientes');
+      return res.json(results);
+    }
+
+    // Se for número → procura por id
+    if (!isNaN(search)) {
+      const [results] = await db.query(
+        'SELECT * FROM pacientes WHERE idPaciente = ?',
+        [search]
+      );
+      return res.json(results);
+    }
+
+    // Se for nome → busca nome parecido
+    const [results] = await db.query(
+      'SELECT * FROM pacientes WHERE nome LIKE ?',
+      [`%${search}%`]
+    );
+
     res.json(results);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ------------------- BUSCAR PACIENTE POR ID ------------------- //
-router.get('/:id', async (req, res) => {
-  const id = parseInt(req.params.id);
-  try {
-    const [results] = await db.query('SELECT * FROM pacientes WHERE idPaciente = ?', [id]);
-    if (results.length === 0)
-      return res.status(404).json({ message: 'Paciente não encontrado' });
-    res.json(results[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 // ------------------- INSERIR NOVO PACIENTE ------------------- //
 router.post('/', async (req, res) => {
