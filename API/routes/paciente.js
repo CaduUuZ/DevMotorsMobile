@@ -34,7 +34,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-
 // ------------------- INSERIR NOVO PACIENTE ------------------- //
 router.post('/', async (req, res) => {
   const { nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia } = req.body;
@@ -52,18 +51,22 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ------------------- EDITAR PACIENTE ------------------- //
+// ------------------- EDITAR PACIENTE (APENAS NOME, TELEFONE E EMAIL) ------------------- //
 router.put('/:id', async (req, res) => {
   const id = parseInt(req.params.id);
-  const { nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia } = req.body;
+  const { nome, telefone, email } = req.body; 
   try {
+    // Atualiza só os campos fornecidos
     const [result] = await db.query(
-      'UPDATE pacientes SET nome=?, dataNascimento=?, telefone=?, email=?, nomeMae=?, idade=?, medicamento=?, patologia=? WHERE idPaciente=?',
-      [nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia, id]
+      'UPDATE pacientes SET nome=?, telefone=?, email=? WHERE idPaciente=?',
+      [nome, telefone, email, id]
     );
+
     if (result.affectedRows === 0)
       return res.status(404).json({ message: 'Paciente não encontrado' });
-    res.json({ id, nome, dataNascimento, telefone, email, nomeMae, idade, medicamento, patologia });
+
+    // Retorna os dados atualizados
+    res.json({ id, nome, telefone, email });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
